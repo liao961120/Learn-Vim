@@ -1,0 +1,19 @@
+# Preface {.unnumbered}
+
+
+[Learn-Vim](https://github.com/iggredible/Learn-Vim) compiled as quarto book.
+
+Built: `r Sys.Date()`
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+	message = FALSE,
+	warning = FALSE,
+	attr.source = '.numberLines',
+	results = 'hold',
+	out.width = "50%",
+	fig.align = 'center',
+	comment = "",
+	fig.dim = c(8, 8)
+)
+```

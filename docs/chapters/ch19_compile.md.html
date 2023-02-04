@@ -1,0 +1,724 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.2.313">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Learn Vim (the Smart Way) - 19&nbsp; Ch19. Compile</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1.6em;
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<link href="../chapters/ch20_views_sessions_viminfo.md.html" rel="next">
+<link href="../chapters/ch18_git.md.html" rel="prev">
+<script src="../site_libs/quarto-html/quarto.js"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-dark.min.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit"
+  }
+}</script>
+
+
+</head>
+
+<body class="nav-sidebar floating">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+    <div class="container-fluid d-flex justify-content-between">
+      <h1 class="quarto-secondary-nav-title"><span class="chapter-number">19</span>&nbsp; <span class="chapter-title">Ch19. Compile</span></h1>
+      <button type="button" class="quarto-btn-toggle btn" aria-label="Show secondary navigation">
+        <i class="bi bi-chevron-right"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="../">Learn Vim (the Smart Way)</a> 
+        <div class="sidebar-tools-main">
+    <a href="https://github.com/iggredible/Learn-Vim" title="" class="sidebar-tool px-1"><i class="bi bi-github"></i></a>
+  <a href="" class="quarto-color-scheme-toggle sidebar-tool" onclick="window.quartoToggleColorScheme(); return false;" title="Toggle dark mode"><i class="bi"></i></a>
+</div>
+    </div>
+      </div>
+      <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+      </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../index.html" class="sidebar-item-text sidebar-link">Preface</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch01_starting_vim.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Ch01. Starting Vim</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch02_buffers_windows_tabs.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Ch02. Buffers, Windows, and Tabs</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch03_searching_files.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Ch03. Searching Files</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch04_vim_grammar.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Ch04. Vim Grammar</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch05_moving_in_file.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Ch05. Moving in a File</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch06_insert_mode.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Ch06. Insert Mode</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch07_the_dot_command.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Ch07. the Dot Command</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch08_registers.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Ch08. Registers</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch09_macros.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Ch09. Macros</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch10_undo.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Ch10. Undo</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch11_visual_mode.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Ch11. Visual Mode</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch12_search_and_substitute.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Ch12. Search and Substitute</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch13_the_global_command.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Ch13. the Global Command</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch14_external_commands.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Ch14. External Commands</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch15_command-line_mode.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">Ch15. Command-line Mode</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch16_tags.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Ch16. Tags</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch17_fold.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">Ch17. Fold</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch18_git.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">18</span>&nbsp; <span class="chapter-title">Ch18. Git</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch19_compile.md.html" class="sidebar-item-text sidebar-link active"><span class="chapter-number">19</span>&nbsp; <span class="chapter-title">Ch19. Compile</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch20_views_sessions_viminfo.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">20</span>&nbsp; <span class="chapter-title">Ch20. Views, Sessions, and Viminfo</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch21_multiple_file_operations.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">21</span>&nbsp; <span class="chapter-title">Multiple File Operations</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch22_vimrc.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">22</span>&nbsp; <span class="chapter-title">Ch22. Vimrc</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch23_vim_packages.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">23</span>&nbsp; <span class="chapter-title">Ch23. Vim Packages</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch24_vim_runtime.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">24</span>&nbsp; <span class="chapter-title">Ch24. Vim Runtime</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch25_vimscript_basic_data_types.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">25</span>&nbsp; <span class="chapter-title">Ch25. Vimscript Basic Data Types</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch26_vimscript_conditionals_and_loops.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">26</span>&nbsp; <span class="chapter-title">Ch26. Vimscript Conditionals and Loops</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch27_vimscript_variable_scopes.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">27</span>&nbsp; <span class="chapter-title">Ch27. Vimscript Variable Scopes</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch28_vimscript_functions.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">28</span>&nbsp; <span class="chapter-title">Ch28. Vimscript Functions</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch29_plugin_example_writing-a-titlecase-plugin.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">29</span>&nbsp; <span class="chapter-title">Ch29. Write a Plugin: Creating a Titlecase Operator</span></a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#compile-from-the-command-line" id="toc-compile-from-the-command-line" class="nav-link active" data-scroll-target="#compile-from-the-command-line"><span class="toc-section-number">19.1</span>  Compile From the Command Line</a></li>
+  <li><a href="#the-make-command" id="toc-the-make-command" class="nav-link" data-scroll-target="#the-make-command"><span class="toc-section-number">19.2</span>  The Make Command</a></li>
+  <li><a href="#compiling-with-make" id="toc-compiling-with-make" class="nav-link" data-scroll-target="#compiling-with-make"><span class="toc-section-number">19.3</span>  Compiling With Make</a></li>
+  <li><a href="#different-make-program" id="toc-different-make-program" class="nav-link" data-scroll-target="#different-make-program"><span class="toc-section-number">19.4</span>  Different Make Program</a></li>
+  <li><a href="#auto-compile-on-save" id="toc-auto-compile-on-save" class="nav-link" data-scroll-target="#auto-compile-on-save"><span class="toc-section-number">19.5</span>  Auto-compile on Save</a></li>
+  <li><a href="#switching-compiler" id="toc-switching-compiler" class="nav-link" data-scroll-target="#switching-compiler"><span class="toc-section-number">19.6</span>  Switching Compiler</a></li>
+  <li><a href="#creating-a-custom-compiler" id="toc-creating-a-custom-compiler" class="nav-link" data-scroll-target="#creating-a-custom-compiler"><span class="toc-section-number">19.7</span>  Creating a Custom Compiler</a></li>
+  <li><a href="#async-compiler" id="toc-async-compiler" class="nav-link" data-scroll-target="#async-compiler"><span class="toc-section-number">19.8</span>  Async Compiler</a></li>
+  <li><a href="#plugin-vim-dispatch" id="toc-plugin-vim-dispatch" class="nav-link" data-scroll-target="#plugin-vim-dispatch"><span class="toc-section-number">19.9</span>  Plugin: Vim-dispatch</a>
+  <ul class="collapse">
+  <li><a href="#async-make" id="toc-async-make" class="nav-link" data-scroll-target="#async-make"><span class="toc-section-number">19.9.1</span>  Async Make</a></li>
+  <li><a href="#async-dispatch" id="toc-async-dispatch" class="nav-link" data-scroll-target="#async-dispatch"><span class="toc-section-number">19.9.2</span>  Async Dispatch</a></li>
+  <li><a href="#automating-dispatch" id="toc-automating-dispatch" class="nav-link" data-scroll-target="#automating-dispatch"><span class="toc-section-number">19.9.3</span>  Automating Dispatch</a></li>
+  </ul></li>
+  <li><a href="#learn-compile-the-smart-way" id="toc-learn-compile-the-smart-way" class="nav-link" data-scroll-target="#learn-compile-the-smart-way"><span class="toc-section-number">19.10</span>  Learn Compile the Smart Way</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title d-none d-lg-block"><span class="chapter-number">19</span>&nbsp; <span class="chapter-title">Ch19. Compile</span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+</header>
+
+<p>Compiling is an important subject for many languages. In this chapter, you will learn how to compile from Vim. You will also look at ways to take advantage of Vim’s <code>:make</code> command.</p>
+<section id="compile-from-the-command-line" class="level2" data-number="19.1">
+<h2 data-number="19.1" class="anchored" data-anchor-id="compile-from-the-command-line"><span class="header-section-number">19.1</span> Compile From the Command Line</h2>
+<p>You can use the bang operator (<code>!</code>) to compile. If you need to compile your <code>.cpp</code> file with <code>g++</code>, run:</p>
+<pre><code>:!g++ hello.cpp -o hello</code></pre>
+<p>However, having to manually type the filename and the output filename each time is error-prone and tedious. A makefile is the way to go.</p>
+</section>
+<section id="the-make-command" class="level2" data-number="19.2">
+<h2 data-number="19.2" class="anchored" data-anchor-id="the-make-command"><span class="header-section-number">19.2</span> The Make Command</h2>
+<p>Vim has a <code>:make</code> command to run a makefile. When you run it, Vim looks for a makefile in the current directory to execute.</p>
+<p>Create a file named <code>makefile</code> in the current directory and put these inside:</p>
+<pre><code>all:
+    echo "Hello all"
+foo:
+    echo "Hello foo"
+list_pls:
+    ls</code></pre>
+<p>Run this from Vim:</p>
+<pre><code>:make</code></pre>
+<p>Vim executes it the same way as when you’re running it from the terminal. The <code>:make</code> command accepts parameter just like the terminal make command. Run:</p>
+<pre><code>:make foo
+" Outputs "Hello foo"
+
+:make list_pls
+" Outputs the ls command result</code></pre>
+<p>The <code>:make</code> command uses Vim’s quickfix to store any error if you run a bad command. Let’s run a nonexisting target:</p>
+<pre><code>:make dontexist</code></pre>
+<p>You should see an error running that command. To view that error, run the quickfix command <code>:copen</code> to view the quickfix window:</p>
+<pre><code>|| make: *** No rule to make target `dontexist'.  Stop.</code></pre>
+</section>
+<section id="compiling-with-make" class="level2" data-number="19.3">
+<h2 data-number="19.3" class="anchored" data-anchor-id="compiling-with-make"><span class="header-section-number">19.3</span> Compiling With Make</h2>
+<p>Let’s use the makefile to compile a basic <code>.cpp</code> program. First, let’s create a <code>hello.cpp</code> file:</p>
+<pre><code>#include &lt;iostream&gt;
+
+int main() {
+    std::cout &lt;&lt; "Hello!\\n";
+    return 0;
+}</code></pre>
+<p>Update your makefile to build and run a <code>.cpp</code> file:</p>
+<pre><code>all:
+    echo "build, run"
+build:
+    g++ hello.cpp -o hello
+run:
+    ./hello</code></pre>
+<p>Now run:</p>
+<pre><code>:make build</code></pre>
+<p>The <code>g++</code> compiles <code>./hello.cpp</code> and creates <code>./hello</code>. Then run:</p>
+<pre><code>:make run</code></pre>
+<p>You should see <code>"Hello!"</code> printed on the terminal.</p>
+</section>
+<section id="different-make-program" class="level2" data-number="19.4">
+<h2 data-number="19.4" class="anchored" data-anchor-id="different-make-program"><span class="header-section-number">19.4</span> Different Make Program</h2>
+<p>When you run <code>:make</code>, Vim actually runs whatever command that is set under the <code>makeprg</code> option. If you run <code>:set makeprg?</code>, you’ll see:</p>
+<pre><code>makeprg=make</code></pre>
+<p>The default <code>:make</code> command is the <code>make</code> external command. To change the <code>:make</code> command to execute <code>g++ {your-file-name}</code> each time you run it, run:</p>
+<pre><code>:set makeprg=g++\ %</code></pre>
+<p>The <code>\</code> is to escape the space after <code>g++</code>. The <code>%</code> symbol in Vim represents the current file. The command <code>g++\\ %</code> is equivalent to running <code>g++ hello.cpp</code>.</p>
+<p>Go to <code>./hello.cpp</code> then run <code>:make</code>. Vim compiles <code>hello.cpp</code> and creates <code>a.out</code> because you didn’t specify the output. Let’s refactor it so it will name the compiled output with the name of the original file minus the extension. Run or add this to vimrc:</p>
+<pre><code>set makeprg=g++\ %\ -o\ %&lt;</code></pre>
+<p>The breakdown: - <code>g++\ %</code> is the same as above. It is equivalent to running <code>g++ &lt;your-file&gt;</code>. - <code>-o</code> is the output option. - <code>%&lt;</code> in Vim represents the current file name without an extension (<code>hello.cpp</code> becomes <code>hello</code>).</p>
+<p>When you run <code>:make</code> from inside <code>./hello.cpp</code>, it is compiled into <code>./hello</code>. To quickly execute <code>./hello</code> from inside <code>./hello.cpp</code>, run <code>:!./%&lt;</code>. Again, this is the same as running <code>:!./{current-file-name-minus-the-extension}</code>.</p>
+<p>For more, check out <code>:h :compiler</code> and <code>:h write-compiler-plugin</code>.</p>
+</section>
+<section id="auto-compile-on-save" class="level2" data-number="19.5">
+<h2 data-number="19.5" class="anchored" data-anchor-id="auto-compile-on-save"><span class="header-section-number">19.5</span> Auto-compile on Save</h2>
+<p>You can make life even easier by automating compilation. Recall that you can use Vim’s <code>autocmd</code> to trigger automatic actions based on certain events. To automatically compile <code>.cpp</code> files on each save add this on your vimrc:</p>
+<pre><code>autocmd BufWritePost *.cpp make</code></pre>
+<p>Each time you save inside a <code>.cpp</code> file, Vim executes the <code>make</code> command.</p>
+</section>
+<section id="switching-compiler" class="level2" data-number="19.6">
+<h2 data-number="19.6" class="anchored" data-anchor-id="switching-compiler"><span class="header-section-number">19.6</span> Switching Compiler</h2>
+<p>Vim has a <code>:compiler</code> command to quickly switch compilers. Your Vim build probably comes with several pre-built compiler configurations. To check what compilers you have, run:</p>
+<pre><code>:e $VIMRUNTIME/compiler/&lt;Tab&gt;</code></pre>
+<p>You should see a list of compilers for different programming languages.</p>
+<p>To use the <code>:compiler</code> command, suppose you have a ruby file, <code>hello.rb</code> and inside it has:</p>
+<pre><code>puts "Hello ruby"</code></pre>
+<p>Recall that if you run <code>:make</code>, Vim executes whatever command is assigned to <code>makeprg</code> (default is <code>make</code>). If you run:</p>
+<pre><code>:compiler ruby</code></pre>
+<p>Vim runs the <code>$VIMRUNTIME/compiler/ruby.vim</code> script and changes the <code>makeprg</code> to use the <code>ruby</code> command. Now if you run <code>:set makeprg?</code>, it should say <code>makeprg=ruby</code> (this depends on what is inside your <code>$VIMRUNTIME/compiler/ruby.vim</code> file or if you have another custom ruby compilers. Yours might be different). The <code>:compiler {your-lang}</code> command allows you to switch to different compilers quickly. This is useful if your project uses multiple languages.</p>
+<p>You don’t have to use the <code>:compiler</code> and <code>makeprg</code> to compile a program. You can run a test script, lint a file, send a signal, or anything you want.</p>
+</section>
+<section id="creating-a-custom-compiler" class="level2" data-number="19.7">
+<h2 data-number="19.7" class="anchored" data-anchor-id="creating-a-custom-compiler"><span class="header-section-number">19.7</span> Creating a Custom Compiler</h2>
+<p>Let’s create a simple Typescript compiler. Install Typescript (<code>npm install -g typescript</code>) to your machine. You should now have the <code>tsc</code> command. If you haven’t played with typescript before, <code>tsc</code> compiles a Typescript file into a Javascript file. Suppose that you have a file, <code>hello.ts</code>:</p>
+<pre><code>const hello = "hello";
+console.log(hello);</code></pre>
+<p>If you run <code>tsc hello.ts</code>, it will compile into <code>hello.js</code>. However, if you have the following expressions inside <code>hello.ts</code>:</p>
+<pre><code>const hello = "hello";
+hello = "hello again";
+console.log(hello);</code></pre>
+<p>This will throw an error because you can’t mutate a <code>const</code> variable. Running <code>tsc hello.ts</code> will throw an error:</p>
+<pre><code>hello.ts:2:1 - error TS2588: Cannot assign to 'person' because it is a constant.
+
+2 person = "hello again";
+  ~~~~~~
+
+
+Found 1 error.</code></pre>
+<p>To create a simple Typescript compiler, in your <code>~/.vim/</code> directory, add a <code>compiler</code> directory (<code>~/.vim/compiler/</code>), then create a <code>typescript.vim</code> file (<code>~/.vim/compiler/typescript.vim</code>). Put this inside:</p>
+<pre><code>CompilerSet makeprg=tsc
+CompilerSet errorformat=%f:\ %m</code></pre>
+<p>The first line sets the <code>makeprg</code> to run the <code>tsc</code> command. The second line sets the error format to display the file (<code>%f</code>), followed by a literal colon (<code>:</code>) and an escaped space (<code>\</code>), followed by the error message (<code>%m</code>). To learn more about the error formatting, check out <code>:h errorformat</code>.</p>
+<p>You should also read some of the pre-made compilers to see how others do it. Check out <code>:e $VIMRUNTIME/compiler/&lt;some-language&gt;.vim</code>.</p>
+<p>Because some plugins may interfere with the Typescript file, let’s open the <code>hello.ts</code> without any plugin, using the <code>--noplugin</code> flag:</p>
+<pre><code>vim --noplugin hello.ts</code></pre>
+<p>Check the <code>makeprg</code>:</p>
+<pre><code>:set makeprg?</code></pre>
+<p>It should say the default <code>make</code> program. To use the new Typescript compiler, run:</p>
+<pre><code>:compiler typescript</code></pre>
+<p>When you run <code>:set makeprg?</code>, it should say <code>tsc</code> now. Let’s put it to the test. Run:</p>
+<pre><code>:make %</code></pre>
+<p>Recall that <code>%</code> means the current file. Watch your Typescript compiler work as expected! To see the list of error(s), run <code>:copen</code>.</p>
+</section>
+<section id="async-compiler" class="level2" data-number="19.8">
+<h2 data-number="19.8" class="anchored" data-anchor-id="async-compiler"><span class="header-section-number">19.8</span> Async Compiler</h2>
+<p>Sometimes compiling can take a long time. You don’t want to be staring at a frozen Vim while waiting for your compilation process to finish. Wouldn’t it be nice if you can compile asynchronously so you can still use Vim during compilation?</p>
+<p>Luckily there are plugins to run async processes. The two big ones are:</p>
+<ul>
+<li><a href="https://github.com/tpope/vim-dispatch">vim-dispatch</a></li>
+<li><a href="https://github.com/skywind3000/asyncrun.vim">asyncrun.vim</a></li>
+</ul>
+<p>In the remaining of this chapter, I will go over vim-dispatch, but I would strongly encourage you to try all of them out there.</p>
+<p><em>Vim and NeoVim actually supports async jobs, but they are beyond the scope of this chapter. If you’re curious, check out <code>:h job-channel-overview.txt</code>.</em></p>
+</section>
+<section id="plugin-vim-dispatch" class="level2" data-number="19.9">
+<h2 data-number="19.9" class="anchored" data-anchor-id="plugin-vim-dispatch"><span class="header-section-number">19.9</span> Plugin: Vim-dispatch</h2>
+<p>Vim-dispatch has several commands, but the two main ones are <code>:Make</code> and <code>:Dispatch</code> commands.</p>
+<section id="async-make" class="level3" data-number="19.9.1">
+<h3 data-number="19.9.1" class="anchored" data-anchor-id="async-make"><span class="header-section-number">19.9.1</span> Async Make</h3>
+<p>Vim-dispatch’s <code>:Make</code> command is similar to Vim’s <code>:make</code>, but it runs asynchronously. If you are in a Javascript project and you need to run <code>npm t</code>, you might attempt to set your makeprg to be:</p>
+<pre><code>:set makeprg=npm\\ t</code></pre>
+<p>If you run:</p>
+<pre><code>:make</code></pre>
+<p>Vim will execute <code>npm t</code>, but you will be staring at the frozen screen while your JavaScript test runs. With vim-dispatch, you can just run:</p>
+<pre><code>:Make</code></pre>
+<p>Vim will run <code>npm t</code> asynchronously. This way, while <code>npm t</code> is running on a background process, you can continue doing whatever you were doing. Awesome!</p>
+</section>
+<section id="async-dispatch" class="level3" data-number="19.9.2">
+<h3 data-number="19.9.2" class="anchored" data-anchor-id="async-dispatch"><span class="header-section-number">19.9.2</span> Async Dispatch</h3>
+<p>The <code>:Dispatch</code> command is like the <code>:compiler</code> and the <code>:!</code> command. It can run any external command asynchronously in Vim.</p>
+<p>Assume that you are inside a ruby spec file and you need to run a test. Run:</p>
+<pre><code>:Dispatch bundle exec rspec %</code></pre>
+<p>Vim will asynchronously run the <code>rspec</code> command against the current file (<code>%</code>).</p>
+</section>
+<section id="automating-dispatch" class="level3" data-number="19.9.3">
+<h3 data-number="19.9.3" class="anchored" data-anchor-id="automating-dispatch"><span class="header-section-number">19.9.3</span> Automating Dispatch</h3>
+<p>Vim-dispatch has <code>b:dispatch</code> buffer variable that you can configure to evaluate specific command automatically. You can leverage it with <code>autocmd</code>. If you add this in your vimrc:</p>
+<pre><code>autocmd BufEnter *_spec.rb let b:dispatch = 'bundle exec rspec %'</code></pre>
+<p>Now each time you enter a file (<code>BufEnter</code>) that ends with <code>_spec.rb</code>, running <code>:Dispatch</code> automatically executes <code>bundle exec rspec {your-current-ruby-spec-file}</code>.</p>
+</section>
+</section>
+<section id="learn-compile-the-smart-way" class="level2" data-number="19.10">
+<h2 data-number="19.10" class="anchored" data-anchor-id="learn-compile-the-smart-way"><span class="header-section-number">19.10</span> Learn Compile the Smart Way</h2>
+<p>In this chapter, you learned that you can use the <code>make</code> and <code>compiler</code> commands to run <em>any</em> process from inside Vim asynchronously to complement your programming workflow. Vim’s ability to extend itself with other programs makes it powerful.</p>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const disableStylesheet = (stylesheets) => {
+    for (let i=0; i < stylesheets.length; i++) {
+      const stylesheet = stylesheets[i];
+      stylesheet.rel = 'prefetch';
+    }
+  }
+  const enableStylesheet = (stylesheets) => {
+    for (let i=0; i < stylesheets.length; i++) {
+      const stylesheet = stylesheets[i];
+      stylesheet.rel = 'stylesheet';
+    }
+  }
+  const manageTransitions = (selector, allowTransitions) => {
+    const els = window.document.querySelectorAll(selector);
+    for (let i=0; i < els.length; i++) {
+      const el = els[i];
+      if (allowTransitions) {
+        el.classList.remove('notransition');
+      } else {
+        el.classList.add('notransition');
+      }
+    }
+  }
+  const toggleColorMode = (alternate) => {
+    // Switch the stylesheets
+    const alternateStylesheets = window.document.querySelectorAll('link.quarto-color-scheme.quarto-color-alternate');
+    manageTransitions('#quarto-margin-sidebar .nav-link', false);
+    if (alternate) {
+      enableStylesheet(alternateStylesheets);
+      for (const sheetNode of alternateStylesheets) {
+        if (sheetNode.id === "quarto-bootstrap") {
+          toggleBodyColorMode(sheetNode);
+        }
+      }
+    } else {
+      disableStylesheet(alternateStylesheets);
+      toggleBodyColorPrimary();
+    }
+    manageTransitions('#quarto-margin-sidebar .nav-link', true);
+    // Switch the toggles
+    const toggles = window.document.querySelectorAll('.quarto-color-scheme-toggle');
+    for (let i=0; i < toggles.length; i++) {
+      const toggle = toggles[i];
+      if (toggle) {
+        if (alternate) {
+          toggle.classList.add("alternate");     
+        } else {
+          toggle.classList.remove("alternate");
+        }
+      }
+    }
+    // Hack to workaround the fact that safari doesn't
+    // properly recolor the scrollbar when toggling (#1455)
+    if (navigator.userAgent.indexOf('Safari') > 0 && navigator.userAgent.indexOf('Chrome') == -1) {
+      manageTransitions("body", false);
+      window.scrollTo(0, 1);
+      setTimeout(() => {
+        window.scrollTo(0, 0);
+        manageTransitions("body", true);
+      }, 40);  
+    }
+  }
+  const isFileUrl = () => { 
+    return window.location.protocol === 'file:';
+  }
+  const hasAlternateSentinel = () => {  
+    let styleSentinel = getColorSchemeSentinel();
+    if (styleSentinel !== null) {
+      return styleSentinel === "alternate";
+    } else {
+      return false;
+    }
+  }
+  const setStyleSentinel = (alternate) => {
+    const value = alternate ? "alternate" : "default";
+    if (!isFileUrl()) {
+      window.localStorage.setItem("quarto-color-scheme", value);
+    } else {
+      localAlternateSentinel = value;
+    }
+  }
+  const getColorSchemeSentinel = () => {
+    if (!isFileUrl()) {
+      const storageValue = window.localStorage.getItem("quarto-color-scheme");
+      return storageValue != null ? storageValue : localAlternateSentinel;
+    } else {
+      return localAlternateSentinel;
+    }
+  }
+  let localAlternateSentinel = 'alternate';
+  // Dark / light mode switch
+  window.quartoToggleColorScheme = () => {
+    // Read the current dark / light value 
+    let toAlternate = !hasAlternateSentinel();
+    toggleColorMode(toAlternate);
+    setStyleSentinel(toAlternate);
+  };
+  // Ensure there is a toggle, if there isn't float one in the top right
+  if (window.document.querySelector('.quarto-color-scheme-toggle') === null) {
+    const a = window.document.createElement('a');
+    a.classList.add('top-right');
+    a.classList.add('quarto-color-scheme-toggle');
+    a.href = "";
+    a.onclick = function() { try { window.quartoToggleColorScheme(); } catch {} return false; };
+    const i = window.document.createElement("i");
+    i.classList.add('bi');
+    a.appendChild(i);
+    window.document.body.appendChild(a);
+  }
+  // Switch to dark mode if need be
+  if (hasAlternateSentinel()) {
+    toggleColorMode(true);
+  } else {
+    toggleColorMode(false);
+  }
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    target: function(trigger) {
+      return trigger.previousElementSibling;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="../chapters/ch18_git.md.html" class="pagination-link">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">18</span>&nbsp; <span class="chapter-title">Ch18. Git</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="../chapters/ch20_views_sessions_viminfo.md.html" class="pagination-link">
+        <span class="nav-page-text"><span class="chapter-number">20</span>&nbsp; <span class="chapter-title">Ch20. Views, Sessions, and Viminfo</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+
+
+
+</body></html>

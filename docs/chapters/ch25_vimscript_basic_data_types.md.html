@@ -1,0 +1,1175 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.2.313">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Learn Vim (the Smart Way) - 25&nbsp; Ch25. Vimscript Basic Data Types</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1.6em;
+  vertical-align: middle;
+}
+q { quotes: "“" "”" "‘" "’"; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { color: #008000; } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { color: #008000; font-weight: bold; } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<link href="../chapters/ch26_vimscript_conditionals_and_loops.md.html" rel="next">
+<link href="../chapters/ch24_vim_runtime.md.html" rel="prev">
+<script src="../site_libs/quarto-html/quarto.js"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-dark.min.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit"
+  }
+}</script>
+
+
+</head>
+
+<body class="nav-sidebar floating">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+    <div class="container-fluid d-flex justify-content-between">
+      <h1 class="quarto-secondary-nav-title"><span class="chapter-number">25</span>&nbsp; <span class="chapter-title">Ch25. Vimscript Basic Data Types</span></h1>
+      <button type="button" class="quarto-btn-toggle btn" aria-label="Show secondary navigation">
+        <i class="bi bi-chevron-right"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="../">Learn Vim (the Smart Way)</a> 
+        <div class="sidebar-tools-main">
+    <a href="https://github.com/iggredible/Learn-Vim" title="" class="sidebar-tool px-1"><i class="bi bi-github"></i></a>
+  <a href="" class="quarto-color-scheme-toggle sidebar-tool" onclick="window.quartoToggleColorScheme(); return false;" title="Toggle dark mode"><i class="bi"></i></a>
+</div>
+    </div>
+      </div>
+      <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+      </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../index.html" class="sidebar-item-text sidebar-link">Preface</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch01_starting_vim.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Ch01. Starting Vim</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch02_buffers_windows_tabs.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Ch02. Buffers, Windows, and Tabs</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch03_searching_files.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Ch03. Searching Files</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch04_vim_grammar.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Ch04. Vim Grammar</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch05_moving_in_file.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Ch05. Moving in a File</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch06_insert_mode.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Ch06. Insert Mode</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch07_the_dot_command.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Ch07. the Dot Command</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch08_registers.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Ch08. Registers</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch09_macros.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Ch09. Macros</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch10_undo.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Ch10. Undo</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch11_visual_mode.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Ch11. Visual Mode</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch12_search_and_substitute.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Ch12. Search and Substitute</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch13_the_global_command.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Ch13. the Global Command</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch14_external_commands.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Ch14. External Commands</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch15_command-line_mode.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">Ch15. Command-line Mode</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch16_tags.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Ch16. Tags</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch17_fold.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">Ch17. Fold</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch18_git.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">18</span>&nbsp; <span class="chapter-title">Ch18. Git</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch19_compile.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">19</span>&nbsp; <span class="chapter-title">Ch19. Compile</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch20_views_sessions_viminfo.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">20</span>&nbsp; <span class="chapter-title">Ch20. Views, Sessions, and Viminfo</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch21_multiple_file_operations.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">21</span>&nbsp; <span class="chapter-title">Multiple File Operations</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch22_vimrc.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">22</span>&nbsp; <span class="chapter-title">Ch22. Vimrc</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch23_vim_packages.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">23</span>&nbsp; <span class="chapter-title">Ch23. Vim Packages</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch24_vim_runtime.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">24</span>&nbsp; <span class="chapter-title">Ch24. Vim Runtime</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch25_vimscript_basic_data_types.md.html" class="sidebar-item-text sidebar-link active"><span class="chapter-number">25</span>&nbsp; <span class="chapter-title">Ch25. Vimscript Basic Data Types</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch26_vimscript_conditionals_and_loops.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">26</span>&nbsp; <span class="chapter-title">Ch26. Vimscript Conditionals and Loops</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch27_vimscript_variable_scopes.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">27</span>&nbsp; <span class="chapter-title">Ch27. Vimscript Variable Scopes</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch28_vimscript_functions.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">28</span>&nbsp; <span class="chapter-title">Ch28. Vimscript Functions</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch29_plugin_example_writing-a-titlecase-plugin.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">29</span>&nbsp; <span class="chapter-title">Ch29. Write a Plugin: Creating a Titlecase Operator</span></a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#data-types" id="toc-data-types" class="nav-link active" data-scroll-target="#data-types"><span class="toc-section-number">25.1</span>  Data Types</a></li>
+  <li><a href="#following-along-with-ex-mode" id="toc-following-along-with-ex-mode" class="nav-link" data-scroll-target="#following-along-with-ex-mode"><span class="toc-section-number">25.2</span>  Following Along With Ex Mode</a></li>
+  <li><a href="#number" id="toc-number" class="nav-link" data-scroll-target="#number"><span class="toc-section-number">25.3</span>  Number</a>
+  <ul class="collapse">
+  <li><a href="#decimal" id="toc-decimal" class="nav-link" data-scroll-target="#decimal"><span class="toc-section-number">25.3.1</span>  Decimal</a></li>
+  <li><a href="#hexadecimal" id="toc-hexadecimal" class="nav-link" data-scroll-target="#hexadecimal"><span class="toc-section-number">25.3.2</span>  Hexadecimal</a></li>
+  <li><a href="#binary" id="toc-binary" class="nav-link" data-scroll-target="#binary"><span class="toc-section-number">25.3.3</span>  Binary</a></li>
+  <li><a href="#octal" id="toc-octal" class="nav-link" data-scroll-target="#octal"><span class="toc-section-number">25.3.4</span>  Octal</a></li>
+  <li><a href="#printing-numbers" id="toc-printing-numbers" class="nav-link" data-scroll-target="#printing-numbers"><span class="toc-section-number">25.3.5</span>  Printing Numbers</a></li>
+  <li><a href="#truthy-and-falsy" id="toc-truthy-and-falsy" class="nav-link" data-scroll-target="#truthy-and-falsy"><span class="toc-section-number">25.3.6</span>  Truthy and Falsy</a></li>
+  <li><a href="#number-arithmetic" id="toc-number-arithmetic" class="nav-link" data-scroll-target="#number-arithmetic"><span class="toc-section-number">25.3.7</span>  Number Arithmetic</a></li>
+  </ul></li>
+  <li><a href="#float" id="toc-float" class="nav-link" data-scroll-target="#float"><span class="toc-section-number">25.4</span>  Float</a>
+  <ul class="collapse">
+  <li><a href="#float-arithmetic" id="toc-float-arithmetic" class="nav-link" data-scroll-target="#float-arithmetic"><span class="toc-section-number">25.4.1</span>  Float Arithmetic</a></li>
+  </ul></li>
+  <li><a href="#string" id="toc-string" class="nav-link" data-scroll-target="#string"><span class="toc-section-number">25.5</span>  String</a>
+  <ul class="collapse">
+  <li><a href="#string-concatenation" id="toc-string-concatenation" class="nav-link" data-scroll-target="#string-concatenation"><span class="toc-section-number">25.5.1</span>  String Concatenation</a></li>
+  <li><a href="#string-arithmetic" id="toc-string-arithmetic" class="nav-link" data-scroll-target="#string-arithmetic"><span class="toc-section-number">25.5.2</span>  String Arithmetic</a></li>
+  <li><a href="#number-and-string-concatenation" id="toc-number-and-string-concatenation" class="nav-link" data-scroll-target="#number-and-string-concatenation"><span class="toc-section-number">25.5.3</span>  Number and String Concatenation</a></li>
+  <li><a href="#string-conditionals" id="toc-string-conditionals" class="nav-link" data-scroll-target="#string-conditionals"><span class="toc-section-number">25.5.4</span>  String Conditionals</a></li>
+  <li><a href="#double-vs-single-quotes" id="toc-double-vs-single-quotes" class="nav-link" data-scroll-target="#double-vs-single-quotes"><span class="toc-section-number">25.5.5</span>  Double vs Single Quotes</a></li>
+  <li><a href="#string-procedures" id="toc-string-procedures" class="nav-link" data-scroll-target="#string-procedures"><span class="toc-section-number">25.5.6</span>  String Procedures</a></li>
+  </ul></li>
+  <li><a href="#list" id="toc-list" class="nav-link" data-scroll-target="#list"><span class="toc-section-number">25.6</span>  List</a>
+  <ul class="collapse">
+  <li><a href="#sublists" id="toc-sublists" class="nav-link" data-scroll-target="#sublists"><span class="toc-section-number">25.6.1</span>  Sublists</a></li>
+  <li><a href="#slicing-string" id="toc-slicing-string" class="nav-link" data-scroll-target="#slicing-string"><span class="toc-section-number">25.6.2</span>  Slicing String</a></li>
+  <li><a href="#list-arithmetic" id="toc-list-arithmetic" class="nav-link" data-scroll-target="#list-arithmetic"><span class="toc-section-number">25.6.3</span>  List Arithmetic</a></li>
+  <li><a href="#list-functions" id="toc-list-functions" class="nav-link" data-scroll-target="#list-functions"><span class="toc-section-number">25.6.4</span>  List Functions</a></li>
+  <li><a href="#list-unpacking" id="toc-list-unpacking" class="nav-link" data-scroll-target="#list-unpacking"><span class="toc-section-number">25.6.5</span>  List Unpacking</a></li>
+  <li><a href="#modifying-list" id="toc-modifying-list" class="nav-link" data-scroll-target="#modifying-list"><span class="toc-section-number">25.6.6</span>  Modifying List</a></li>
+  </ul></li>
+  <li><a href="#dictionary" id="toc-dictionary" class="nav-link" data-scroll-target="#dictionary"><span class="toc-section-number">25.7</span>  Dictionary</a>
+  <ul class="collapse">
+  <li><a href="#accessing-dictionary" id="toc-accessing-dictionary" class="nav-link" data-scroll-target="#accessing-dictionary"><span class="toc-section-number">25.7.1</span>  Accessing Dictionary</a></li>
+  <li><a href="#modifying-dictionary" id="toc-modifying-dictionary" class="nav-link" data-scroll-target="#modifying-dictionary"><span class="toc-section-number">25.7.2</span>  Modifying Dictionary</a></li>
+  <li><a href="#dictionary-functions" id="toc-dictionary-functions" class="nav-link" data-scroll-target="#dictionary-functions"><span class="toc-section-number">25.7.3</span>  Dictionary Functions</a></li>
+  </ul></li>
+  <li><a href="#special-primitives" id="toc-special-primitives" class="nav-link" data-scroll-target="#special-primitives"><span class="toc-section-number">25.8</span>  Special Primitives</a>
+  <ul class="collapse">
+  <li><a href="#true" id="toc-true" class="nav-link" data-scroll-target="#true"><span class="toc-section-number">25.8.1</span>  True</a></li>
+  <li><a href="#false" id="toc-false" class="nav-link" data-scroll-target="#false"><span class="toc-section-number">25.8.2</span>  False</a></li>
+  <li><a href="#none" id="toc-none" class="nav-link" data-scroll-target="#none"><span class="toc-section-number">25.8.3</span>  None</a></li>
+  <li><a href="#null" id="toc-null" class="nav-link" data-scroll-target="#null"><span class="toc-section-number">25.8.4</span>  Null</a></li>
+  </ul></li>
+  <li><a href="#learn-data-types-the-smart-way" id="toc-learn-data-types-the-smart-way" class="nav-link" data-scroll-target="#learn-data-types-the-smart-way"><span class="toc-section-number">25.9</span>  Learn Data Types the Smart Way</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title d-none d-lg-block"><span class="chapter-number">25</span>&nbsp; <span class="chapter-title">Ch25. Vimscript Basic Data Types</span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+</header>
+
+<p>In the next few chapters, you will learn about Vimscript, Vim’s built-in programming language.</p>
+<p>When learning a new language, there are three basic elements to look for: - Primitives - Means of Combination - Means of Abstraction</p>
+<p>In this chapter, you will learn Vim’s primitive data types.</p>
+<section id="data-types" class="level2" data-number="25.1">
+<h2 data-number="25.1" class="anchored" data-anchor-id="data-types"><span class="header-section-number">25.1</span> Data Types</h2>
+<p>Vim has 10 different data types: - Number - Float - String - List - Dictionary - Special - Funcref - Job - Channel - Blob</p>
+<p>I will cover the first six data types here. In Ch. 27, you will learn about Funcref. For more about Vim data types, check out <code>:h variables</code>.</p>
+</section>
+<section id="following-along-with-ex-mode" class="level2" data-number="25.2">
+<h2 data-number="25.2" class="anchored" data-anchor-id="following-along-with-ex-mode"><span class="header-section-number">25.2</span> Following Along With Ex Mode</h2>
+<p>Vim technically does not have a built-in REPL, but it has a mode, Ex mode, that can be used like one. You can go to the Ex mode with <code>Q</code> or <code>gQ</code>. The Ex mode is like an extended command-line mode (it’s like typing command-line mode commands non-stop). To quit the Ex mode, type <code>:visual</code>.</p>
+<p>You can use either <code>:echo</code> or <code>:echom</code> on this chapter and the subsequent Vimscript chapters to code along. They are like <code>console.log</code> in JS or <code>print</code> in Python. The <code>:echo</code> command prints the evaluated expression you give. The <code>:echom</code> command does the same, but in addition, it stores the result in the message history.</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode numberSource viml number-lines code-with-copy"><code class="sourceCode"><span id="cb1-1"><a href="#cb1-1"></a>:echom "hello echo message"</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>You can view the message history with:</p>
+<pre><code>:messages</code></pre>
+<p>To clear your message history, run:</p>
+<pre><code>:messages clear</code></pre>
+</section>
+<section id="number" class="level2" data-number="25.3">
+<h2 data-number="25.3" class="anchored" data-anchor-id="number"><span class="header-section-number">25.3</span> Number</h2>
+<p>Vim has 4 different number types: decimal, hexadecimal, binary, and octal. By the way, when I say number data type, often this means an integer data type. In this guide, I will use the terms number and integer interchangeably.</p>
+<section id="decimal" class="level3" data-number="25.3.1">
+<h3 data-number="25.3.1" class="anchored" data-anchor-id="decimal"><span class="header-section-number">25.3.1</span> Decimal</h3>
+<p>You should be familiar with the decimal system. Vim accepts positive and negative decimals. 1, -1, 10, etc. In Vimscript programming, you will probably be using the decimal type most of the time.</p>
+</section>
+<section id="hexadecimal" class="level3" data-number="25.3.2">
+<h3 data-number="25.3.2" class="anchored" data-anchor-id="hexadecimal"><span class="header-section-number">25.3.2</span> Hexadecimal</h3>
+<p>Hexadecimals start with <code>0x</code> or <code>0X</code>. Mnemonic: He<strong>x</strong>adecimal.</p>
+</section>
+<section id="binary" class="level3" data-number="25.3.3">
+<h3 data-number="25.3.3" class="anchored" data-anchor-id="binary"><span class="header-section-number">25.3.3</span> Binary</h3>
+<p>Binaries start with <code>0b</code> or <code>0B</code>. Mnemonic: <strong>B</strong>inary.</p>
+</section>
+<section id="octal" class="level3" data-number="25.3.4">
+<h3 data-number="25.3.4" class="anchored" data-anchor-id="octal"><span class="header-section-number">25.3.4</span> Octal</h3>
+<p>Octals start with <code>0</code>, <code>0o</code>, and <code>0O</code>. Mnemonic: <strong>O</strong>ctal.</p>
+</section>
+<section id="printing-numbers" class="level3" data-number="25.3.5">
+<h3 data-number="25.3.5" class="anchored" data-anchor-id="printing-numbers"><span class="header-section-number">25.3.5</span> Printing Numbers</h3>
+<p>If you <code>echo</code> either a hexadecimal, a binary, or an octal number, Vim automatically converts them to decimals.</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode numberSource viml number-lines code-with-copy"><code class="sourceCode"><span id="cb4-1"><a href="#cb4-1"></a>:echo 42</span>
+<span id="cb4-2"><a href="#cb4-2"></a>" returns 42</span>
+<span id="cb4-3"><a href="#cb4-3"></a></span>
+<span id="cb4-4"><a href="#cb4-4"></a>:echo 052</span>
+<span id="cb4-5"><a href="#cb4-5"></a>" returns 42</span>
+<span id="cb4-6"><a href="#cb4-6"></a></span>
+<span id="cb4-7"><a href="#cb4-7"></a>:echo 0b101010</span>
+<span id="cb4-8"><a href="#cb4-8"></a>" returns 42</span>
+<span id="cb4-9"><a href="#cb4-9"></a></span>
+<span id="cb4-10"><a href="#cb4-10"></a>:echo 0x2A</span>
+<span id="cb4-11"><a href="#cb4-11"></a>" returns 42</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="truthy-and-falsy" class="level3" data-number="25.3.6">
+<h3 data-number="25.3.6" class="anchored" data-anchor-id="truthy-and-falsy"><span class="header-section-number">25.3.6</span> Truthy and Falsy</h3>
+<p>In Vim, a 0 value is falsy and all non-0 values are truthy.</p>
+<p>The following will not echo anything.</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode numberSource viml number-lines code-with-copy"><code class="sourceCode"><span id="cb5-1"><a href="#cb5-1"></a>:if 0</span>
+<span id="cb5-2"><a href="#cb5-2"></a>:  echo "Nope"</span>
+<span id="cb5-3"><a href="#cb5-3"></a>:endif</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>However, this will:</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode numberSource viml number-lines code-with-copy"><code class="sourceCode"><span id="cb6-1"><a href="#cb6-1"></a>:if 1</span>
+<span id="cb6-2"><a href="#cb6-2"></a>:  echo "Yes"</span>
+<span id="cb6-3"><a href="#cb6-3"></a>:endif</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Any values other than 0 is truthy, including negative numbers. 100 is truthy. -1 is truthy.</p>
+</section>
+<section id="number-arithmetic" class="level3" data-number="25.3.7">
+<h3 data-number="25.3.7" class="anchored" data-anchor-id="number-arithmetic"><span class="header-section-number">25.3.7</span> Number Arithmetic</h3>
+<p>Numbers can be used to run arithmetic expressions:</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode numberSource viml number-lines code-with-copy"><code class="sourceCode"><span id="cb7-1"><a href="#cb7-1"></a>:echo 3 + 1</span>
+<span id="cb7-2"><a href="#cb7-2"></a>" returns 4</span>
+<span id="cb7-3"><a href="#cb7-3"></a></span>
+<span id="cb7-4"><a href="#cb7-4"></a>: echo 5 - 3</span>
+<span id="cb7-5"><a href="#cb7-5"></a>" returns 2</span>
+<span id="cb7-6"><a href="#cb7-6"></a></span>
+<span id="cb7-7"><a href="#cb7-7"></a>:echo 2 * 2</span>
+<span id="cb7-8"><a href="#cb7-8"></a>" returns 4</span>
+<span id="cb7-9"><a href="#cb7-9"></a></span>
+<span id="cb7-10"><a href="#cb7-10"></a>:echo 4 / 2</span>
+<span id="cb7-11"><a href="#cb7-11"></a>" returns 2</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>When dividing a number with a remainder, Vim drops the remainder.</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode numberSource viml number-lines code-with-copy"><code class="sourceCode"><span id="cb8-1"><a href="#cb8-1"></a>:echo 5 / 2</span>
+<span id="cb8-2"><a href="#cb8-2"></a>" returns 2 instead of 2.5</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>To get a more accurate result, you need to use a float number.</p>
+</section>
+</section>
+<section id="float" class="level2" data-number="25.4">
+<h2 data-number="25.4" class="anchored" data-anchor-id="float"><span class="header-section-number">25.4</span> Float</h2>
+<p>Floats are numbers with trailing decimals. There are two ways to represent floating numbers: dot point notation (like 31.4) and exponent (3.14e01). Similar to numbers, you can use positive and negative signs:</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode numberSource viml number-lines code-with-copy"><code class="sourceCode"><span id="cb9-1"><a href="#cb9-1"></a>:echo +123.4</span>
+<span id="cb9-2"><a href="#cb9-2"></a>" returns 123.4</span>
+<span id="cb9-3"><a href="#cb9-3"></a></span>
+<span id="cb9-4"><a href="#cb9-4"></a>:echo -1.234e2</span>
+<span id="cb9-5"><a href="#cb9-5"></a>" returns -123.4</span>
+<span id="cb9-6"><a href="#cb9-6"></a></span>
+<span id="cb9-7"><a href="#cb9-7"></a>:echo 0.25</span>
+<span id="cb9-8"><a href="#cb9-8"></a>" returns 0.25</span>
+<span id="cb9-9"><a href="#cb9-9"></a></span>
+<span id="cb9-10"><a href="#cb9-10"></a>:echo 2.5e-1</span>
+<span id="cb9-11"><a href="#cb9-11"></a>" returns 0.25</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>You need to give a float a dot and trailing digits. <code>25e-2</code> (no dot) and <code>1234.</code> (has a dot, but no trailing digits) are both invalid float numbers.</p>
+<section id="float-arithmetic" class="level3" data-number="25.4.1">
+<h3 data-number="25.4.1" class="anchored" data-anchor-id="float-arithmetic"><span class="header-section-number">25.4.1</span> Float Arithmetic</h3>
+<p>When doing an arithmetic expression between a number and a float, Vim coerces the result to a float.</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode numberSource viml number-lines code-with-copy"><code class="sourceCode"><span id="cb10-1"><a href="#cb10-1"></a>:echo 5 / 2.0</span>
+<span id="cb10-2"><a href="#cb10-2"></a>" returns 2.5</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Float and float arithmetic gives you another float.</p>
+<pre><code>:echo 1.0 + 1.0
+" returns 2.0</code></pre>
+</section>
+</section>
+<section id="string" class="level2" data-number="25.5">
+<h2 data-number="25.5" class="anchored" data-anchor-id="string"><span class="header-section-number">25.5</span> String</h2>
+<p>Strings are characters surrounded by either double-quotes (<code>""</code>) or single-quotes (<code>''</code>). <q>Hello</q>, <q>123</q>, and <q>123.4</q> are examples of strings.</p>
+<section id="string-concatenation" class="level3" data-number="25.5.1">
+<h3 data-number="25.5.1" class="anchored" data-anchor-id="string-concatenation"><span class="header-section-number">25.5.1</span> String Concatenation</h3>
+<p>To concatenate a string in Vim, use the <code>.</code> operator.</p>
+<div class="sourceCode" id="cb12"><pre class="sourceCode numberSource viml number-lines code-with-copy"><code class="sourceCode"><span id="cb12-1"><a href="#cb12-1"></a>:echo "Hello" . " world"</span>
+<span id="cb12-2"><a href="#cb12-2"></a>" returns "Hello world"</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="string-arithmetic" class="level3" data-number="25.5.2">
+<h3 data-number="25.5.2" class="anchored" data-anchor-id="string-arithmetic"><span class="header-section-number">25.5.2</span> String Arithmetic</h3>
+<p>When you run arithmetic operators (<code>+ - * /</code>) with a number and a string, Vim coerces the string into a number.</p>
+<div class="sourceCode" id="cb13"><pre class="sourceCode numberSource viml number-lines code-with-copy"><code class="sourceCode"><span id="cb13-1"><a href="#cb13-1"></a>:echo "12 donuts" + 3</span>
+<span id="cb13-2"><a href="#cb13-2"></a>" returns 15</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>When Vim sees <q>12 donuts</q>, it extracts the 12 from the string and converts it into the number 12. Then it performs addition, returning 15. For this string-to-number coercion to work, the number character needs to be the <em>first character</em> in the string.</p>
+<p>The following won’t work because 12 is not the first character in the string:</p>
+<div class="sourceCode" id="cb14"><pre class="sourceCode numberSource viml number-lines code-with-copy"><code class="sourceCode"><span id="cb14-1"><a href="#cb14-1"></a>:echo "donuts 12" + 3</span>
+<span id="cb14-2"><a href="#cb14-2"></a>" returns 3</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>This also won’t work because an empty space is the first character of the string:</p>
+<div class="sourceCode" id="cb15"><pre class="sourceCode numberSource viml number-lines code-with-copy"><code class="sourceCode"><span id="cb15-1"><a href="#cb15-1"></a>:echo " 12 donuts" + 3</span>
+<span id="cb15-2"><a href="#cb15-2"></a>" returns 3</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>This coercion works even with two strings:</p>
+<pre><code>:echo "12 donuts" + "6 pastries"
+" returns 18</code></pre>
+<p>This works with any arithmetic operator, not only <code>+</code>:</p>
+<div class="sourceCode" id="cb17"><pre class="sourceCode numberSource viml number-lines code-with-copy"><code class="sourceCode"><span id="cb17-1"><a href="#cb17-1"></a>:echo "12 donuts" * "5 boxes"</span>
+<span id="cb17-2"><a href="#cb17-2"></a>" returns 60</span>
+<span id="cb17-3"><a href="#cb17-3"></a></span>
+<span id="cb17-4"><a href="#cb17-4"></a>:echo "12 donuts" - 5</span>
+<span id="cb17-5"><a href="#cb17-5"></a>" returns 7</span>
+<span id="cb17-6"><a href="#cb17-6"></a></span>
+<span id="cb17-7"><a href="#cb17-7"></a>:echo "12 donuts" / "3 people"</span>
+<span id="cb17-8"><a href="#cb17-8"></a>" returns 4</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>A neat trick to force a string-to-number conversion is to just add 0 or multiply by 1:</p>
+<div class="sourceCode" id="cb18"><pre class="sourceCode numberSource viml number-lines code-with-copy"><code class="sourceCode"><span id="cb18-1"><a href="#cb18-1"></a>:echo "12" + 0</span>
+<span id="cb18-2"><a href="#cb18-2"></a>" returns 12</span>
+<span id="cb18-3"><a href="#cb18-3"></a></span>
+<span id="cb18-4"><a href="#cb18-4"></a>:echo "12" * 1</span>
+<span id="cb18-5"><a href="#cb18-5"></a>" returns 12</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>When arithmetic is done against a float in a string, Vim treats it like an integer, not a float:</p>
+<pre><code>:echo "12.0 donuts" + 12
+" returns 24, not 24.0</code></pre>
+</section>
+<section id="number-and-string-concatenation" class="level3" data-number="25.5.3">
+<h3 data-number="25.5.3" class="anchored" data-anchor-id="number-and-string-concatenation"><span class="header-section-number">25.5.3</span> Number and String Concatenation</h3>
+<p>You can coerce a number into a string with a dot operator (<code>.</code>):</p>
+<div class="sourceCode" id="cb20"><pre class="sourceCode numberSource viml number-lines code-with-copy"><code class="sourceCode"><span id="cb20-1"><a href="#cb20-1"></a>:echo 12 . "donuts"</span>
+<span id="cb20-2"><a href="#cb20-2"></a>" returns "12donuts"</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>The coercion only works with number data type, not float. This won’t work:</p>
+<pre><code>:echo 12.0 . "donuts"
+" does not return "12.0donuts" but throws an error</code></pre>
+</section>
+<section id="string-conditionals" class="level3" data-number="25.5.4">
+<h3 data-number="25.5.4" class="anchored" data-anchor-id="string-conditionals"><span class="header-section-number">25.5.4</span> String Conditionals</h3>
+<p>Recall that 0 is falsy and all non-0 numbers are truthy. This is also true when using string as conditionals.</p>
+<p>In the following if statement, Vim coerces <q>12donuts</q> into 12, which is truthy:</p>
+<div class="sourceCode" id="cb22"><pre class="sourceCode numberSource viml number-lines code-with-copy"><code class="sourceCode"><span id="cb22-1"><a href="#cb22-1"></a>:if "12donuts"</span>
+<span id="cb22-2"><a href="#cb22-2"></a>:  echo "Yum"</span>
+<span id="cb22-3"><a href="#cb22-3"></a>:endif</span>
+<span id="cb22-4"><a href="#cb22-4"></a>" returns "Yum"</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>On the other hand, this is falsy:</p>
+<div class="sourceCode" id="cb23"><pre class="sourceCode numberSource viml number-lines code-with-copy"><code class="sourceCode"><span id="cb23-1"><a href="#cb23-1"></a>:if "donuts12"</span>
+<span id="cb23-2"><a href="#cb23-2"></a>:  echo "Nope"</span>
+<span id="cb23-3"><a href="#cb23-3"></a>:endif</span>
+<span id="cb23-4"><a href="#cb23-4"></a>" rerturns nothing</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Vim coerces <q>donuts12</q> into 0, because the first character is not a number.</p>
+</section>
+<section id="double-vs-single-quotes" class="level3" data-number="25.5.5">
+<h3 data-number="25.5.5" class="anchored" data-anchor-id="double-vs-single-quotes"><span class="header-section-number">25.5.5</span> Double vs Single Quotes</h3>
+<p>Double quotes behave differently than single quotes. Single quotes display characters literally while double quotes accept special characters.</p>
+<p>What are special characters? Check out the newline and double-quotes display:</p>
+<div class="sourceCode" id="cb24"><pre class="sourceCode numberSource viml number-lines code-with-copy"><code class="sourceCode"><span id="cb24-1"><a href="#cb24-1"></a>:echo "hello\nworld"</span>
+<span id="cb24-2"><a href="#cb24-2"></a>" returns</span>
+<span id="cb24-3"><a href="#cb24-3"></a>" hello</span>
+<span id="cb24-4"><a href="#cb24-4"></a>" world</span>
+<span id="cb24-5"><a href="#cb24-5"></a></span>
+<span id="cb24-6"><a href="#cb24-6"></a>:echo "hello \"world\""</span>
+<span id="cb24-7"><a href="#cb24-7"></a>" returns "hello "world""</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Compare that with single-quotes:</p>
+<pre><code>:echo 'hello\nworld'
+" returns 'hello\nworld'
+
+:echo 'hello \"world\"'
+" returns 'hello \"world\"'</code></pre>
+<p>Special characters are special string characters that when escaped, behave differently. <code>\n</code> acts like a newline. <code>\"</code> behaves like a literal <code>"</code>. For a list of other special characters, check out <code>:h expr-quote</code>.</p>
+</section>
+<section id="string-procedures" class="level3" data-number="25.5.6">
+<h3 data-number="25.5.6" class="anchored" data-anchor-id="string-procedures"><span class="header-section-number">25.5.6</span> String Procedures</h3>
+<p>Let’s look at some built-in string procedures.</p>
+<p>You can get the length of a string with <code>strlen()</code>.</p>
+<pre><code>:echo strlen("choco")
+" returns 5</code></pre>
+<p>You can convert string to a number with <code>str2nr()</code>:</p>
+<pre><code>:echo str2nr("12donuts")
+" returns 12
+
+:echo str2nr("donuts12")
+" returns 0</code></pre>
+<p>Similar to the string-to-number coercion earlier, if the number is not the first character, Vim won’t catch it.</p>
+<p>The good news is that Vim has a method that transforms a string to a float, <code>str2float()</code>:</p>
+<pre><code>:echo str2float("12.5donuts")
+" returns 12.5</code></pre>
+<p>You can substitute a pattern in a string with the <code>substitute()</code> method:</p>
+<pre><code>:echo substitute("sweet", "e", "o", "g")
+" returns "swoot"</code></pre>
+<p>The last parameter, <q>g</q>, is the global flag. With it, Vim will substitute all matching occurrences. Without it, Vim will only substitute the first match.</p>
+<pre><code>:echo substitute("sweet", "e", "o", "")
+" returns "swoet"</code></pre>
+<p>The substitute command can be combined with <code>getline()</code>. Recall that the function <code>getline()</code> gets the text on the given line number. Suppose you have the text <q>chocolate donut</q> on line 5. You can use the procedure:</p>
+<pre><code>:echo substitute(getline(5), "chocolate", "glazed", "g")
+" returns glazed donut</code></pre>
+<p>There are many other string procedures. Check out <code>:h string-functions</code>.</p>
+</section>
+</section>
+<section id="list" class="level2" data-number="25.6">
+<h2 data-number="25.6" class="anchored" data-anchor-id="list"><span class="header-section-number">25.6</span> List</h2>
+<p>A Vimscript list is like an Array in Javascript or List in Python. It is an <em>ordered</em> sequence of items. You can mix-and-match the content with different data types:</p>
+<pre><code>[1,2,3]
+['a', 'b', 'c']
+[1,'a', 3.14]
+[1,2,[3,4]]</code></pre>
+<section id="sublists" class="level3" data-number="25.6.1">
+<h3 data-number="25.6.1" class="anchored" data-anchor-id="sublists"><span class="header-section-number">25.6.1</span> Sublists</h3>
+<p>Vim list is zero-indexed. You can access a particular item in a list with <code>[n]</code>, where n is the index.</p>
+<pre><code>:echo ["a", "sweet", "dessert"][0]
+" returns "a"
+
+:echo ["a", "sweet", "dessert"][2]
+" returns "dessert"</code></pre>
+<p>If you go over the maximum index number, Vim will throw an error saying that the index is out of range:</p>
+<pre><code>:echo ["a", "sweet", "dessert"][999]
+" returns an error</code></pre>
+<p>When you go below zero, Vim will start the index from the last element. Going past the minimum index number will also throw you an error:</p>
+<pre><code>:echo ["a", "sweet", "dessert"][-1]
+" returns "dessert"
+
+:echo ["a", "sweet", "dessert"][-3]
+" returns "a"
+
+:echo ["a", "sweet", "dessert"][-999]
+" returns an error</code></pre>
+<p>You can <q>slice</q> several elements from a list with <code>[n:m]</code>, where <code>n</code> is the starting index and <code>m</code> is the ending index.</p>
+<pre><code>:echo ["chocolate", "glazed", "plain", "strawberry", "lemon", "sugar", "cream"][2:4]
+" returns ["plain", "strawberry", "lemon"]</code></pre>
+<p>If you don’t pass <code>m</code> (<code>[n:]</code>), Vim will return the rest of the elements starting from the nth element. If you don’t pass <code>n</code> (<code>[:m]</code>), Vim will return the first element up to the mth element.</p>
+<pre><code>:echo ["chocolate", "glazed", "plain", "strawberry", "lemon", "sugar", "cream"][2:]
+" returns ['plain', 'strawberry', 'lemon', 'sugar', 'cream']
+
+:echo ["chocolate", "glazed", "plain", "strawberry", "lemon", "sugar", "cream"][:4]
+" returns ['chocolate', 'glazed', 'plain', 'strawberry', 'lemon']</code></pre>
+<p>You can pass an index that exceeds the maximum items when slicing an array.</p>
+<div class="sourceCode" id="cb38"><pre class="sourceCode numberSource viml number-lines code-with-copy"><code class="sourceCode"><span id="cb38-1"><a href="#cb38-1"></a>:echo ["chocolate", "glazed", "plain", "strawberry", "lemon", "sugar", "cream"][2:999]</span>
+<span id="cb38-2"><a href="#cb38-2"></a>" returns ['plain', 'strawberry', 'lemon', 'sugar', 'cream']</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="slicing-string" class="level3" data-number="25.6.2">
+<h3 data-number="25.6.2" class="anchored" data-anchor-id="slicing-string"><span class="header-section-number">25.6.2</span> Slicing String</h3>
+<p>You can slice and target strings just like lists:</p>
+<div class="sourceCode" id="cb39"><pre class="sourceCode numberSource viml number-lines code-with-copy"><code class="sourceCode"><span id="cb39-1"><a href="#cb39-1"></a>:echo "choco"[0]</span>
+<span id="cb39-2"><a href="#cb39-2"></a>" returns "c"</span>
+<span id="cb39-3"><a href="#cb39-3"></a></span>
+<span id="cb39-4"><a href="#cb39-4"></a>:echo "choco"[1:3]</span>
+<span id="cb39-5"><a href="#cb39-5"></a>" returns "hoc"</span>
+<span id="cb39-6"><a href="#cb39-6"></a></span>
+<span id="cb39-7"><a href="#cb39-7"></a>:echo "choco"[:3]</span>
+<span id="cb39-8"><a href="#cb39-8"></a>" returns choc</span>
+<span id="cb39-9"><a href="#cb39-9"></a></span>
+<span id="cb39-10"><a href="#cb39-10"></a>:echo "choco"[1:]</span>
+<span id="cb39-11"><a href="#cb39-11"></a>" returns hoco</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="list-arithmetic" class="level3" data-number="25.6.3">
+<h3 data-number="25.6.3" class="anchored" data-anchor-id="list-arithmetic"><span class="header-section-number">25.6.3</span> List Arithmetic</h3>
+<p>You can use <code>+</code> to concatenate and mutate a list:</p>
+<div class="sourceCode" id="cb40"><pre class="sourceCode numberSource viml number-lines code-with-copy"><code class="sourceCode"><span id="cb40-1"><a href="#cb40-1"></a>:let sweetList = ["chocolate", "strawberry"]</span>
+<span id="cb40-2"><a href="#cb40-2"></a>:let sweetList += ["sugar"]</span>
+<span id="cb40-3"><a href="#cb40-3"></a>:echo sweetList</span>
+<span id="cb40-4"><a href="#cb40-4"></a>" returns ["chocolate", "strawberry", "sugar"]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="list-functions" class="level3" data-number="25.6.4">
+<h3 data-number="25.6.4" class="anchored" data-anchor-id="list-functions"><span class="header-section-number">25.6.4</span> List Functions</h3>
+<p>Let’s explore Vim’s built-in list functions.</p>
+<p>To get the length of a list, use <code>len()</code>:</p>
+<pre><code>:echo len(["chocolate", "strawberry"])
+" returns 2</code></pre>
+<p>To prepend an element to a list, you can use <code>insert()</code>:</p>
+<pre><code>:let sweetList = ["chocolate", "strawberry"]
+:call insert(sweetList, "glazed")
+
+:echo sweetList
+" returns ["glazed", "chocolate", "strawberry"]</code></pre>
+<p>You can also pass <code>insert()</code> the index where you want to prepend the element to. If you want to prepend an item before the second element (index 1):</p>
+<pre><code>:let sweeterList = ["glazed", "chocolate", "strawberry"]
+:call insert(sweeterList, "cream", 1)
+
+:echo sweeterList
+" returns ['glazed', 'cream', 'chocolate', 'strawberry']</code></pre>
+<p>To remove a list item, use <code>remove()</code>. It accepts a list and the element index you want to remove.</p>
+<pre><code>:let sweeterList = ["glazed", "chocolate", "strawberry"]
+:call remove(sweeterList, 1)
+
+:echo sweeterList
+" returns ['glazed', 'strawberry']</code></pre>
+<p>You can use <code>map()</code> and <code>filter()</code> on a list. To filter out element containing the phrase <q>choco</q>:</p>
+<pre><code>:let sweeterList = ["glazed", "chocolate", "strawberry"]
+:call filter(sweeterList, 'v:val !~ "choco"')
+:echo sweeterList
+" returns ["glazed", "strawberry"]
+
+:let sweetestList = ["chocolate", "glazed", "sugar"]
+:call map(sweetestList, 'v:val . " donut"')
+:echo sweetestList
+" returns ['chocolate donut', 'glazed donut', 'sugar donut']</code></pre>
+<p>The <code>v:val</code> variable is a Vim special variable. It is available when iterating a list or a dictionary using <code>map()</code> or <code>filter()</code>. It represents each iterated item.</p>
+<p>For more, check out <code>:h list-functions</code>.</p>
+</section>
+<section id="list-unpacking" class="level3" data-number="25.6.5">
+<h3 data-number="25.6.5" class="anchored" data-anchor-id="list-unpacking"><span class="header-section-number">25.6.5</span> List Unpacking</h3>
+<p>You can unpack a list and assign variables to the list items:</p>
+<pre><code>:let favoriteFlavor = ["chocolate", "glazed", "plain"]
+:let [flavor1, flavor2, flavor3] = favoriteFlavor
+
+:echo flavor1
+" returns "chocolate"
+
+:echo flavor2
+" returns "glazed"</code></pre>
+<p>To assign the rest of list items, you can use <code>;</code> followed with a variable name:</p>
+<pre><code>:let favoriteFruits = ["apple", "banana", "lemon", "blueberry", "raspberry"]
+:let [fruit1, fruit2; restFruits] = favoriteFruits
+
+:echo fruit1
+" returns "apple"
+
+:echo restFruits
+" returns ['lemon', 'blueberry', 'raspberry']</code></pre>
+</section>
+<section id="modifying-list" class="level3" data-number="25.6.6">
+<h3 data-number="25.6.6" class="anchored" data-anchor-id="modifying-list"><span class="header-section-number">25.6.6</span> Modifying List</h3>
+<p>You can modify a list item directly:</p>
+<pre><code>:let favoriteFlavor = ["chocolate", "glazed", "plain"]
+:let favoriteFlavor[0] = "sugar"
+:echo favoriteFlavor
+" returns ['sugar', 'glazed', 'plain']</code></pre>
+<p>You can mutate multiple list items directly:</p>
+<pre><code>:let favoriteFlavor = ["chocolate", "glazed", "plain"]
+:let favoriteFlavor[2:] = ["strawberry", "chocolate"]
+:echo favoriteFlavor
+" returns ['chocolate', 'glazed', 'strawberry', 'chocolate']</code></pre>
+</section>
+</section>
+<section id="dictionary" class="level2" data-number="25.7">
+<h2 data-number="25.7" class="anchored" data-anchor-id="dictionary"><span class="header-section-number">25.7</span> Dictionary</h2>
+<p>A Vimscript dictionary is an associative, unordered list. A non-empty dictionary consists of at least a key-value pair.</p>
+<pre><code>{"breakfast": "waffles", "lunch": "pancakes"}
+{"meal": ["breakfast", "second breakfast", "third breakfast"]}
+{"dinner": 1, "dessert": 2}</code></pre>
+<p>A Vim dictionary data object uses string for key. If you try to use a number, Vim will coerce it into a string.</p>
+<pre><code>:let breakfastNo = {1: "7am", 2: "9am", "11ses": "11am"}
+
+:echo breakfastNo
+" returns {'1': '7am', '2': '9am', '11ses': '11am'}</code></pre>
+<p>If you are too lazy to put quotes around each key, you can use the <code>#{}</code> notation:</p>
+<pre><code>:let mealPlans = #{breakfast: "waffles", lunch: "pancakes", dinner: "donuts"}
+
+:echo mealPlans
+" returns {'lunch': 'pancakes', 'breakfast': 'waffles', 'dinner': 'donuts'}</code></pre>
+<p>The only requirement for using the <code>#{}</code> syntax is that each key must be either:</p>
+<ul>
+<li>ASCII character.</li>
+<li>Digit.</li>
+<li>An underscore (<code>_</code>).</li>
+<li>A hyphen (<code>-</code>).</li>
+</ul>
+<p>Just like list, you can use any data type as values.</p>
+<pre><code>:let mealPlan = {"breakfast": ["pancake", "waffle", "hash brown"], "lunch": WhatsForLunch(), "dinner": {"appetizer": "gruel", "entree": "more gruel"}}</code></pre>
+<section id="accessing-dictionary" class="level3" data-number="25.7.1">
+<h3 data-number="25.7.1" class="anchored" data-anchor-id="accessing-dictionary"><span class="header-section-number">25.7.1</span> Accessing Dictionary</h3>
+<p>To access a value from a dictionary, you can call the key with either the square brackets (<code>['key']</code>) or the dot notation (<code>.key</code>).</p>
+<pre><code>:let meal = {"breakfast": "gruel omelettes", "lunch": "gruel sandwiches", "dinner": "more gruel"}
+
+:let breakfast = meal['breakfast']
+:let lunch = meal.lunch
+
+:echo breakfast
+" returns "gruel omelettes"
+
+:echo lunch
+" returns "gruel sandwiches"</code></pre>
+</section>
+<section id="modifying-dictionary" class="level3" data-number="25.7.2">
+<h3 data-number="25.7.2" class="anchored" data-anchor-id="modifying-dictionary"><span class="header-section-number">25.7.2</span> Modifying Dictionary</h3>
+<p>You can modify or even add a dictionary content:</p>
+<pre><code>:let meal = {"breakfast": "gruel omelettes", "lunch": "gruel sandwiches"}
+
+:let meal.breakfast = "breakfast tacos"
+:let meal["lunch"] = "tacos al pastor"
+:let meal["dinner"] = "quesadillas"
+
+:echo meal
+" returns {'lunch': 'tacos al pastor', 'breakfast': 'breakfast tacos', 'dinner': 'quesadillas'}</code></pre>
+</section>
+<section id="dictionary-functions" class="level3" data-number="25.7.3">
+<h3 data-number="25.7.3" class="anchored" data-anchor-id="dictionary-functions"><span class="header-section-number">25.7.3</span> Dictionary Functions</h3>
+<p>Let’s explore some of Vim’s built-in functions to handle dictionaries.</p>
+<p>To check the length of a dictionary, use <code>len()</code>.</p>
+<pre><code>:let mealPlans = #{breakfast: "waffles", lunch: "pancakes", dinner: "donuts"}
+
+:echo len(meaPlans)
+" returns 3</code></pre>
+<p>To see if a dictionary contains a specific key, use <code>has_key()</code>.</p>
+<pre><code>:let mealPlans = #{breakfast: "waffles", lunch: "pancakes", dinner: "donuts"}
+
+:echo has_key(mealPlans, "breakfast")
+" returns 1
+
+:echo has_key(mealPlans, "dessert")
+" returns 0</code></pre>
+<p>To see if a dictionary has any item, use <code>empty()</code>. The <code>empty()</code> procedure works with all data types: list, dictionary, string, number, float, etc.</p>
+<pre><code>:let mealPlans = #{breakfast: "waffles", lunch: "pancakes", dinner: "donuts"}
+:let noMealPlan = {}
+
+:echo empty(noMealPlan)
+" returns 1
+
+:echo empty(mealPlans)
+" returns 0</code></pre>
+<p>To remove an entry from a dictionary, use <code>remove()</code>.</p>
+<pre><code>:let mealPlans = #{breakfast: "waffles", lunch: "pancakes", dinner: "donuts"}
+
+:echo "removing breakfast: " . remove(mealPlans, "breakfast")
+" returns "removing breakfast: 'waffles'""
+
+:echo mealPlans
+" returns {'lunch': 'pancakes', 'dinner': 'donuts'}</code></pre>
+<p>To convert a dictionary into a list of lists, use <code>items()</code>:</p>
+<pre><code>:let mealPlans = #{breakfast: "waffles", lunch: "pancakes", dinner: "donuts"}
+
+:echo items(mealPlans)
+" returns [['lunch', 'pancakes'], ['breakfast', 'waffles'], ['dinner', 'donuts']]</code></pre>
+<p><code>filter()</code> and <code>map()</code> are also available.</p>
+<pre><code>:let breakfastNo = {1: "7am", 2: "9am", "11ses": "11am"}
+:call filter(breakfastNo, 'v:key &gt; 1')
+
+:echo breakfastNo
+" returns {'2': '9am', '11ses': '11am'}</code></pre>
+<p>Since a dictionary contains key-value pairs, Vim provides <code>v:key</code> special variable that works similar to <code>v:val</code>. When iterating through a dictionary, <code>v:key</code> will hold the value of the current iterated key.</p>
+<p>If you have a <code>mealPlans</code> dictionary, you can map it using <code>v:key</code>.</p>
+<pre><code>:let mealPlans = #{breakfast: "waffles", lunch: "pancakes", dinner: "donuts"}
+:call map(mealPlans, 'v:key . " and milk"')
+
+:echo mealPlans
+" returns {'lunch': 'lunch and milk', 'breakfast': 'breakfast and milk', 'dinner': 'dinner and milk'}</code></pre>
+<p>Similarly, you can map it using <code>v:val</code>:</p>
+<pre><code>:let mealPlans = #{breakfast: "waffles", lunch: "pancakes", dinner: "donuts"}
+:call map(mealPlans, 'v:val . " and milk"')
+
+:echo mealPlans
+" returns {'lunch': 'pancakes and milk', 'breakfast': 'waffles and milk', 'dinner': 'donuts and milk'}</code></pre>
+<p>To see more dictionary functions, check out <code>:h dict-functions</code>.</p>
+</section>
+</section>
+<section id="special-primitives" class="level2" data-number="25.8">
+<h2 data-number="25.8" class="anchored" data-anchor-id="special-primitives"><span class="header-section-number">25.8</span> Special Primitives</h2>
+<p>Vim has special primitives:</p>
+<ul>
+<li><code>v:false</code></li>
+<li><code>v:true</code></li>
+<li><code>v:none</code></li>
+<li><code>v:null</code></li>
+</ul>
+<p>By the way, <code>v:</code> is Vim’s built-in variable. They will be covered more in a later chapter.</p>
+<p>In my experience, you won’t use these special primitives often. If you need a truthy / falsy value, you can just use 0 (falsy) and non-0 (truthy). If you need an empty string, just use <code>""</code>. But it is still good to know, so let’s quickly go over them.</p>
+<section id="true" class="level3" data-number="25.8.1">
+<h3 data-number="25.8.1" class="anchored" data-anchor-id="true"><span class="header-section-number">25.8.1</span> True</h3>
+<p>This is equivalent to <code>true</code>. It is equivalent to a number with value of non-0 . When decoding json with <code>json_encode()</code>, it is interpreted as <q>true</q>.</p>
+<pre><code>:echo json_encode({"test": v:true})
+" returns {"test": true}</code></pre>
+</section>
+<section id="false" class="level3" data-number="25.8.2">
+<h3 data-number="25.8.2" class="anchored" data-anchor-id="false"><span class="header-section-number">25.8.2</span> False</h3>
+<p>This is equivalent to <code>false</code>. It is equivalent to a number with value of 0. When decoding json with <code>json_encode()</code>, it is interpreted as <q>false</q>.</p>
+<pre><code>:echo json_encode({"test": v:false})
+" returns {"test": false}</code></pre>
+</section>
+<section id="none" class="level3" data-number="25.8.3">
+<h3 data-number="25.8.3" class="anchored" data-anchor-id="none"><span class="header-section-number">25.8.3</span> None</h3>
+<p>It is equivalent to an empty string. When decoding json with <code>json_encode()</code>, it is interpreted as an empty item (<code>null</code>).</p>
+<pre><code>:echo json_encode({"test": v:none})
+" returns {"test": null}</code></pre>
+</section>
+<section id="null" class="level3" data-number="25.8.4">
+<h3 data-number="25.8.4" class="anchored" data-anchor-id="null"><span class="header-section-number">25.8.4</span> Null</h3>
+<p>Similar to <code>v:none</code>.</p>
+<pre><code>:echo json_encode({"test": v:null})
+" returns {"test": null}</code></pre>
+</section>
+</section>
+<section id="learn-data-types-the-smart-way" class="level2" data-number="25.9">
+<h2 data-number="25.9" class="anchored" data-anchor-id="learn-data-types-the-smart-way"><span class="header-section-number">25.9</span> Learn Data Types the Smart Way</h2>
+<p>In this chapter, you learned about Vimscript’s basic data types: number, float, string, list, dictionary, and special. Learning these is the first step to start Vimscript programming.</p>
+<p>In the next chapter, you will learn how to combine them for writing expressions like equalities, conditionals, and loops.</p>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const disableStylesheet = (stylesheets) => {
+    for (let i=0; i < stylesheets.length; i++) {
+      const stylesheet = stylesheets[i];
+      stylesheet.rel = 'prefetch';
+    }
+  }
+  const enableStylesheet = (stylesheets) => {
+    for (let i=0; i < stylesheets.length; i++) {
+      const stylesheet = stylesheets[i];
+      stylesheet.rel = 'stylesheet';
+    }
+  }
+  const manageTransitions = (selector, allowTransitions) => {
+    const els = window.document.querySelectorAll(selector);
+    for (let i=0; i < els.length; i++) {
+      const el = els[i];
+      if (allowTransitions) {
+        el.classList.remove('notransition');
+      } else {
+        el.classList.add('notransition');
+      }
+    }
+  }
+  const toggleColorMode = (alternate) => {
+    // Switch the stylesheets
+    const alternateStylesheets = window.document.querySelectorAll('link.quarto-color-scheme.quarto-color-alternate');
+    manageTransitions('#quarto-margin-sidebar .nav-link', false);
+    if (alternate) {
+      enableStylesheet(alternateStylesheets);
+      for (const sheetNode of alternateStylesheets) {
+        if (sheetNode.id === "quarto-bootstrap") {
+          toggleBodyColorMode(sheetNode);
+        }
+      }
+    } else {
+      disableStylesheet(alternateStylesheets);
+      toggleBodyColorPrimary();
+    }
+    manageTransitions('#quarto-margin-sidebar .nav-link', true);
+    // Switch the toggles
+    const toggles = window.document.querySelectorAll('.quarto-color-scheme-toggle');
+    for (let i=0; i < toggles.length; i++) {
+      const toggle = toggles[i];
+      if (toggle) {
+        if (alternate) {
+          toggle.classList.add("alternate");     
+        } else {
+          toggle.classList.remove("alternate");
+        }
+      }
+    }
+    // Hack to workaround the fact that safari doesn't
+    // properly recolor the scrollbar when toggling (#1455)
+    if (navigator.userAgent.indexOf('Safari') > 0 && navigator.userAgent.indexOf('Chrome') == -1) {
+      manageTransitions("body", false);
+      window.scrollTo(0, 1);
+      setTimeout(() => {
+        window.scrollTo(0, 0);
+        manageTransitions("body", true);
+      }, 40);  
+    }
+  }
+  const isFileUrl = () => { 
+    return window.location.protocol === 'file:';
+  }
+  const hasAlternateSentinel = () => {  
+    let styleSentinel = getColorSchemeSentinel();
+    if (styleSentinel !== null) {
+      return styleSentinel === "alternate";
+    } else {
+      return false;
+    }
+  }
+  const setStyleSentinel = (alternate) => {
+    const value = alternate ? "alternate" : "default";
+    if (!isFileUrl()) {
+      window.localStorage.setItem("quarto-color-scheme", value);
+    } else {
+      localAlternateSentinel = value;
+    }
+  }
+  const getColorSchemeSentinel = () => {
+    if (!isFileUrl()) {
+      const storageValue = window.localStorage.getItem("quarto-color-scheme");
+      return storageValue != null ? storageValue : localAlternateSentinel;
+    } else {
+      return localAlternateSentinel;
+    }
+  }
+  let localAlternateSentinel = 'alternate';
+  // Dark / light mode switch
+  window.quartoToggleColorScheme = () => {
+    // Read the current dark / light value 
+    let toAlternate = !hasAlternateSentinel();
+    toggleColorMode(toAlternate);
+    setStyleSentinel(toAlternate);
+  };
+  // Ensure there is a toggle, if there isn't float one in the top right
+  if (window.document.querySelector('.quarto-color-scheme-toggle') === null) {
+    const a = window.document.createElement('a');
+    a.classList.add('top-right');
+    a.classList.add('quarto-color-scheme-toggle');
+    a.href = "";
+    a.onclick = function() { try { window.quartoToggleColorScheme(); } catch {} return false; };
+    const i = window.document.createElement("i");
+    i.classList.add('bi');
+    a.appendChild(i);
+    window.document.body.appendChild(a);
+  }
+  // Switch to dark mode if need be
+  if (hasAlternateSentinel()) {
+    toggleColorMode(true);
+  } else {
+    toggleColorMode(false);
+  }
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    target: function(trigger) {
+      return trigger.previousElementSibling;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="../chapters/ch24_vim_runtime.md.html" class="pagination-link">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">24</span>&nbsp; <span class="chapter-title">Ch24. Vim Runtime</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="../chapters/ch26_vimscript_conditionals_and_loops.md.html" class="pagination-link">
+        <span class="nav-page-text"><span class="chapter-number">26</span>&nbsp; <span class="chapter-title">Ch26. Vimscript Conditionals and Loops</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+
+
+
+</body></html>

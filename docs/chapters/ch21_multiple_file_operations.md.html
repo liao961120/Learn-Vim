@@ -1,0 +1,648 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.2.313">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Learn Vim (the Smart Way) - 21&nbsp; Multiple File Operations</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1.6em;
+  vertical-align: middle;
+}
+q { quotes: "“" "”" "‘" "’"; }
+</style>
+
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<link href="../chapters/ch22_vimrc.md.html" rel="next">
+<link href="../chapters/ch20_views_sessions_viminfo.md.html" rel="prev">
+<script src="../site_libs/quarto-html/quarto.js"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-dark.min.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit"
+  }
+}</script>
+
+
+</head>
+
+<body class="nav-sidebar floating">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+    <div class="container-fluid d-flex justify-content-between">
+      <h1 class="quarto-secondary-nav-title"><span class="chapter-number">21</span>&nbsp; <span class="chapter-title">Multiple File Operations</span></h1>
+      <button type="button" class="quarto-btn-toggle btn" aria-label="Show secondary navigation">
+        <i class="bi bi-chevron-right"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="../">Learn Vim (the Smart Way)</a> 
+        <div class="sidebar-tools-main">
+    <a href="https://github.com/iggredible/Learn-Vim" title="" class="sidebar-tool px-1"><i class="bi bi-github"></i></a>
+  <a href="" class="quarto-color-scheme-toggle sidebar-tool" onclick="window.quartoToggleColorScheme(); return false;" title="Toggle dark mode"><i class="bi"></i></a>
+</div>
+    </div>
+      </div>
+      <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+      </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../index.html" class="sidebar-item-text sidebar-link">Preface</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch01_starting_vim.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Ch01. Starting Vim</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch02_buffers_windows_tabs.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Ch02. Buffers, Windows, and Tabs</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch03_searching_files.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Ch03. Searching Files</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch04_vim_grammar.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Ch04. Vim Grammar</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch05_moving_in_file.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Ch05. Moving in a File</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch06_insert_mode.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Ch06. Insert Mode</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch07_the_dot_command.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Ch07. the Dot Command</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch08_registers.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Ch08. Registers</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch09_macros.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Ch09. Macros</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch10_undo.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Ch10. Undo</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch11_visual_mode.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Ch11. Visual Mode</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch12_search_and_substitute.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Ch12. Search and Substitute</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch13_the_global_command.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Ch13. the Global Command</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch14_external_commands.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Ch14. External Commands</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch15_command-line_mode.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">Ch15. Command-line Mode</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch16_tags.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Ch16. Tags</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch17_fold.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">Ch17. Fold</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch18_git.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">18</span>&nbsp; <span class="chapter-title">Ch18. Git</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch19_compile.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">19</span>&nbsp; <span class="chapter-title">Ch19. Compile</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch20_views_sessions_viminfo.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">20</span>&nbsp; <span class="chapter-title">Ch20. Views, Sessions, and Viminfo</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch21_multiple_file_operations.md.html" class="sidebar-item-text sidebar-link active"><span class="chapter-number">21</span>&nbsp; <span class="chapter-title">Multiple File Operations</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch22_vimrc.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">22</span>&nbsp; <span class="chapter-title">Ch22. Vimrc</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch23_vim_packages.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">23</span>&nbsp; <span class="chapter-title">Ch23. Vim Packages</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch24_vim_runtime.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">24</span>&nbsp; <span class="chapter-title">Ch24. Vim Runtime</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch25_vimscript_basic_data_types.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">25</span>&nbsp; <span class="chapter-title">Ch25. Vimscript Basic Data Types</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch26_vimscript_conditionals_and_loops.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">26</span>&nbsp; <span class="chapter-title">Ch26. Vimscript Conditionals and Loops</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch27_vimscript_variable_scopes.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">27</span>&nbsp; <span class="chapter-title">Ch27. Vimscript Variable Scopes</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch28_vimscript_functions.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">28</span>&nbsp; <span class="chapter-title">Ch28. Vimscript Functions</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch29_plugin_example_writing-a-titlecase-plugin.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">29</span>&nbsp; <span class="chapter-title">Ch29. Write a Plugin: Creating a Titlecase Operator</span></a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#different-ways-to-execute-a-command-in-multiple-files" id="toc-different-ways-to-execute-a-command-in-multiple-files" class="nav-link active" data-scroll-target="#different-ways-to-execute-a-command-in-multiple-files"><span class="toc-section-number">21.1</span>  Different Ways to Execute a Command in Multiple Files</a></li>
+  <li><a href="#argument-list" id="toc-argument-list" class="nav-link" data-scroll-target="#argument-list"><span class="toc-section-number">21.2</span>  Argument List</a></li>
+  <li><a href="#buffer-list" id="toc-buffer-list" class="nav-link" data-scroll-target="#buffer-list"><span class="toc-section-number">21.3</span>  Buffer List</a></li>
+  <li><a href="#window-and-tab-list" id="toc-window-and-tab-list" class="nav-link" data-scroll-target="#window-and-tab-list"><span class="toc-section-number">21.4</span>  Window and Tab List</a></li>
+  <li><a href="#quickfix-list" id="toc-quickfix-list" class="nav-link" data-scroll-target="#quickfix-list"><span class="toc-section-number">21.5</span>  Quickfix List</a></li>
+  <li><a href="#location-list" id="toc-location-list" class="nav-link" data-scroll-target="#location-list"><span class="toc-section-number">21.6</span>  Location List</a></li>
+  <li><a href="#running-multiple-file-operations-in-vim" id="toc-running-multiple-file-operations-in-vim" class="nav-link" data-scroll-target="#running-multiple-file-operations-in-vim"><span class="toc-section-number">21.7</span>  Running Multiple-File Operations in Vim</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title d-none d-lg-block"><span class="chapter-number">21</span>&nbsp; <span class="chapter-title">Multiple File Operations</span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+</header>
+
+<p>Being able to update in multiple files is another useful editing tool to have. Earlier you learned how to update multiple texts with <code>cfdo</code>. In this chapter, you will learn the different ways you can edit multiple files in Vim.</p>
+<section id="different-ways-to-execute-a-command-in-multiple-files" class="level2" data-number="21.1">
+<h2 data-number="21.1" class="anchored" data-anchor-id="different-ways-to-execute-a-command-in-multiple-files"><span class="header-section-number">21.1</span> Different Ways to Execute a Command in Multiple Files</h2>
+<p>Vim has eight ways to execute commands across multiple files: - arg list (<code>argdo</code>) - buffer list (<code>bufdo</code>) - window list (<code>windo</code>) - tab list (<code>tabdo</code>) - quickfix list (<code>cdo</code>) - quickfix list filewise (<code>cfdo</code>) - location list (<code>ldo</code>) - location list filewise (<code>lfdo</code>)</p>
+<p>Practically speaking, you will probably only use one or two most of the time (I personally use <code>cdo</code> and <code>argdo</code> more than others), but it’s good to learn about all the available options and use the ones that match your editing style.</p>
+<p>Learning eight commands might sound daunting. But in reality, these commands work similarly. After learning one, learning the rest will get easier. They all share the same big idea: make a list of their respective categories then pass them the command that you want to run.</p>
+</section>
+<section id="argument-list" class="level2" data-number="21.2">
+<h2 data-number="21.2" class="anchored" data-anchor-id="argument-list"><span class="header-section-number">21.2</span> Argument List</h2>
+<p>The argument list is the most basic list. It creates a list of files. To create a list of file1, file2, and file3, you can run:</p>
+<pre><code>:args file1 file2 file3</code></pre>
+<p>You can also pass it a wildcard (<code>*</code>), so if you want to make a list of all <code>.js</code> files in the current directory, run:</p>
+<pre><code>:args *.js</code></pre>
+<p>If you want to make a list of all Javascript files that start with <q>a</q> in the current directory, run:</p>
+<pre><code>:args a*.js</code></pre>
+<p>The wildcard matches one or more of any filename character in the current directory, but what if you need to search recursively in any directory? You can use the double wildcard (<code>**</code>). To get all Javascript files inside the directories within your current location, run:</p>
+<pre><code>:args **/*.js</code></pre>
+<p>Once you run the <code>args</code> command, your current buffer will be switched to the first item on the list. To view the list of files you just created, run <code>:args</code>. Once you’ve created your list, you can traverse them. <code>:first</code> will put you on the first item on the list. <code>:last</code> will put you on the last list. To move the list forward one file at a time, run <code>:next</code>. To move the list backward one file at a time, run <code>:prev</code>. To move forward / backward one file at a time and save the changes, run <code>:wnext</code> and <code>:wprev</code>. There are plenty more navigation commands. Check out <code>:h arglist</code> for more.</p>
+<p>The arg list is useful if you need to target a specific type of file or a few files. Maybe you need to update all the <q>donut</q> into <q>pancake</q> inside all <code>yml</code> files, you can do:</p>
+<pre><code>:args **/*.yml
+:argdo %s/donut/pancake/g | update
+</code></pre>
+<p>If you run the <code>args</code> command again, it will replace the previous list. For example, if you previously ran:</p>
+<pre><code>:args file1 file2 file3</code></pre>
+<p>Assuming these files exist, you now have a list of <code>file1</code>, <code>file2</code>, and <code>file3</code>. Then you run this:</p>
+<pre><code>:args file4 file5</code></pre>
+<p>Your initial list of <code>file1</code>, <code>file2</code>, and <code>file3</code> is replaced with <code>file4</code> and <code>file5</code>. If you have <code>file1</code>, <code>file2</code>, and <code>file3</code> in your arg list and you want to <em>add</em> <code>file4</code> and <code>file5</code> into your initial files list, use the <code>:arga</code> command. Run:</p>
+<pre><code>:arga file4 file5</code></pre>
+<p>Now you have <code>file1</code>, <code>file2</code>, <code>file3</code>, <code>file4</code>, and <code>file5</code> in your arg list.</p>
+<p>If you run <code>:arga</code> without any argument, Vim will add your current buffer into the current arg list. If you already have <code>file1</code>, <code>file2</code>, and <code>file3</code> in your arg list and your current buffer is on <code>file5</code>, running <code>:arga</code> adds <code>file5</code> into the list.</p>
+<p>Once you have the list, you can pass it with any command-line commands of your choosing. You’ve seen it being done with substitution (<code>:argdo %s/donut/pancake/g</code>). Some other examples: - To delete all lines that contain <q>dessert</q> across the arg list, run <code>:argdo g/dessert/d</code>. - To execute macro a (assuming you have recorded something in macro a) across the arg list, run <code>:argdo norm @a</code>. - To write <q>hello</q> followed by the filename on the first line, run <code>:argdo 0put='hello ' .. @:</code>.</p>
+<p>Once you’re done, don’t forget to save them with <code>:update</code>.</p>
+<p>Sometimes you need to run the commands only on the first n items of the argument list. If that’s the case, just pass to the <code>argdo</code> command an address. For example, to run the substitute command only on the first 3 items from the list, run <code>:1,3argdo %s/donut/pancake/g</code>.</p>
+</section>
+<section id="buffer-list" class="level2" data-number="21.3">
+<h2 data-number="21.3" class="anchored" data-anchor-id="buffer-list"><span class="header-section-number">21.3</span> Buffer List</h2>
+<p>The buffer list will be organically created when you edit new files because each time you create a new file / open a file, Vim saves it in a buffer (unless you explicitly delete it). So if you already opened 3 files: <code>file1.rb file2.rb file3.rb</code>, you already have 3 items in your buffer list. To display the buffer list, run <code>:buffers</code> (alternatively: <code>:ls</code> or <code>:files</code>). To traverse forward and backward, use <code>:bnext</code> and <code>:bprev</code>. To go to the first and last buffer from the list, use <code>:bfirst</code> and <code>:blast</code> (having a blast yet? :D).</p>
+<p>By the way, here’s a cool buffer trick unrelated to this chapter: if you have a number of items in your buffer list, you can show all of them with <code>:ball</code> (buffer all). The <code>ball</code> command displays all buffers horizontally. To display them vertically, run <code>:vertical ball</code>.</p>
+<p>Back to the topic, the mechanics to run operation across all buffers is similar to the arg list. Once you have created your buffer list, you just need to prepend the command(s) that you want to run with <code>:bufdo</code> instead of <code>:argdo</code>. So if you want to substitute all <q>donut</q> with <q>pancake</q> across all buffers then save the changes, run <code>:bufdo %s/donut/pancake/g | update</code>.</p>
+</section>
+<section id="window-and-tab-list" class="level2" data-number="21.4">
+<h2 data-number="21.4" class="anchored" data-anchor-id="window-and-tab-list"><span class="header-section-number">21.4</span> Window and Tab List</h2>
+<p>The windows and tabs list are also similar to the arg and buffer list. The only differences are their context and syntax.</p>
+<p>Window operations are performed on each open window and performed with <code>:windo</code>. Tab operations are performed on each tab you have opened and performed with <code>:tabdo</code>. For more, check out <code>:h list-repeat</code>, <code>:h :windo</code>, and <code>:h :tabdo</code>.</p>
+<p>For example, if you have three windows opened (you can open new windows with <code>Ctrl-W v</code> for a vertical window and <code>Ctrl-W s</code> for a horizontal window) and you run <code>:windo 0put ='hello' . @%</code>, Vim will output <q>hello</q> + filename to all open windows.</p>
+</section>
+<section id="quickfix-list" class="level2" data-number="21.5">
+<h2 data-number="21.5" class="anchored" data-anchor-id="quickfix-list"><span class="header-section-number">21.5</span> Quickfix List</h2>
+<p>In the previous chapters (Ch3 and Ch19), I have spoken about quickfixes. Quickfix has many uses. Many popular plugins use quickfixes, so it’s good to spend more time to understand them.</p>
+<p>If you’re new to Vim, quickfix might be a new concept. Back in the old days when you actually have to explicitly compile your code, during the compilation phase you would encounter errors. To display these errors, you need a special window. That’s where quickfix comes in. When you compile your code, Vim displays error messages in the quickfix window so you can fix them later. Many modern languages don’t require an explicit compile anymore, but that doesn’t make quickfix obsolete. Nowadays, people use quickfix for all sorts of things, like displaying a virtual terminal output and storing search results. Let’s focus on the latter one, storing search results.</p>
+<p>In addition to the compile commands, certain Vim commands rely on quickfix interfaces. One type of command that use quickfixes heavily are the search commands. Both <code>:vimgrep</code> and <code>:grep</code> use quickfixes by default.</p>
+<p>For example, if you need to search for <q>donut</q> in all Javascript files recursively, you can run:</p>
+<pre><code>:vimgrep /donut/ **/*.js</code></pre>
+<p>The result for the <q>donut</q> search is stored in the quickfix window. To see these match results’ quickfix window, run:</p>
+<pre><code>:copen</code></pre>
+<p>To close it, run:</p>
+<pre><code>:cclose</code></pre>
+<p>To traverse the quickfix list forward and backward, run:</p>
+<pre><code>:cnext
+:cprev</code></pre>
+<p>To go to the first and the last item in the match, run:</p>
+<pre><code>:cfirst
+:clast</code></pre>
+<p>Earlier I mentioned that there were two quickfix commands: <code>cdo</code> and <code>cfdo</code>. How do they differ? <code>cdo</code> executes command for each item in the quickfix list while <code>cfdo</code> executes command for each <em>file</em> in the quickfix list.</p>
+<p>Let me clarify. Suppose that after running the <code>vimgrep</code> command above, you found: - 1 result in <code>file1.js</code> - 10 results in <code>file2.js</code></p>
+<p>If you run <code>:cfdo %s/donut/pancake/g</code>, this will effectively run <code>%s/donut/pancake/g</code> once in <code>file1.js</code> and once in <code>file2.js</code>. It runs <em>as many times as there are files in the match.</em> Since there are two files in the results, Vim executes the substitute command once on <code>file1.js</code> and once more on <code>file2.js</code>, despite the fact that there are 10 matches in the second file. <code>cfdo</code> only cares about how many total files are in the quickfix list.</p>
+<p>If you run <code>:cdo %s/donut/pancake/g</code>, this will effectively run <code>%s/donut/pancake/g</code> once in <code>file1.js</code> and <em>ten times</em> in <code>file2.js</code>. It runs as many times as there are actual items in the quickfix list. Since there is only one match found in <code>file1.js</code> and 10 matches found in <code>file2.js</code>, it will run a total of 11 times.</p>
+<p>Since you ran <code>%s/donut/pancake/g</code>, it would make sense to use <code>cfdo</code>. It did not make sense to use <code>cdo</code> because it would run <code>%s/donut/pancake/g</code> ten times in <code>file2.js</code> (<code>%s</code> is a file-wide substitution). Running <code>%s</code> once per file is enough. If you used <code>cdo</code>, it would make more sense to pass it with <code>s/donut/pancake/g</code> instead.</p>
+<p>When deciding whether to use <code>cfdo</code> or <code>cdo</code>, think of the command scope that you are passing it to. Is this a file-wide command (like <code>:%s</code> or <code>:g</code>) or is this a line-wise command (like <code>:s</code> or <code>:!</code>)?</p>
+</section>
+<section id="location-list" class="level2" data-number="21.6">
+<h2 data-number="21.6" class="anchored" data-anchor-id="location-list"><span class="header-section-number">21.6</span> Location List</h2>
+<p>Location list is similar to quickfix list in a sense that Vim also uses a special window to display messages. The difference between a quickfix list and a location list is that at any time, you may only have one quickfix list, whereas you can have as many location list as windows.</p>
+<p>Suppose that you have two windows opened, one window displaying <code>food.txt</code> and another displaying <code>drinks.txt</code>. From inside <code>food.txt</code>, you run a location-list search command <code>:lvimgrep</code> (the location variant for the <code>:vimgrep</code> command):</p>
+<pre><code>:lvim /bagel/ **/*.md</code></pre>
+<p>Vim will create a location list of all the bagel search matches for that <code>food.txt</code> <em>window</em>. You can see the location list with <code>:lopen</code>. Now go to the other window <code>drinks.txt</code> and run:</p>
+<pre><code>:lvimgrep /milk/ **/*.md</code></pre>
+<p>Vim will create a <em>separate</em> location list with all the milk search results for that <code>drinks.txt</code> <em>window</em>.</p>
+<p>For each location-command you run in each window, Vim creates a distinct location list. If you have 10 different windows, you can have up to 10 different location lists. Contrast this with the quickfix list where you can only have one at any time. If you have 10 different windows, you still get only one quickfix list.</p>
+<p>Most of the location list commands are similar to quickfix commands except that they are prefixed with <code>l-</code> instead. For example: <code>:lvimgrep</code>, <code>:lgrep</code>, and <code>:lmake</code> vs <code>:vimgrep</code>, <code>:grep</code>, and <code>:make</code>. To manipulate the location list window, again, the commands look similar to the quickfix commands <code>:lopen</code>, <code>:lclose</code>, <code>:lfirst</code>, <code>:llast</code>, <code>:lnext</code>, and <code>:lprev</code> vs <code>:copen</code>, <code>:cclose</code>, <code>:cfirst</code>, <code>:clast</code>, <code>:cnext</code>, and <code>:cprev</code>.</p>
+<p>The two location list multi-file commands are also similar to quickfix multi-file commands: <code>:ldo</code> and <code>:lfdo</code>. <code>:ldo</code> executes the location command in each location list while <code>:lfdo</code> executes the location list command for each file in the location list. For more, check out <code>:h location-list</code>.</p>
+</section>
+<section id="running-multiple-file-operations-in-vim" class="level2" data-number="21.7">
+<h2 data-number="21.7" class="anchored" data-anchor-id="running-multiple-file-operations-in-vim"><span class="header-section-number">21.7</span> Running Multiple-File Operations in Vim</h2>
+<p>Knowing how to do a multiple file operation is a useful skill to have in editing. Whenever you need to change a variable name across multiple files, you want to execute them in one swoop. Vim has eight different ways you can do this.</p>
+<p>Practically speaking, you probably won’t use all eight equally. You will gravitate towards one or two. When you are starting out, pick one (I personally suggest starting with the arg list <code>:argdo</code>) and master it. Once you are comfortable with one, then learn the next one. You will find that learning the second, third, fourth gets easier. Be creative. Use it with different combinations. Keep practicing until you can do this effortlessly and without much thinking. Make it part of your muscle memory.</p>
+<p>With that being said, you’ve mastered Vim editing. Congratulations!</p>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const disableStylesheet = (stylesheets) => {
+    for (let i=0; i < stylesheets.length; i++) {
+      const stylesheet = stylesheets[i];
+      stylesheet.rel = 'prefetch';
+    }
+  }
+  const enableStylesheet = (stylesheets) => {
+    for (let i=0; i < stylesheets.length; i++) {
+      const stylesheet = stylesheets[i];
+      stylesheet.rel = 'stylesheet';
+    }
+  }
+  const manageTransitions = (selector, allowTransitions) => {
+    const els = window.document.querySelectorAll(selector);
+    for (let i=0; i < els.length; i++) {
+      const el = els[i];
+      if (allowTransitions) {
+        el.classList.remove('notransition');
+      } else {
+        el.classList.add('notransition');
+      }
+    }
+  }
+  const toggleColorMode = (alternate) => {
+    // Switch the stylesheets
+    const alternateStylesheets = window.document.querySelectorAll('link.quarto-color-scheme.quarto-color-alternate');
+    manageTransitions('#quarto-margin-sidebar .nav-link', false);
+    if (alternate) {
+      enableStylesheet(alternateStylesheets);
+      for (const sheetNode of alternateStylesheets) {
+        if (sheetNode.id === "quarto-bootstrap") {
+          toggleBodyColorMode(sheetNode);
+        }
+      }
+    } else {
+      disableStylesheet(alternateStylesheets);
+      toggleBodyColorPrimary();
+    }
+    manageTransitions('#quarto-margin-sidebar .nav-link', true);
+    // Switch the toggles
+    const toggles = window.document.querySelectorAll('.quarto-color-scheme-toggle');
+    for (let i=0; i < toggles.length; i++) {
+      const toggle = toggles[i];
+      if (toggle) {
+        if (alternate) {
+          toggle.classList.add("alternate");     
+        } else {
+          toggle.classList.remove("alternate");
+        }
+      }
+    }
+    // Hack to workaround the fact that safari doesn't
+    // properly recolor the scrollbar when toggling (#1455)
+    if (navigator.userAgent.indexOf('Safari') > 0 && navigator.userAgent.indexOf('Chrome') == -1) {
+      manageTransitions("body", false);
+      window.scrollTo(0, 1);
+      setTimeout(() => {
+        window.scrollTo(0, 0);
+        manageTransitions("body", true);
+      }, 40);  
+    }
+  }
+  const isFileUrl = () => { 
+    return window.location.protocol === 'file:';
+  }
+  const hasAlternateSentinel = () => {  
+    let styleSentinel = getColorSchemeSentinel();
+    if (styleSentinel !== null) {
+      return styleSentinel === "alternate";
+    } else {
+      return false;
+    }
+  }
+  const setStyleSentinel = (alternate) => {
+    const value = alternate ? "alternate" : "default";
+    if (!isFileUrl()) {
+      window.localStorage.setItem("quarto-color-scheme", value);
+    } else {
+      localAlternateSentinel = value;
+    }
+  }
+  const getColorSchemeSentinel = () => {
+    if (!isFileUrl()) {
+      const storageValue = window.localStorage.getItem("quarto-color-scheme");
+      return storageValue != null ? storageValue : localAlternateSentinel;
+    } else {
+      return localAlternateSentinel;
+    }
+  }
+  let localAlternateSentinel = 'alternate';
+  // Dark / light mode switch
+  window.quartoToggleColorScheme = () => {
+    // Read the current dark / light value 
+    let toAlternate = !hasAlternateSentinel();
+    toggleColorMode(toAlternate);
+    setStyleSentinel(toAlternate);
+  };
+  // Ensure there is a toggle, if there isn't float one in the top right
+  if (window.document.querySelector('.quarto-color-scheme-toggle') === null) {
+    const a = window.document.createElement('a');
+    a.classList.add('top-right');
+    a.classList.add('quarto-color-scheme-toggle');
+    a.href = "";
+    a.onclick = function() { try { window.quartoToggleColorScheme(); } catch {} return false; };
+    const i = window.document.createElement("i");
+    i.classList.add('bi');
+    a.appendChild(i);
+    window.document.body.appendChild(a);
+  }
+  // Switch to dark mode if need be
+  if (hasAlternateSentinel()) {
+    toggleColorMode(true);
+  } else {
+    toggleColorMode(false);
+  }
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    target: function(trigger) {
+      return trigger.previousElementSibling;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="../chapters/ch20_views_sessions_viminfo.md.html" class="pagination-link">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">20</span>&nbsp; <span class="chapter-title">Ch20. Views, Sessions, and Viminfo</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="../chapters/ch22_vimrc.md.html" class="pagination-link">
+        <span class="nav-page-text"><span class="chapter-number">22</span>&nbsp; <span class="chapter-title">Ch22. Vimrc</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+
+
+
+</body></html>

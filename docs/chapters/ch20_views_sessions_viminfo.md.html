@@ -1,0 +1,775 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.2.313">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Learn Vim (the Smart Way) - 20&nbsp; Ch20. Views, Sessions, and Viminfo</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1.6em;
+  vertical-align: middle;
+}
+q { quotes: "“" "”" "‘" "’"; }
+</style>
+
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<link href="../chapters/ch21_multiple_file_operations.md.html" rel="next">
+<link href="../chapters/ch19_compile.md.html" rel="prev">
+<script src="../site_libs/quarto-html/quarto.js"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-dark.min.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit"
+  }
+}</script>
+
+
+</head>
+
+<body class="nav-sidebar floating">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+    <div class="container-fluid d-flex justify-content-between">
+      <h1 class="quarto-secondary-nav-title"><span class="chapter-number">20</span>&nbsp; <span class="chapter-title">Ch20. Views, Sessions, and Viminfo</span></h1>
+      <button type="button" class="quarto-btn-toggle btn" aria-label="Show secondary navigation">
+        <i class="bi bi-chevron-right"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="../">Learn Vim (the Smart Way)</a> 
+        <div class="sidebar-tools-main">
+    <a href="https://github.com/iggredible/Learn-Vim" title="" class="sidebar-tool px-1"><i class="bi bi-github"></i></a>
+  <a href="" class="quarto-color-scheme-toggle sidebar-tool" onclick="window.quartoToggleColorScheme(); return false;" title="Toggle dark mode"><i class="bi"></i></a>
+</div>
+    </div>
+      </div>
+      <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+      </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../index.html" class="sidebar-item-text sidebar-link">Preface</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch01_starting_vim.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Ch01. Starting Vim</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch02_buffers_windows_tabs.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Ch02. Buffers, Windows, and Tabs</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch03_searching_files.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Ch03. Searching Files</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch04_vim_grammar.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Ch04. Vim Grammar</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch05_moving_in_file.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Ch05. Moving in a File</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch06_insert_mode.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Ch06. Insert Mode</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch07_the_dot_command.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Ch07. the Dot Command</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch08_registers.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Ch08. Registers</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch09_macros.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Ch09. Macros</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch10_undo.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Ch10. Undo</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch11_visual_mode.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Ch11. Visual Mode</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch12_search_and_substitute.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Ch12. Search and Substitute</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch13_the_global_command.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Ch13. the Global Command</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch14_external_commands.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Ch14. External Commands</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch15_command-line_mode.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">Ch15. Command-line Mode</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch16_tags.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Ch16. Tags</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch17_fold.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">Ch17. Fold</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch18_git.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">18</span>&nbsp; <span class="chapter-title">Ch18. Git</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch19_compile.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">19</span>&nbsp; <span class="chapter-title">Ch19. Compile</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch20_views_sessions_viminfo.md.html" class="sidebar-item-text sidebar-link active"><span class="chapter-number">20</span>&nbsp; <span class="chapter-title">Ch20. Views, Sessions, and Viminfo</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch21_multiple_file_operations.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">21</span>&nbsp; <span class="chapter-title">Multiple File Operations</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch22_vimrc.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">22</span>&nbsp; <span class="chapter-title">Ch22. Vimrc</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch23_vim_packages.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">23</span>&nbsp; <span class="chapter-title">Ch23. Vim Packages</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch24_vim_runtime.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">24</span>&nbsp; <span class="chapter-title">Ch24. Vim Runtime</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch25_vimscript_basic_data_types.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">25</span>&nbsp; <span class="chapter-title">Ch25. Vimscript Basic Data Types</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch26_vimscript_conditionals_and_loops.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">26</span>&nbsp; <span class="chapter-title">Ch26. Vimscript Conditionals and Loops</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch27_vimscript_variable_scopes.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">27</span>&nbsp; <span class="chapter-title">Ch27. Vimscript Variable Scopes</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch28_vimscript_functions.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">28</span>&nbsp; <span class="chapter-title">Ch28. Vimscript Functions</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch29_plugin_example_writing-a-titlecase-plugin.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">29</span>&nbsp; <span class="chapter-title">Ch29. Write a Plugin: Creating a Titlecase Operator</span></a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#view" id="toc-view" class="nav-link active" data-scroll-target="#view"><span class="toc-section-number">20.1</span>  View</a>
+  <ul class="collapse">
+  <li><a href="#configuring-view-attributes" id="toc-configuring-view-attributes" class="nav-link" data-scroll-target="#configuring-view-attributes"><span class="toc-section-number">20.1.1</span>  Configuring View Attributes</a></li>
+  <li><a href="#saving-the-view" id="toc-saving-the-view" class="nav-link" data-scroll-target="#saving-the-view"><span class="toc-section-number">20.1.2</span>  Saving the View</a></li>
+  <li><a href="#view-files" id="toc-view-files" class="nav-link" data-scroll-target="#view-files"><span class="toc-section-number">20.1.3</span>  View Files</a></li>
+  <li><a href="#loading-the-view-file" id="toc-loading-the-view-file" class="nav-link" data-scroll-target="#loading-the-view-file"><span class="toc-section-number">20.1.4</span>  Loading the View File</a></li>
+  <li><a href="#multiple-views" id="toc-multiple-views" class="nav-link" data-scroll-target="#multiple-views"><span class="toc-section-number">20.1.5</span>  Multiple Views</a></li>
+  <li><a href="#automating-view-creation" id="toc-automating-view-creation" class="nav-link" data-scroll-target="#automating-view-creation"><span class="toc-section-number">20.1.6</span>  Automating View Creation</a></li>
+  </ul></li>
+  <li><a href="#sessions" id="toc-sessions" class="nav-link" data-scroll-target="#sessions"><span class="toc-section-number">20.2</span>  Sessions</a>
+  <ul class="collapse">
+  <li><a href="#creating-a-new-session" id="toc-creating-a-new-session" class="nav-link" data-scroll-target="#creating-a-new-session"><span class="toc-section-number">20.2.1</span>  Creating a New Session</a></li>
+  <li><a href="#loading-a-session" id="toc-loading-a-session" class="nav-link" data-scroll-target="#loading-a-session"><span class="toc-section-number">20.2.2</span>  Loading a Session</a></li>
+  <li><a href="#configuring-session-attributes" id="toc-configuring-session-attributes" class="nav-link" data-scroll-target="#configuring-session-attributes"><span class="toc-section-number">20.2.3</span>  Configuring Session Attributes</a></li>
+  </ul></li>
+  <li><a href="#viminfo" id="toc-viminfo" class="nav-link" data-scroll-target="#viminfo"><span class="toc-section-number">20.3</span>  Viminfo</a>
+  <ul class="collapse">
+  <li><a href="#writing-and-reading-viminfo" id="toc-writing-and-reading-viminfo" class="nav-link" data-scroll-target="#writing-and-reading-viminfo"><span class="toc-section-number">20.3.1</span>  Writing and Reading Viminfo</a></li>
+  <li><a href="#starting-vim-without-viminfo" id="toc-starting-vim-without-viminfo" class="nav-link" data-scroll-target="#starting-vim-without-viminfo"><span class="toc-section-number">20.3.2</span>  Starting Vim Without Viminfo</a></li>
+  <li><a href="#configuring-viminfo-attributes" id="toc-configuring-viminfo-attributes" class="nav-link" data-scroll-target="#configuring-viminfo-attributes"><span class="toc-section-number">20.3.3</span>  Configuring Viminfo Attributes</a></li>
+  </ul></li>
+  <li><a href="#using-views-sessions-and-viminfo-the-smart-way" id="toc-using-views-sessions-and-viminfo-the-smart-way" class="nav-link" data-scroll-target="#using-views-sessions-and-viminfo-the-smart-way"><span class="toc-section-number">20.4</span>  Using Views, Sessions, and Viminfo the Smart Way</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title d-none d-lg-block"><span class="chapter-number">20</span>&nbsp; <span class="chapter-title">Ch20. Views, Sessions, and Viminfo</span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+</header>
+
+<p>After you worked on a project for a while, you may find the project to gradually take shape with its own settings, folds, buffers, layouts, etc. It’s like decorating your apartment after living in it for a while. The problem is, when you close Vim, you lose those changes. Wouldn’t it be nice if you can keep those changes so the next time you open Vim, it looks just like you had never left?</p>
+<p>In this chapter, you will learn how use View, Session, and Viminfo to preserve a <q>snapshot</q> of your projects.</p>
+<section id="view" class="level2" data-number="20.1">
+<h2 data-number="20.1" class="anchored" data-anchor-id="view"><span class="header-section-number">20.1</span> View</h2>
+<p>A View is the smallest subset of the three (View, Session, Viminfo). It is a collection of settings for one window. If you spend a long time working on a window and you want to preserve the maps and folds, you can use a View.</p>
+<p>Let’s create a file called <code>foo.txt</code>:</p>
+<pre><code>foo1
+foo2
+foo3
+foo4
+foo5
+foo6
+foo7
+foo8
+foo9
+foo10</code></pre>
+<p>In this file, create three changes: 1. On line 1, create a manual fold <code>zf4j</code> (fold the next 4 lines). 2. Change the <code>number</code> setting: <code>setlocal nonumber norelativenumber</code>. This will remove the number indicators on the left side of the window. 3. Create a local mapping to go down two lines each time you press <code>j</code> instead of one: <code>:nnoremap &lt;buffer&gt; j jj</code>.</p>
+<p>Your file should look like this:</p>
+<pre><code>+-- 5 lines: foo1 -----
+foo6
+foo7
+foo8
+foo9
+foo10</code></pre>
+<section id="configuring-view-attributes" class="level3" data-number="20.1.1">
+<h3 data-number="20.1.1" class="anchored" data-anchor-id="configuring-view-attributes"><span class="header-section-number">20.1.1</span> Configuring View Attributes</h3>
+<p>Run:</p>
+<pre><code>:set viewoptions?</code></pre>
+<p>By default it should say (yours may look different depending on your vimrc):</p>
+<pre><code>viewoptions=folds,cursor,curdir</code></pre>
+<p>Let’s configure <code>viewoptions</code>. The three attributes you want to preserve are the folds, the maps, and the local set options. If your setting looks like mine, you already have the <code>folds</code> option. You need to tell View to remember the <code>localoptions</code>. Run:</p>
+<pre><code>:set viewoptions+=localoptions</code></pre>
+<p>To learn what other options are available for <code>viewoptions</code>, check out <code>:h viewoptions</code>. Now if you run <code>:set viewoptions?</code>, you should see:</p>
+<pre><code>viewoptions=folds,cursor,curdir,localoptions</code></pre>
+</section>
+<section id="saving-the-view" class="level3" data-number="20.1.2">
+<h3 data-number="20.1.2" class="anchored" data-anchor-id="saving-the-view"><span class="header-section-number">20.1.2</span> Saving the View</h3>
+<p>With the <code>foo.txt</code> window properly folded and having <code>nonumber norelativenumber</code> options, let’s save the View. Run:</p>
+<pre><code>:mkview</code></pre>
+<p>Vim creates a View file.</p>
+</section>
+<section id="view-files" class="level3" data-number="20.1.3">
+<h3 data-number="20.1.3" class="anchored" data-anchor-id="view-files"><span class="header-section-number">20.1.3</span> View Files</h3>
+<p>You might wonder, <q>Where did Vim save this View file?</q> To see where Vim saves it, run:</p>
+<pre><code>:set viewdir?</code></pre>
+<p>In Unix based OS the default should say <code>~/.vim/view</code> (if you have a different OS, it might show a different path. Check out <code>:h viewdir</code> for more). If you are running a Unix based OS and want to change it to a different path, add this into your vimrc:</p>
+<pre><code>set viewdir=$HOME/else/where</code></pre>
+</section>
+<section id="loading-the-view-file" class="level3" data-number="20.1.4">
+<h3 data-number="20.1.4" class="anchored" data-anchor-id="loading-the-view-file"><span class="header-section-number">20.1.4</span> Loading the View File</h3>
+<p>Close the <code>foo.txt</code> if you haven’t, then open <code>foo.txt</code> again. <strong>You should see the original text without the changes.</strong> That’s expected.</p>
+<p>To restore the state, you need to load the View file. Run:</p>
+<pre><code>:loadview</code></pre>
+<p>Now you should see:</p>
+<pre><code>+-- 5 lines: foo1 -----
+foo6
+foo7
+foo8
+foo9
+foo10</code></pre>
+<p>The folds, local settings, and local mappings are restored. If you notice, your cursor should also be on the line where you left it when you ran <code>:mkview</code>. As long as you have the <code>cursor</code> option, View also remembers your cursor position.</p>
+</section>
+<section id="multiple-views" class="level3" data-number="20.1.5">
+<h3 data-number="20.1.5" class="anchored" data-anchor-id="multiple-views"><span class="header-section-number">20.1.5</span> Multiple Views</h3>
+<p>Vim lets you save 9 numbered Views (1-9).</p>
+<p>Suppose you want to make an additional fold (say you want to fold the last two lines) with <code>:9,10 fold</code>. Let’s save this as View 1. Run:</p>
+<pre><code>:mkview 1</code></pre>
+<p>If you want to make one more fold with <code>:6,7 fold</code> and save it as a different View, run:</p>
+<pre><code>:mkview 2</code></pre>
+<p>Close the file. When you open <code>foo.txt</code> and you want to load View 1, run:</p>
+<pre><code>:loadview 1</code></pre>
+<p>To load View 2, run:</p>
+<pre><code>:loadview 2</code></pre>
+<p>To load the original View, run:</p>
+<pre><code>:loadview</code></pre>
+</section>
+<section id="automating-view-creation" class="level3" data-number="20.1.6">
+<h3 data-number="20.1.6" class="anchored" data-anchor-id="automating-view-creation"><span class="header-section-number">20.1.6</span> Automating View Creation</h3>
+<p>One of the worst things that can happen is, after spending countless hours organizing a large file with folds, you accidentally close the window and lose all fold information. To prevent this, you might want to automatically create a View each time you close a buffer. Add this in your vimrc:</p>
+<pre><code>autocmd BufWinLeave *.txt mkview</code></pre>
+<p>Additionally, it might be nice to load View when you open a buffer:</p>
+<pre><code>autocmd BufWinEnter *.txt silent loadview</code></pre>
+<p>Now you don’t have to worry about creating and loading View anymore when you are working with <code>txt</code> files. Keep in mind that over time, your <code>~/.vim/view</code> might start to accumulate View files. It’s good to clean it up once every few months.</p>
+</section>
+</section>
+<section id="sessions" class="level2" data-number="20.2">
+<h2 data-number="20.2" class="anchored" data-anchor-id="sessions"><span class="header-section-number">20.2</span> Sessions</h2>
+<p>If a View saves the settings of a window, a Session saves the information of all windows (including the layout).</p>
+<section id="creating-a-new-session" class="level3" data-number="20.2.1">
+<h3 data-number="20.2.1" class="anchored" data-anchor-id="creating-a-new-session"><span class="header-section-number">20.2.1</span> Creating a New Session</h3>
+<p>Suppose you are working with these 3 files in a <code>foobarbaz</code> project:</p>
+<p>Inside <code>foo.txt</code>:</p>
+<pre><code>foo1
+foo2
+foo3
+foo4
+foo5
+foo6
+foo7
+foo8
+foo9
+foo10</code></pre>
+<p>Inside <code>bar.txt</code>:</p>
+<pre><code>bar1
+bar2
+bar3
+bar4
+bar5
+bar6
+bar7
+bar8
+bar9
+bar10</code></pre>
+<p>Inside <code>baz.txt</code>:</p>
+<pre><code>baz1
+baz2
+baz3
+baz4
+baz5
+baz6
+baz7
+baz8
+baz9
+baz10</code></pre>
+<p>Now let’s say that you split your windows with <code>:split</code> and <code>:vsplit</code>. To preserve this look, you need to save the Session. Run:</p>
+<pre><code>:mksession</code></pre>
+<p>Unlike <code>mkview</code> where it saves to <code>~/.vim/view</code> by default, <code>mksession</code> saves a Session file (<code>Session.vim</code>) in the current directory. Check out the file if you’re curious what’s inside.</p>
+<p>If you want to save the Session file somewhere else, you can pass an argument to <code>mksession</code>:</p>
+<pre><code>:mksession ~/some/where/else.vim</code></pre>
+<p>If you want to overwrite the existing Session file, call the command with a <code>!</code> (<code>:mksession! ~/some/where/else.vim</code>).</p>
+</section>
+<section id="loading-a-session" class="level3" data-number="20.2.2">
+<h3 data-number="20.2.2" class="anchored" data-anchor-id="loading-a-session"><span class="header-section-number">20.2.2</span> Loading a Session</h3>
+<p>To load a Session, run:</p>
+<pre><code>:source Session.vim</code></pre>
+<p>Now Vim looks like just the way you left it, including the split windows! Alternatively, you can also load a Session file from the terminal:</p>
+<pre><code>vim -S Session.vim</code></pre>
+</section>
+<section id="configuring-session-attributes" class="level3" data-number="20.2.3">
+<h3 data-number="20.2.3" class="anchored" data-anchor-id="configuring-session-attributes"><span class="header-section-number">20.2.3</span> Configuring Session Attributes</h3>
+<p>You can configure the attributes Session saves. To see what is currently being saved, run:</p>
+<pre><code>:set sessionoptions?</code></pre>
+<p>Mine says:</p>
+<pre><code>blank,buffers,curdir,folds,help,tabpages,winsize,terminal</code></pre>
+<p>If you don’t want to save <code>terminal</code> when you save a Session, remove it from the session options. Run:</p>
+<pre><code>:set sessionoptions-=terminal</code></pre>
+<p>If you want to add an <code>options</code> when you save a Session, run:</p>
+<pre><code>:set sessionoptions+=options</code></pre>
+<p>Here are some attributes that <code>sessionoptions</code> can store: - <code>blank</code> stores empty windows - <code>buffers</code> stores buffers - <code>folds</code> stores folds - <code>globals</code> stores global variables (must start with an uppercase letter and contain at least one lowercase letter) - <code>options</code> stores options and mappings - <code>resize</code> stores window lines and columns - <code>winpos</code> stores window position - <code>winsize</code> stores window sizes - <code>tabpages</code> stores tabs - <code>unix</code> stores files in Unix format</p>
+<p>For the complete list check out <code>:h 'sessionoptions'</code>.</p>
+<p>Session is a useful tool to preserve your project’s external attributes. However, some internal attributes aren’t saved by Session, like local marks, registers, histories, etc. To save them, you need to use Viminfo!</p>
+</section>
+</section>
+<section id="viminfo" class="level2" data-number="20.3">
+<h2 data-number="20.3" class="anchored" data-anchor-id="viminfo"><span class="header-section-number">20.3</span> Viminfo</h2>
+<p>If you notice, after yanking a word into register a and quitting Vim, the next time you open Vim you still have that text stored in register a. This is actually a work of Viminfo. Without it, Vim won’t remember the register after you close Vim.</p>
+<p>If you use Vim 8 or higher, Vim enables Viminfo by default, so you may have been using Viminfo this whole time without knowing it!</p>
+<p>You might ask: <q>What does Viminfo save? How does it differ from Session?</q></p>
+<p>To use Viminfo, first you need to have <code>+viminfo</code> feature available (<code>:version</code>). Viminfo stores: - The command-line history. - The search string history. - The input-line history. - Contents of non-empty registers. - Marks for several files. - File marks, pointing to locations in files. - Last search / substitute pattern (for <q>n</q> and <q>&amp;</q>). - The buffer list. - Global variables.</p>
+<p>In general, Session stores the <q>external</q> attributes and Viminfo the <q>internal</q> attributes.</p>
+<p>Unlike Session where you can have one Session file per project, you normally will use one Viminfo file per computer. Viminfo is project-agnostic.</p>
+<p>The default Viminfo location for Unix is <code>$HOME/.viminfo</code> (<code>~/.viminfo</code>). If you use a different OS, your Viminfo location might be different. Check out <code>:h viminfo-file-name</code>. Each time you make <q>internal</q> changes, like yanking a text into a register, Vim automatically updates the Viminfo file.</p>
+<p><em>Make sure that you have <code>nocompatible</code> option set (<code>set nocompatible</code>), otherwise your Viminfo will not work.</em></p>
+<section id="writing-and-reading-viminfo" class="level3" data-number="20.3.1">
+<h3 data-number="20.3.1" class="anchored" data-anchor-id="writing-and-reading-viminfo"><span class="header-section-number">20.3.1</span> Writing and Reading Viminfo</h3>
+<p>Although you will use only one Viminfo file, you can create multiple Viminfo files. To write a Viminfo file, use the <code>:wviminfo</code> command (<code>:wv</code> for short).</p>
+<pre><code>:wv ~/.viminfo_extra</code></pre>
+<p>To overwrite an existing Viminfo file, add a bang to the <code>wv</code> command:</p>
+<pre><code>:wv! ~/.viminfo_extra</code></pre>
+<p>By default Vim will read from <code>~/.viminfo</code> file. To read from a different Viminfo file, run <code>:rviminfo</code>, or <code>:rv</code> for short:</p>
+<pre><code>:rv ~/.viminfo_extra</code></pre>
+<p>To start Vim with a different Viminfo file from the terminal, use the <code>i</code> flag:</p>
+<pre><code>vim -i viminfo_extra</code></pre>
+<p>If you use Vim for different tasks, like coding and writing, you can create a Viminfo optimized for writing and another for coding.</p>
+<pre><code>vim -i viminfo_writing
+
+vim -i viminfo_coding</code></pre>
+</section>
+<section id="starting-vim-without-viminfo" class="level3" data-number="20.3.2">
+<h3 data-number="20.3.2" class="anchored" data-anchor-id="starting-vim-without-viminfo"><span class="header-section-number">20.3.2</span> Starting Vim Without Viminfo</h3>
+<p>To start Vim without Viminfo, you can run from the terminal:</p>
+<pre><code>vim -i NONE</code></pre>
+<p>To make it permanent, you can add this in your vimrc file:</p>
+<pre><code>set viminfo="NONE"</code></pre>
+</section>
+<section id="configuring-viminfo-attributes" class="level3" data-number="20.3.3">
+<h3 data-number="20.3.3" class="anchored" data-anchor-id="configuring-viminfo-attributes"><span class="header-section-number">20.3.3</span> Configuring Viminfo Attributes</h3>
+<p>Similar to <code>viewoptions</code> and <code>sessionoptions</code>, you can instruct what attributes to save with the <code>viminfo</code> option. Run:</p>
+<pre><code>:set viminfo?</code></pre>
+<p>You will get:</p>
+<pre><code>!,'100,&lt;50,s10,h</code></pre>
+<p>This looks cryptic. Let’s break it down: - <code>!</code> saves global variables that start with an uppercase letter and don’t contain lowercase letters. Recall that <code>g:</code> indicates a global variable. For example, if at some point you wrote the assignment <code>let g:FOO = "foo"</code>, Viminfo will save the global variable <code>FOO</code>. However if you did <code>let g:Foo = "foo"</code>, Viminfo will not save this global variable because it contains lowercase letters. Without <code>!</code>, Vim won’t save those global variables. - <code>'100</code> represents marks. In this case, Viminfo will save the local marks (a-z) of the last 100 files. Be aware that if you tell Viminfo to save too many files, Vim can start slowing down. 1000 is a good number to have. - <code>&lt;50</code> tells Viminfo how many maximum lines are saved for each register (50 in this case). If I yank 100 lines of text into register a (<code>"ay99j</code>) and close Vim, the next time I open Vim and paste from register a (<code>"ap</code>), Vim will only paste 50 lines max. If you don’t give maximum line number, <em>all</em> lines will be saved. If you give it 0, nothing will be saved. - <code>s10</code> sets a size limit (in kb) for a register. In this case, any register greater than 10kb size will be excluded. - <code>h</code> disables highlighting (from <code>hlsearch</code>) when Vim starts.</p>
+<p>There are other options that you can pass. To learn more, check out <code>:h 'viminfo'</code>.</p>
+</section>
+</section>
+<section id="using-views-sessions-and-viminfo-the-smart-way" class="level2" data-number="20.4">
+<h2 data-number="20.4" class="anchored" data-anchor-id="using-views-sessions-and-viminfo-the-smart-way"><span class="header-section-number">20.4</span> Using Views, Sessions, and Viminfo the Smart Way</h2>
+<p>Vim has View, Session, and Viminfo to take different level of your Vim environment snapshots. For micro projects, use Views. For larger projects, use Sessions. You should take your time to check out all the options that View, Session, and Viminfo offers.</p>
+<p>Create your own View, Session, and Viminfo for your own editing style. If you ever need to use Vim outside of your computer, you can just load your settings and you will immediately feel at home!</p>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const disableStylesheet = (stylesheets) => {
+    for (let i=0; i < stylesheets.length; i++) {
+      const stylesheet = stylesheets[i];
+      stylesheet.rel = 'prefetch';
+    }
+  }
+  const enableStylesheet = (stylesheets) => {
+    for (let i=0; i < stylesheets.length; i++) {
+      const stylesheet = stylesheets[i];
+      stylesheet.rel = 'stylesheet';
+    }
+  }
+  const manageTransitions = (selector, allowTransitions) => {
+    const els = window.document.querySelectorAll(selector);
+    for (let i=0; i < els.length; i++) {
+      const el = els[i];
+      if (allowTransitions) {
+        el.classList.remove('notransition');
+      } else {
+        el.classList.add('notransition');
+      }
+    }
+  }
+  const toggleColorMode = (alternate) => {
+    // Switch the stylesheets
+    const alternateStylesheets = window.document.querySelectorAll('link.quarto-color-scheme.quarto-color-alternate');
+    manageTransitions('#quarto-margin-sidebar .nav-link', false);
+    if (alternate) {
+      enableStylesheet(alternateStylesheets);
+      for (const sheetNode of alternateStylesheets) {
+        if (sheetNode.id === "quarto-bootstrap") {
+          toggleBodyColorMode(sheetNode);
+        }
+      }
+    } else {
+      disableStylesheet(alternateStylesheets);
+      toggleBodyColorPrimary();
+    }
+    manageTransitions('#quarto-margin-sidebar .nav-link', true);
+    // Switch the toggles
+    const toggles = window.document.querySelectorAll('.quarto-color-scheme-toggle');
+    for (let i=0; i < toggles.length; i++) {
+      const toggle = toggles[i];
+      if (toggle) {
+        if (alternate) {
+          toggle.classList.add("alternate");     
+        } else {
+          toggle.classList.remove("alternate");
+        }
+      }
+    }
+    // Hack to workaround the fact that safari doesn't
+    // properly recolor the scrollbar when toggling (#1455)
+    if (navigator.userAgent.indexOf('Safari') > 0 && navigator.userAgent.indexOf('Chrome') == -1) {
+      manageTransitions("body", false);
+      window.scrollTo(0, 1);
+      setTimeout(() => {
+        window.scrollTo(0, 0);
+        manageTransitions("body", true);
+      }, 40);  
+    }
+  }
+  const isFileUrl = () => { 
+    return window.location.protocol === 'file:';
+  }
+  const hasAlternateSentinel = () => {  
+    let styleSentinel = getColorSchemeSentinel();
+    if (styleSentinel !== null) {
+      return styleSentinel === "alternate";
+    } else {
+      return false;
+    }
+  }
+  const setStyleSentinel = (alternate) => {
+    const value = alternate ? "alternate" : "default";
+    if (!isFileUrl()) {
+      window.localStorage.setItem("quarto-color-scheme", value);
+    } else {
+      localAlternateSentinel = value;
+    }
+  }
+  const getColorSchemeSentinel = () => {
+    if (!isFileUrl()) {
+      const storageValue = window.localStorage.getItem("quarto-color-scheme");
+      return storageValue != null ? storageValue : localAlternateSentinel;
+    } else {
+      return localAlternateSentinel;
+    }
+  }
+  let localAlternateSentinel = 'alternate';
+  // Dark / light mode switch
+  window.quartoToggleColorScheme = () => {
+    // Read the current dark / light value 
+    let toAlternate = !hasAlternateSentinel();
+    toggleColorMode(toAlternate);
+    setStyleSentinel(toAlternate);
+  };
+  // Ensure there is a toggle, if there isn't float one in the top right
+  if (window.document.querySelector('.quarto-color-scheme-toggle') === null) {
+    const a = window.document.createElement('a');
+    a.classList.add('top-right');
+    a.classList.add('quarto-color-scheme-toggle');
+    a.href = "";
+    a.onclick = function() { try { window.quartoToggleColorScheme(); } catch {} return false; };
+    const i = window.document.createElement("i");
+    i.classList.add('bi');
+    a.appendChild(i);
+    window.document.body.appendChild(a);
+  }
+  // Switch to dark mode if need be
+  if (hasAlternateSentinel()) {
+    toggleColorMode(true);
+  } else {
+    toggleColorMode(false);
+  }
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    target: function(trigger) {
+      return trigger.previousElementSibling;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="../chapters/ch19_compile.md.html" class="pagination-link">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">19</span>&nbsp; <span class="chapter-title">Ch19. Compile</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="../chapters/ch21_multiple_file_operations.md.html" class="pagination-link">
+        <span class="nav-page-text"><span class="chapter-number">21</span>&nbsp; <span class="chapter-title">Multiple File Operations</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+
+
+
+</body></html>

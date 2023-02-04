@@ -1,0 +1,791 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.2.313">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Learn Vim (the Smart Way) - 5&nbsp; Ch05. Moving in a File</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1.6em;
+  vertical-align: middle;
+}
+q { quotes: "“" "”" "‘" "’"; }
+</style>
+
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<link href="../chapters/ch06_insert_mode.md.html" rel="next">
+<link href="../chapters/ch04_vim_grammar.md.html" rel="prev">
+<script src="../site_libs/quarto-html/quarto.js"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-dark.min.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit"
+  }
+}</script>
+
+
+</head>
+
+<body class="nav-sidebar floating">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+    <div class="container-fluid d-flex justify-content-between">
+      <h1 class="quarto-secondary-nav-title"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Ch05. Moving in a File</span></h1>
+      <button type="button" class="quarto-btn-toggle btn" aria-label="Show secondary navigation">
+        <i class="bi bi-chevron-right"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="../">Learn Vim (the Smart Way)</a> 
+        <div class="sidebar-tools-main">
+    <a href="https://github.com/iggredible/Learn-Vim" title="" class="sidebar-tool px-1"><i class="bi bi-github"></i></a>
+  <a href="" class="quarto-color-scheme-toggle sidebar-tool" onclick="window.quartoToggleColorScheme(); return false;" title="Toggle dark mode"><i class="bi"></i></a>
+</div>
+    </div>
+      </div>
+      <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+      </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../index.html" class="sidebar-item-text sidebar-link">Preface</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch01_starting_vim.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Ch01. Starting Vim</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch02_buffers_windows_tabs.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Ch02. Buffers, Windows, and Tabs</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch03_searching_files.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Ch03. Searching Files</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch04_vim_grammar.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Ch04. Vim Grammar</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch05_moving_in_file.md.html" class="sidebar-item-text sidebar-link active"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Ch05. Moving in a File</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch06_insert_mode.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Ch06. Insert Mode</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch07_the_dot_command.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Ch07. the Dot Command</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch08_registers.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Ch08. Registers</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch09_macros.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Ch09. Macros</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch10_undo.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Ch10. Undo</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch11_visual_mode.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Ch11. Visual Mode</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch12_search_and_substitute.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Ch12. Search and Substitute</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch13_the_global_command.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Ch13. the Global Command</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch14_external_commands.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Ch14. External Commands</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch15_command-line_mode.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">Ch15. Command-line Mode</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch16_tags.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Ch16. Tags</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch17_fold.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">Ch17. Fold</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch18_git.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">18</span>&nbsp; <span class="chapter-title">Ch18. Git</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch19_compile.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">19</span>&nbsp; <span class="chapter-title">Ch19. Compile</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch20_views_sessions_viminfo.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">20</span>&nbsp; <span class="chapter-title">Ch20. Views, Sessions, and Viminfo</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch21_multiple_file_operations.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">21</span>&nbsp; <span class="chapter-title">Multiple File Operations</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch22_vimrc.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">22</span>&nbsp; <span class="chapter-title">Ch22. Vimrc</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch23_vim_packages.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">23</span>&nbsp; <span class="chapter-title">Ch23. Vim Packages</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch24_vim_runtime.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">24</span>&nbsp; <span class="chapter-title">Ch24. Vim Runtime</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch25_vimscript_basic_data_types.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">25</span>&nbsp; <span class="chapter-title">Ch25. Vimscript Basic Data Types</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch26_vimscript_conditionals_and_loops.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">26</span>&nbsp; <span class="chapter-title">Ch26. Vimscript Conditionals and Loops</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch27_vimscript_variable_scopes.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">27</span>&nbsp; <span class="chapter-title">Ch27. Vimscript Variable Scopes</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch28_vimscript_functions.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">28</span>&nbsp; <span class="chapter-title">Ch28. Vimscript Functions</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch29_plugin_example_writing-a-titlecase-plugin.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">29</span>&nbsp; <span class="chapter-title">Ch29. Write a Plugin: Creating a Titlecase Operator</span></a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#character-navigation" id="toc-character-navigation" class="nav-link active" data-scroll-target="#character-navigation"><span class="toc-section-number">5.1</span>  Character Navigation</a></li>
+  <li><a href="#relative-numbering" id="toc-relative-numbering" class="nav-link" data-scroll-target="#relative-numbering"><span class="toc-section-number">5.2</span>  Relative Numbering</a></li>
+  <li><a href="#count-your-move" id="toc-count-your-move" class="nav-link" data-scroll-target="#count-your-move"><span class="toc-section-number">5.3</span>  Count Your Move</a></li>
+  <li><a href="#word-navigation" id="toc-word-navigation" class="nav-link" data-scroll-target="#word-navigation"><span class="toc-section-number">5.4</span>  Word Navigation</a></li>
+  <li><a href="#current-line-navigation" id="toc-current-line-navigation" class="nav-link" data-scroll-target="#current-line-navigation"><span class="toc-section-number">5.5</span>  Current Line Navigation</a></li>
+  <li><a href="#sentence-and-paragraph-navigation" id="toc-sentence-and-paragraph-navigation" class="nav-link" data-scroll-target="#sentence-and-paragraph-navigation"><span class="toc-section-number">5.6</span>  Sentence and Paragraph Navigation</a></li>
+  <li><a href="#match-navigation" id="toc-match-navigation" class="nav-link" data-scroll-target="#match-navigation"><span class="toc-section-number">5.7</span>  Match Navigation</a></li>
+  <li><a href="#line-number-navigation" id="toc-line-number-navigation" class="nav-link" data-scroll-target="#line-number-navigation"><span class="toc-section-number">5.8</span>  Line Number Navigation</a></li>
+  <li><a href="#window-navigation" id="toc-window-navigation" class="nav-link" data-scroll-target="#window-navigation"><span class="toc-section-number">5.9</span>  Window Navigation</a></li>
+  <li><a href="#scrolling" id="toc-scrolling" class="nav-link" data-scroll-target="#scrolling"><span class="toc-section-number">5.10</span>  Scrolling</a></li>
+  <li><a href="#search-navigation" id="toc-search-navigation" class="nav-link" data-scroll-target="#search-navigation"><span class="toc-section-number">5.11</span>  Search Navigation</a></li>
+  <li><a href="#marking-position" id="toc-marking-position" class="nav-link" data-scroll-target="#marking-position"><span class="toc-section-number">5.12</span>  Marking Position</a></li>
+  <li><a href="#jump" id="toc-jump" class="nav-link" data-scroll-target="#jump"><span class="toc-section-number">5.13</span>  Jump</a></li>
+  <li><a href="#learn-navigation-the-smart-way" id="toc-learn-navigation-the-smart-way" class="nav-link" data-scroll-target="#learn-navigation-the-smart-way"><span class="toc-section-number">5.14</span>  Learn Navigation the Smart Way</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title d-none d-lg-block"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Ch05. Moving in a File</span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+</header>
+
+<p>In the beginning, moving with a keyboard feels slow and awkward but don’t give up! Once you get used to it, you can go anywhere in a file faster than using a mouse.</p>
+<p>In this chapter, you will learn the essential motions and how to use them efficiently. Keep in mind that this is <strong>not</strong> the entire motion that Vim has. The goal here is to introduce useful motions to become productive quickly. If you need to learn more, check out <code>:h motion.txt</code>.</p>
+<section id="character-navigation" class="level2" data-number="5.1">
+<h2 data-number="5.1" class="anchored" data-anchor-id="character-navigation"><span class="header-section-number">5.1</span> Character Navigation</h2>
+<p>The most basic motion unit is moving one character left, down, up, and right.</p>
+<pre><code>h   Left
+j   Down
+k   Up
+l   Right
+gj  Down in a soft-wrapped line
+gk  Up in a soft-wrapped line</code></pre>
+<p>You can also move with directional arrows. If you are just starting, feel free to use any method you’re most comfortable with.</p>
+<p>I prefer <code>hjkl</code> because my right hand can stay in the home row. Doing this gives me shorter reach to surrounding keys. To get used to <code>hjkl</code>, I actually disabled the arrow buttons when starting out by adding these in <code>~/.vimrc</code>:</p>
+<pre><code>noremap &lt;Up&gt; &lt;NOP&gt;
+noremap &lt;Down&gt; &lt;NOP&gt;
+noremap &lt;Left&gt; &lt;NOP&gt;
+noremap &lt;Right&gt; &lt;NOP&gt;</code></pre>
+<p>There are also plugins to help break this bad habit. One of them is <a href="https://github.com/takac/vim-hardtime">vim-hardtime</a>. To my surprise, it took me less than a week to get used to <code>hjkl</code>.</p>
+<p>If you wonder why Vim uses <code>hjkl</code> to move, this is because Lear-Siegler ADM-3A terminal where Bill Joy wrote Vi, didn’t have arrow keys and used <code>hjkl</code> as left/down/up/right.*</p>
+</section>
+<section id="relative-numbering" class="level2" data-number="5.2">
+<h2 data-number="5.2" class="anchored" data-anchor-id="relative-numbering"><span class="header-section-number">5.2</span> Relative Numbering</h2>
+<p>I think it is helpful to have <code>number</code> and <code>relativenumber</code> set. You can do it by having this on <code>.vimrc</code>:</p>
+<pre><code>set relativenumber number</code></pre>
+<p>This displays my current line number and relative line numbers.</p>
+<p>It is easy why having a number on the left column is useful, but some of you may ask how having relative numbers on the left column may be useful. Having a relative number allows me to quickly see how many lines apart my cursor is from the target text. With this, I can easily spot that my target text is 12 lines below me so I can do <code>d12j</code> to delete them. Otherwise, if I’m on line 69 and my target is on line 81, I have to do mental calculation (81 - 69 = 12). Doing math while editing takes too much mental resources. The less I have to think about where I need to go, the better.</p>
+<p>This is 100% personal preference. Experiment with <code>relativenumber</code> / <code>norelativenumber</code>, <code>number</code> / <code>nonumber</code> and use whatever you find most useful!</p>
+</section>
+<section id="count-your-move" class="level2" data-number="5.3">
+<h2 data-number="5.3" class="anchored" data-anchor-id="count-your-move"><span class="header-section-number">5.3</span> Count Your Move</h2>
+<p>Let’s talk about the <q>count</q> argument. Vim motions accept a preceding numerical argument. I mentioned above that you can go down 12 lines with <code>12j</code>. The 12 in <code>12j</code> is the count number.</p>
+<p>The syntax to use count with your motion is:</p>
+<pre><code>[count] + motion</code></pre>
+<p>You can apply this to all motions. If you want to move 9 characters to the right, instead of pressing <code>l</code> 9 times, you can do <code>9l</code>.</p>
+</section>
+<section id="word-navigation" class="level2" data-number="5.4">
+<h2 data-number="5.4" class="anchored" data-anchor-id="word-navigation"><span class="header-section-number">5.4</span> Word Navigation</h2>
+<p>Let’s move to a larger motion unit: <em>word</em>. You can move to the beginning of the next word (<code>w</code>), to the end of the next word (<code>e</code>), to the beginning of the previous word (<code>b</code>), and to the end of the previous word (<code>ge</code>).</p>
+<p>In addition, there is <em>WORD</em>, distinct from word. You can move to the beginning of the next WORD (<code>W</code>), to the end of the next WORD (<code>E</code>), to the beginning of the previous WORD (<code>B</code>), and to the end of the previous WORD (<code>gE</code>). To make it easy to remember, WORD uses the same letters as word, only uppercased.</p>
+<pre><code>w     Move forward to the beginning of the next word
+W     Move forward to the beginning of the next WORD
+e     Move forward one word to the end of the next word
+E     Move forward one word to the end of the next WORD
+b     Move backward to beginning of the previous word
+B     Move backward to beginning of the previous WORD
+ge    Move backward to end of the previous word
+gE    Move backward to end of the previous WORD</code></pre>
+<p>So what are the similarities and differences between a word and a WORD? Both word and WORD are separated by blank characters. A word is a sequence of characters containing <em>only</em> <code>a-zA-Z0-9_</code>. A WORD is a sequence of all characters except white space (a white space means either space, tab, and EOL). To learn more, check out <code>:h word</code> and <code>:h WORD</code>.</p>
+<p>For example, suppose you have:</p>
+<pre><code>const hello = "world";</code></pre>
+<p>With your cursor at the start of the line, to go to the end of the line with <code>l</code>, it will take you 21 key presses. Using <code>w</code>, it will take 6. Using <code>W</code>, it will only take 4. Both word and WORD are good options to travel short distance.</p>
+<p>However, you can get from <q>c</q> to <q>;</q> in one keystroke with current line navigation.</p>
+</section>
+<section id="current-line-navigation" class="level2" data-number="5.5">
+<h2 data-number="5.5" class="anchored" data-anchor-id="current-line-navigation"><span class="header-section-number">5.5</span> Current Line Navigation</h2>
+<p>When editing, you often need to navigate horizontally in a line. To jump to the first character in current line, use <code>0</code>. To go to the last character in the current line, use <code>$</code>. Additionally, you can use <code>^</code> to go to the first non-blank character in the current line and <code>g_</code> to go to the last non-blank character in the current line. If you want to go to the column <code>n</code> in the current line, you can use <code>n|</code>.</p>
+<pre><code>0     Go to the first character in the current line
+^     Go to the first nonblank char in the current line
+g_    Go to the last non-blank char in the current line
+$     Go to the last char in the current line
+n|    Go the column n in the current line</code></pre>
+<p>You can do current line search with <code>f</code> and <code>t</code>. The difference between <code>f</code> and <code>t</code> is that <code>f</code> takes you to the first letter of the match and <code>t</code> takes you till (right before) the first letter of the match. So if you want to search for <q>h</q> and land on <q>h</q>, use <code>fh</code>. If you want to search for first <q>h</q> and land right before the match, use <code>th</code>. If you want to go to the <em>next</em> occurrence of the last current line search, use <code>;</code>. To go to the previous occurrence of the last current line match, use <code>,</code>.</p>
+<p><code>F</code> and <code>T</code> are the backward counterparts of <code>f</code> and <code>t</code>. To search backwards for <q>h</q>, run <code>Fh</code>. To keep searching for <q>h</q> in the same direction, use <code>;</code>. Note that <code>;</code> after a <code>Fh</code> searches backward and <code>,</code> after <code>Fh</code> searches forward.</p>
+<pre><code>f    Search forward for a match in the same line
+F    Search backward for a match in the same line
+t    Search forward for a match in the same line, stopping before match
+T    Search backward for a match in the same line, stopping before match
+;    Repeat the last search in the same line using the same direction
+,    Repeat the last search in the same line using the opposite direction</code></pre>
+<p>Back at the previous example:</p>
+<pre><code>const hello = "world";</code></pre>
+<p>With your cursor at the start of the line, you can go to the last character in current line (<q>;</q>) with one keypress: <code>$</code>. If you want to go to <q>w</q> in <q>world</q>, you can use <code>fw</code>. A good tip to go anywhere in a line is to look for least-common-letters like <q>j</q>, <q>x</q>, <q>z</q> near your target.</p>
+</section>
+<section id="sentence-and-paragraph-navigation" class="level2" data-number="5.6">
+<h2 data-number="5.6" class="anchored" data-anchor-id="sentence-and-paragraph-navigation"><span class="header-section-number">5.6</span> Sentence and Paragraph Navigation</h2>
+<p>Next two navigation units are sentence and paragraph.</p>
+<p>Let’s talk about what a sentence is first. A sentence ends with either <code>. ! ?</code> followed by an EOL, a space, or a tab. You can jump to the next sentence with <code>)</code> and the previous sentence with <code>(</code>.</p>
+<pre><code>(    Jump to the previous sentence
+)    Jump to the next sentence</code></pre>
+<p>Let’s look at some examples. Which phrases do you think are sentences and which aren’t? Try navigating with <code>(</code> and <code>)</code> in Vim!</p>
+<pre><code>I am a sentence. I am another sentence because I end with a period. I am still a sentence when ending with an exclamation point! What about question mark? I am not quite a sentence because of the hyphen - and neither semicolon ; nor colon :
+
+There is an empty line above me.</code></pre>
+<p>By the way, if you’re having a problem with Vim not counting a sentence for phrases separated by <code>.</code> followed by a single line, you might be in <code>'compatible'</code> mode. Add <code>set nocompatible</code> into vimrc. In Vi, a sentence is a <code>.</code> followed by <strong>two</strong> spaces. You should have <code>nocompatible</code> set at all times.</p>
+<p>Let’s talk what a paragraph is. A paragraph begins after each empty line and also at each set of a paragraph macro specified by the pairs of characters in paragraphs option.</p>
+<pre><code>{    Jump to the previous paragraph
+}    Jump to the next paragraph</code></pre>
+<p>If you’re not sure what a paragraph macro is, do not worry. The important thing is that a paragraph begins and ends after an empty line. This should be true most of the time.</p>
+<p>Let’s look at this example. Try navigating around with <code>}</code> and <code>{</code> (also, play around with sentence navigations <code>( )</code> to move around too!)</p>
+<pre><code>Hello. How are you? I am great, thanks!
+Vim is awesome.
+It may not easy to learn it at first...- but we are in this together. Good luck!
+
+Hello again.
+
+Try to move around with ), (, }, and {. Feel how they work.
+You got this.</code></pre>
+<p>Check out <code>:h sentence</code> and <code>:h paragraph</code> to learn more.</p>
+</section>
+<section id="match-navigation" class="level2" data-number="5.7">
+<h2 data-number="5.7" class="anchored" data-anchor-id="match-navigation"><span class="header-section-number">5.7</span> Match Navigation</h2>
+<p>Programmers write and edit codes. Codes typically use parentheses, braces, and brackets. You can easily get lost in them. If you’re inside one, you can jump to the other pair (if it exists) with <code>%</code>. You can also use this to find out whether you have matching parentheses, braces, and brackets.</p>
+<pre><code>%    Navigate to another match, usually works for (), [], {}</code></pre>
+<p>Let’s look at a Scheme code example because it uses parentheses extensively. Move around with <code>%</code> inside different parentheses.</p>
+<pre><code>(define (fib n)
+  (cond ((= n 0) 0)
+        ((= n 1) 1)
+        (else
+          (+ (fib (- n 1)) (fib (- n 2)))
+        )))</code></pre>
+<p>I personally like to complement <code>%</code> with visual indicators plugins like <a href="https://github.com/frazrepo/vim-rainbow">vim-rainbow</a>. For more, check out <code>:h %</code>.</p>
+</section>
+<section id="line-number-navigation" class="level2" data-number="5.8">
+<h2 data-number="5.8" class="anchored" data-anchor-id="line-number-navigation"><span class="header-section-number">5.8</span> Line Number Navigation</h2>
+<p>You can jump to line number <code>n</code> with <code>nG</code>. For example, if you want to jump to line 7, use <code>7G</code>. To jump to the first line, use either <code>1G</code> or <code>gg</code>. To jump to the last line, use <code>G</code>.</p>
+<p>Often you don’t know exactly what line number your target is, but you know it’s approximately at 70% of the whole file. In this case, you can do <code>70%</code>. To jump halfway through the file, you can do <code>50%</code>.</p>
+<pre><code>gg    Go to the first line
+G     Go to the last line
+nG    Go to line n
+n%    Go to n% in file</code></pre>
+<p>By the way, if you want to see total lines in a file, you can use <code>Ctrl-g</code>.</p>
+</section>
+<section id="window-navigation" class="level2" data-number="5.9">
+<h2 data-number="5.9" class="anchored" data-anchor-id="window-navigation"><span class="header-section-number">5.9</span> Window Navigation</h2>
+<p>To quickly go to the top, middle, or bottom of your <em>window</em>, you can use <code>H</code>, <code>M</code>, and <code>L</code>.</p>
+<p>You can also pass a count to <code>H</code> and <code>L</code>. If you use <code>10H</code>, you will go to 10 lines below the top of window. If you use <code>3L</code>, you will go to 3 lines above the last line of window.</p>
+<pre><code>H     Go to top of screen
+M     Go to medium screen
+L     Go to bottom of screen
+nH    Go n line from top
+nL    Go n line from bottom</code></pre>
+</section>
+<section id="scrolling" class="level2" data-number="5.10">
+<h2 data-number="5.10" class="anchored" data-anchor-id="scrolling"><span class="header-section-number">5.10</span> Scrolling</h2>
+<p>To scroll, you have 3 speed increments: full-screen (<code>Ctrl-F/Ctrl-B</code>), half-screen (<code>Ctrl-D/Ctrl-U</code>), and line (<code>Ctrl-E/Ctrl-Y</code>).</p>
+<pre><code>Ctrl-E    Scroll down a line
+Ctrl-D    Scroll down half screen
+Ctrl-F    Scroll down whole screen
+Ctrl-Y    Scroll up a line
+Ctrl-U    Scroll up half screen
+Ctrl-B    Scroll up whole screen</code></pre>
+<p>You can also scroll relatively to the current line (zoom screen sight):</p>
+<pre><code>zt    Bring the current line near the top of your screen
+zz    Bring the current line to the middle of your screen
+zb    Bring the current line near the bottom of your screen</code></pre>
+</section>
+<section id="search-navigation" class="level2" data-number="5.11">
+<h2 data-number="5.11" class="anchored" data-anchor-id="search-navigation"><span class="header-section-number">5.11</span> Search Navigation</h2>
+<p>Often you know that a phrase exists inside a file. You can use search navigation to very quickly reach your target. To search for a phrase, you can use <code>/</code> to search forward and <code>?</code> to search backward. To repeat the last search you can use <code>n</code>. To repeat the last search going opposite direction, you can use <code>N</code>.</p>
+<pre><code>/    Search forward for a match
+?    Search backward for a match
+n    Repeat last search in same direction of previous search
+N    Repeat last search in opposite direction of previous search</code></pre>
+<p>Suppose you have this text:</p>
+<pre><code>let one = 1;
+let two = 2;
+one = "01";
+one = "one";
+let onetwo = 12;</code></pre>
+<p>If you are searching for <q>let</q>, run <code>/let</code>. To quickly search for <q>let</q> again, you can just do <code>n</code>. To search for <q>let</q> again in opposite direction, run <code>N</code>. If you run <code>?let</code>, it will search for <q>let</q> backwards. If you use <code>n</code>, it will now search for <q>let</q> backwards (<code>N</code> will search for <q>let</q> forwards now).</p>
+<p>You can enable search highlight with <code>set hlsearch</code>. Now when you search for <code>/let</code>, it will highlight <em>all</em> matching phrases in the file. In addition, you can set incremental search with <code>set incsearch</code>. This will highlight the pattern while typing. By default, your matching phrases will remain highlighted until you search for another phrase. This can quickly turn into an annoyance. To disable highlight, you can run <code>:nohlsearch</code> or simply <code>:noh</code>. Because I use this no-highlight feature frequently, I created a map in vimrc:</p>
+<pre><code>nnoremap &lt;esc&gt;&lt;esc&gt; :noh&lt;return&gt;&lt;esc&gt;</code></pre>
+<p>You can quickly search for the text under the cursor with <code>*</code> to search forward and <code>#</code> to search backward. If your cursor is on the string <q>one</q>, pressing <code>*</code> will be the same as if you had done <code>/\&lt;one\&gt;</code>.</p>
+<p>Both <code>\&lt;</code> and <code>\&gt;</code> in <code>/\&lt;one\&gt;</code> mean whole word search. It does not match <q>one</q> if it is a part of a bigger word. It will match for the word <q>one</q> but not <q>onetwo</q>. If your cursor is over <q>one</q> and you want to search forward to match whole or partial words like <q>one</q> and <q>onetwo</q>, you need to use <code>g*</code> instead of <code>*</code>.</p>
+<pre><code>*     Search for whole word under cursor forward
+#     Search for whole word under cursor backward
+g*    Search for word under cursor forward
+g#    Search for word under cursor backward
+</code></pre>
+</section>
+<section id="marking-position" class="level2" data-number="5.12">
+<h2 data-number="5.12" class="anchored" data-anchor-id="marking-position"><span class="header-section-number">5.12</span> Marking Position</h2>
+<p>You can use marks to save your current position and return to this position later. It’s like a bookmark for text editing. You can set a mark with <code>mx</code>, where <code>x</code> can be any alphabetical letter <code>a-zA-Z</code>. There are two ways to return to mark: exact (line and column) with <code>`x</code> and linewise (<code>'x</code>).</p>
+<pre><code>ma    Mark position with mark "a"
+`a    Jump to line and column "a"
+'a    Jump to line "a"</code></pre>
+<p>There is a difference between marking with lowercase letters (a-z) and uppercase letters (A-Z). Lowercase alphabets are local marks and uppercase alphabets are global marks (sometimes known as file marks).</p>
+<p>Let’s talk about local marks. Each buffer can have its own set of local marks. If I have two files opened, I can set a mark <q>a</q> (<code>ma</code>) in the first file and another mark <q>a</q> (<code>ma</code>) in the second file.</p>
+<p>Unlike local marks where you can have a set of marks in each buffer, you only get one set of global marks. If you set <code>mA</code> inside <code>myFile.txt</code>, the next time you run <code>mA</code> in a different file, it will overwrite the first <q>A</q> mark. One advantage of global marks is you can jump to any global mark even if you are inside a completely different project. Global marks can travel across files.</p>
+<p>To view all marks, use <code>:marks</code>. You may notice from the marks list there are more marks other than <code>a-zA-Z</code>. Some of them are:</p>
+<pre><code>''    Jump back to the last line in current buffer before jump
+``    Jump back to the last position in current buffer before jump
+`[    Jump to beginning of previously changed / yanked text
+`]    Jump to the ending of previously changed / yanked text
+`&lt;    Jump to the beginning of last visual selection
+`&gt;    Jump to the ending of last visual selection
+`0    Jump back to the last edited file when exiting vim</code></pre>
+<p>There are more marks than the ones listed above. I won’t cover them here because I think they are rarely used, but if you’re curious, check out <code>:h marks</code>.</p>
+</section>
+<section id="jump" class="level2" data-number="5.13">
+<h2 data-number="5.13" class="anchored" data-anchor-id="jump"><span class="header-section-number">5.13</span> Jump</h2>
+<p>In Vim, you can <q>jump</q> to a different file or different part of a file with some motions. Not all motions count as a jump, though. Going down with <code>j</code> does not count as a jump. Going to line 10 with <code>10G</code> counts as a jump.</p>
+<p>Here are the commands Vim consider as <q>jump</q> commands:</p>
+<pre><code>'       Go to the marked line
+`       Go to the marked position
+G       Go to the line
+/       Search forward
+?       Search backward
+n       Repeat the last search, same direction
+N       Repeat the last search, opposite direction
+%       Find match
+(       Go to the last sentence
+)       Go to the next sentence
+{       Go to the last paragraph
+}       Go to the next paragraph
+L       Go to the the last line of displayed window
+M       Go to the middle line of displayed window
+H       Go to the top line of displayed window
+[[      Go to the previous section
+]]      Go to the next section
+:s      Substitute
+:tag    Jump to tag definition</code></pre>
+<p>I don’t recommend memorizing this list. A good rule of thumb is, any motion that moves farther than a word and current line navigation is probably a jump. Vim keeps track of where you’ve been when you move around and you can see this list inside <code>:jumps</code>.</p>
+<p>For more, check out <code>:h jump-motions</code>.</p>
+<p>Why are jumps useful? Because you can navigate the jump list with <code>Ctrl-O</code> to move up the jump list and <code>Ctrl-I</code> to move down the jump list. <code>hjkl</code> are not <q>jump</q> commands, but you can manually add the current location to jump list with <code>m'</code> before movement. For example, <code>m'5j</code> adds current location to jump list and goes down 5 lines, and you can come back with <code>Ctrl-O</code>. You can jump across different files, which I will discuss more in the next part.</p>
+</section>
+<section id="learn-navigation-the-smart-way" class="level2" data-number="5.14">
+<h2 data-number="5.14" class="anchored" data-anchor-id="learn-navigation-the-smart-way"><span class="header-section-number">5.14</span> Learn Navigation the Smart Way</h2>
+<p>If you are new to Vim, this is a lot to learn. I do not expect anyone to remember everything immediately. It takes time before you can execute them without thinking.</p>
+<p>I think the best way to get started is to memorize a few essential motions. I recommend starting out with these 10 motions: <code>h, j, k, l, w, b, G, /, ?, n</code>. Repeat them sufficiently until you can use them without thinking.</p>
+<p>To improve your navigation skill, here are my suggestions: 1. Watch for repeated actions. If you find yourself doing <code>l</code> repeatedly, look for a motion that will take you forward faster. You will find that you can use <code>w</code>. If you catch yourself repeatedly doing <code>w</code>, look if there is a motion that will take you across the current line quickly. You will find that you can use the <code>f</code>. If you can describe your need succinctly, there is a good chance Vim has a way to do it. 2. Whenever you learn a new move, spend some time until you can do it without thinking.</p>
+<p>Finally, realize that you do not need to know every single Vim command to be productive. Most Vim users don’t. I don’t. Learn the commands that will help you accomplish your task at that moment.</p>
+<p>Take your time. Navigation skill is a very important skill in Vim. Learn one small thing every day and learn it well.</p>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const disableStylesheet = (stylesheets) => {
+    for (let i=0; i < stylesheets.length; i++) {
+      const stylesheet = stylesheets[i];
+      stylesheet.rel = 'prefetch';
+    }
+  }
+  const enableStylesheet = (stylesheets) => {
+    for (let i=0; i < stylesheets.length; i++) {
+      const stylesheet = stylesheets[i];
+      stylesheet.rel = 'stylesheet';
+    }
+  }
+  const manageTransitions = (selector, allowTransitions) => {
+    const els = window.document.querySelectorAll(selector);
+    for (let i=0; i < els.length; i++) {
+      const el = els[i];
+      if (allowTransitions) {
+        el.classList.remove('notransition');
+      } else {
+        el.classList.add('notransition');
+      }
+    }
+  }
+  const toggleColorMode = (alternate) => {
+    // Switch the stylesheets
+    const alternateStylesheets = window.document.querySelectorAll('link.quarto-color-scheme.quarto-color-alternate');
+    manageTransitions('#quarto-margin-sidebar .nav-link', false);
+    if (alternate) {
+      enableStylesheet(alternateStylesheets);
+      for (const sheetNode of alternateStylesheets) {
+        if (sheetNode.id === "quarto-bootstrap") {
+          toggleBodyColorMode(sheetNode);
+        }
+      }
+    } else {
+      disableStylesheet(alternateStylesheets);
+      toggleBodyColorPrimary();
+    }
+    manageTransitions('#quarto-margin-sidebar .nav-link', true);
+    // Switch the toggles
+    const toggles = window.document.querySelectorAll('.quarto-color-scheme-toggle');
+    for (let i=0; i < toggles.length; i++) {
+      const toggle = toggles[i];
+      if (toggle) {
+        if (alternate) {
+          toggle.classList.add("alternate");     
+        } else {
+          toggle.classList.remove("alternate");
+        }
+      }
+    }
+    // Hack to workaround the fact that safari doesn't
+    // properly recolor the scrollbar when toggling (#1455)
+    if (navigator.userAgent.indexOf('Safari') > 0 && navigator.userAgent.indexOf('Chrome') == -1) {
+      manageTransitions("body", false);
+      window.scrollTo(0, 1);
+      setTimeout(() => {
+        window.scrollTo(0, 0);
+        manageTransitions("body", true);
+      }, 40);  
+    }
+  }
+  const isFileUrl = () => { 
+    return window.location.protocol === 'file:';
+  }
+  const hasAlternateSentinel = () => {  
+    let styleSentinel = getColorSchemeSentinel();
+    if (styleSentinel !== null) {
+      return styleSentinel === "alternate";
+    } else {
+      return false;
+    }
+  }
+  const setStyleSentinel = (alternate) => {
+    const value = alternate ? "alternate" : "default";
+    if (!isFileUrl()) {
+      window.localStorage.setItem("quarto-color-scheme", value);
+    } else {
+      localAlternateSentinel = value;
+    }
+  }
+  const getColorSchemeSentinel = () => {
+    if (!isFileUrl()) {
+      const storageValue = window.localStorage.getItem("quarto-color-scheme");
+      return storageValue != null ? storageValue : localAlternateSentinel;
+    } else {
+      return localAlternateSentinel;
+    }
+  }
+  let localAlternateSentinel = 'alternate';
+  // Dark / light mode switch
+  window.quartoToggleColorScheme = () => {
+    // Read the current dark / light value 
+    let toAlternate = !hasAlternateSentinel();
+    toggleColorMode(toAlternate);
+    setStyleSentinel(toAlternate);
+  };
+  // Ensure there is a toggle, if there isn't float one in the top right
+  if (window.document.querySelector('.quarto-color-scheme-toggle') === null) {
+    const a = window.document.createElement('a');
+    a.classList.add('top-right');
+    a.classList.add('quarto-color-scheme-toggle');
+    a.href = "";
+    a.onclick = function() { try { window.quartoToggleColorScheme(); } catch {} return false; };
+    const i = window.document.createElement("i");
+    i.classList.add('bi');
+    a.appendChild(i);
+    window.document.body.appendChild(a);
+  }
+  // Switch to dark mode if need be
+  if (hasAlternateSentinel()) {
+    toggleColorMode(true);
+  } else {
+    toggleColorMode(false);
+  }
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    target: function(trigger) {
+      return trigger.previousElementSibling;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="../chapters/ch04_vim_grammar.md.html" class="pagination-link">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Ch04. Vim Grammar</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="../chapters/ch06_insert_mode.md.html" class="pagination-link">
+        <span class="nav-page-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Ch06. Insert Mode</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+
+
+
+</body></html>

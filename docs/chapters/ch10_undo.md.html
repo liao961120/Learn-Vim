@@ -1,0 +1,695 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.2.313">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Learn Vim (the Smart Way) - 10&nbsp; Ch10. Undo</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1.6em;
+  vertical-align: middle;
+}
+q { quotes: "“" "”" "‘" "’"; }
+</style>
+
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<link href="../chapters/ch11_visual_mode.md.html" rel="next">
+<link href="../chapters/ch09_macros.md.html" rel="prev">
+<script src="../site_libs/quarto-html/quarto.js"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-dark.min.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit"
+  }
+}</script>
+
+
+</head>
+
+<body class="nav-sidebar floating">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+    <div class="container-fluid d-flex justify-content-between">
+      <h1 class="quarto-secondary-nav-title"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Ch10. Undo</span></h1>
+      <button type="button" class="quarto-btn-toggle btn" aria-label="Show secondary navigation">
+        <i class="bi bi-chevron-right"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="../">Learn Vim (the Smart Way)</a> 
+        <div class="sidebar-tools-main">
+    <a href="https://github.com/iggredible/Learn-Vim" title="" class="sidebar-tool px-1"><i class="bi bi-github"></i></a>
+  <a href="" class="quarto-color-scheme-toggle sidebar-tool" onclick="window.quartoToggleColorScheme(); return false;" title="Toggle dark mode"><i class="bi"></i></a>
+</div>
+    </div>
+      </div>
+      <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+      </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../index.html" class="sidebar-item-text sidebar-link">Preface</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch01_starting_vim.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Ch01. Starting Vim</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch02_buffers_windows_tabs.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Ch02. Buffers, Windows, and Tabs</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch03_searching_files.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Ch03. Searching Files</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch04_vim_grammar.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Ch04. Vim Grammar</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch05_moving_in_file.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Ch05. Moving in a File</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch06_insert_mode.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Ch06. Insert Mode</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch07_the_dot_command.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Ch07. the Dot Command</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch08_registers.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Ch08. Registers</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch09_macros.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Ch09. Macros</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch10_undo.md.html" class="sidebar-item-text sidebar-link active"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Ch10. Undo</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch11_visual_mode.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Ch11. Visual Mode</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch12_search_and_substitute.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Ch12. Search and Substitute</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch13_the_global_command.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Ch13. the Global Command</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch14_external_commands.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Ch14. External Commands</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch15_command-line_mode.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">Ch15. Command-line Mode</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch16_tags.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Ch16. Tags</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch17_fold.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">Ch17. Fold</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch18_git.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">18</span>&nbsp; <span class="chapter-title">Ch18. Git</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch19_compile.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">19</span>&nbsp; <span class="chapter-title">Ch19. Compile</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch20_views_sessions_viminfo.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">20</span>&nbsp; <span class="chapter-title">Ch20. Views, Sessions, and Viminfo</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch21_multiple_file_operations.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">21</span>&nbsp; <span class="chapter-title">Multiple File Operations</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch22_vimrc.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">22</span>&nbsp; <span class="chapter-title">Ch22. Vimrc</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch23_vim_packages.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">23</span>&nbsp; <span class="chapter-title">Ch23. Vim Packages</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch24_vim_runtime.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">24</span>&nbsp; <span class="chapter-title">Ch24. Vim Runtime</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch25_vimscript_basic_data_types.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">25</span>&nbsp; <span class="chapter-title">Ch25. Vimscript Basic Data Types</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch26_vimscript_conditionals_and_loops.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">26</span>&nbsp; <span class="chapter-title">Ch26. Vimscript Conditionals and Loops</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch27_vimscript_variable_scopes.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">27</span>&nbsp; <span class="chapter-title">Ch27. Vimscript Variable Scopes</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch28_vimscript_functions.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">28</span>&nbsp; <span class="chapter-title">Ch28. Vimscript Functions</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch29_plugin_example_writing-a-titlecase-plugin.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">29</span>&nbsp; <span class="chapter-title">Ch29. Write a Plugin: Creating a Titlecase Operator</span></a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#undo-redo-and-undo" id="toc-undo-redo-and-undo" class="nav-link active" data-scroll-target="#undo-redo-and-undo"><span class="toc-section-number">10.1</span>  Undo, Redo, and UNDO</a></li>
+  <li><a href="#breaking-the-blocks" id="toc-breaking-the-blocks" class="nav-link" data-scroll-target="#breaking-the-blocks"><span class="toc-section-number">10.2</span>  Breaking the Blocks</a></li>
+  <li><a href="#undo-tree" id="toc-undo-tree" class="nav-link" data-scroll-target="#undo-tree"><span class="toc-section-number">10.3</span>  Undo Tree</a></li>
+  <li><a href="#persistent-undo" id="toc-persistent-undo" class="nav-link" data-scroll-target="#persistent-undo"><span class="toc-section-number">10.4</span>  Persistent Undo</a></li>
+  <li><a href="#time-travel" id="toc-time-travel" class="nav-link" data-scroll-target="#time-travel"><span class="toc-section-number">10.5</span>  Time Travel</a></li>
+  <li><a href="#learn-undo-the-smart-way" id="toc-learn-undo-the-smart-way" class="nav-link" data-scroll-target="#learn-undo-the-smart-way"><span class="toc-section-number">10.6</span>  Learn Undo the Smart Way</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title d-none d-lg-block"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Ch10. Undo</span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+</header>
+
+<p>We all make all sorts of typing mistakes. That’s why undo is an essential feature in any modern software. Vim’s undo system is not only capable of undoing and redoing simple mistakes, but also accessing different text states, giving you control to all the texts you have ever typed. In this chapter, you will learn how to undo, redo, navigate an undo branch, persist undo, and travel across time.</p>
+<section id="undo-redo-and-undo" class="level2" data-number="10.1">
+<h2 data-number="10.1" class="anchored" data-anchor-id="undo-redo-and-undo"><span class="header-section-number">10.1</span> Undo, Redo, and UNDO</h2>
+<p>To perform a basic undo, you can use <code>u</code> or run <code>:undo</code>.</p>
+<p>If you have this text (note the empty line below <q>one</q>):</p>
+<pre><code>one
+</code></pre>
+<p>Then you add another text:</p>
+<pre><code>one
+two</code></pre>
+<p>If you press <code>u</code>, Vim undoes the text <q>two</q>.</p>
+<p>How does Vim know how much to undo? Vim undoes a single <q>change</q> at a time, similar to a dot command’s change (unlike the dot command, command-line command also count as a change).</p>
+<p>To redo the last change, press <code>Ctrl-R</code> or run <code>:redo</code>. After you undo the text above to remove <q>two</q>, running <code>Ctrl-R</code> will get the removed text back.</p>
+<p>Vim also has UNDO that you can run with <code>U</code>. It undoes all latest changes.</p>
+<p>How is <code>U</code> different from <code>u</code>? First, <code>U</code> removes <em>all</em> the changes on the latest changed line, while <code>u</code> only removes one change at a time. Second, while doing <code>u</code> does not count as a change, doing <code>U</code> counts as a change.</p>
+<p>Back to this example:</p>
+<pre><code>one
+two</code></pre>
+<p>Change the second line to <q>three</q>:</p>
+<pre><code>one
+three</code></pre>
+<p>Change the second line again and replace it with <q>four</q>:</p>
+<pre><code>one
+four</code></pre>
+<p>If you press <code>u</code>, you will see <q>three</q>. If you press <code>u</code> again, you’ll see <q>two</q>. If instead of pressing <code>u</code> when you still had the text <q>four</q>, you had pressed <code>U</code>, you will see:</p>
+<pre><code>one
+</code></pre>
+<p><code>U</code> bypasses all the intermediary changes and goes to the original state when you started (an empty line). In addition, since UNDO actually creates a new change in Vim, you can UNDO your UNDO. <code>U</code> followed by <code>U</code> will undo itself. You can press <code>U</code>, then <code>U</code>, then <code>U</code>, etc. You will see the same two text states toggling back and forth.</p>
+<p>I personally do not use <code>U</code> because it is hard to remember the original state (I seldom ever need it).</p>
+<p>Vim sets a maximum number of how many times you can undo in <code>undolevels</code> option variable. You can check it with <code>:echo &amp;undolevels</code>. I have mine set to be 1000. To change yours to 1000, run <code>:set undolevels=1000</code>. Feel free to set it to any number you like.</p>
+</section>
+<section id="breaking-the-blocks" class="level2" data-number="10.2">
+<h2 data-number="10.2" class="anchored" data-anchor-id="breaking-the-blocks"><span class="header-section-number">10.2</span> Breaking the Blocks</h2>
+<p>I mentioned earlier that <code>u</code> undoes a single <q>change</q> similar to the dot command’s change: the texts inserted from when you enter the insert mode until you exit it count as a change.</p>
+<p>If you do <code>ione two three&lt;Esc&gt;</code> then press <code>u</code>, Vim removes the entire <q>one two three</q> text because the whole thing counts as a change. This is not a big deal if you have written short texts, but what if you have written several paragraphs within one insert mode session without exiting and later you realized you made a mistake? If you press <code>u</code>, everything you had written would be removed. Wouldn’t it be useful if you can press <code>u</code> to remove only a section of your text?</p>
+<p>Luckily, you can break the undo blocks. When you are typing in insert mode, pressing <code>Ctrl-G u</code> creates an undo breakpoint. For example, if you do <code>ione &lt;Ctrl-G u&gt;two &lt;Ctrl-G u&gt;three&lt;Esc&gt;</code>, then press <code>u</code>, you will only lose the text <q>three</q> (press <code>u</code> one more time to remove <q>two</q>). When you write a long text, use <code>Ctrl-G u</code> strategically. The end of each sentence, between two paragraphs, or after each line of code are prime locations to add undo breakpoints to make it easier to undo your mistakes if you ever make one.</p>
+<p>It is also useful to create an undo breakpoint when deleting chunks in insert mode with <code>Ctrl-W</code> (delete the word before the cursor) and <code>Ctrl-U</code> (delete all text before the cursor). A friend suggested to use the following maps:</p>
+<pre><code>inoremap &lt;c-u&gt; &lt;c-g&gt;u&lt;c-u&gt;
+inoremap &lt;c-w&gt; &lt;c-g&gt;u&lt;c-w&gt;</code></pre>
+<p>With these, you can easily recover the deleted texts.</p>
+</section>
+<section id="undo-tree" class="level2" data-number="10.3">
+<h2 data-number="10.3" class="anchored" data-anchor-id="undo-tree"><span class="header-section-number">10.3</span> Undo Tree</h2>
+<p>Vim stores every change ever written in an undo tree. Start a new empty file. Then add a new text:</p>
+<pre><code>one
+</code></pre>
+<p>Add a new text:</p>
+<pre><code>one
+two</code></pre>
+<p>Undo once:</p>
+<pre><code>one
+</code></pre>
+<p>Add a different text:</p>
+<pre><code>one
+three</code></pre>
+<p>Undo again:</p>
+<pre><code>one
+</code></pre>
+<p>And add another different text:</p>
+<pre><code>one
+four</code></pre>
+<p>Now if you undo, you will lose the text <q>four</q> you just added:</p>
+<pre><code>one
+</code></pre>
+<p>If you undo one more time:</p>
+<pre><code></code></pre>
+<p>You will lose the text <q>one</q>. In most text editor, getting the texts <q>two</q> and <q>three</q> back would have been impossible, but not with Vim! Press <code>g+</code> and you’ll get your text <q>one</q> back:</p>
+<pre><code>one
+</code></pre>
+<p>Type <code>g+</code> again and you will see an old friend:</p>
+<pre><code>one
+two</code></pre>
+<p>Let’s keep going. Press <code>g+</code> again:</p>
+<pre><code>one
+three</code></pre>
+<p>Press <code>g+</code> one more time:</p>
+<pre><code>one
+four</code></pre>
+<p>In Vim, every time you press <code>u</code> and then make a different change, Vim stores the previous state’s text by creating an <q>undo branch</q>. In this example, after you typed <q>two</q>, then pressed <code>u</code>, then typed <q>three</q>, you created an leaf branch that stores the state containing the text <q>two</q>. At that moment, the undo tree contained at least two leaf nodes: the main node containing the text <q>three</q> (most recent) and the undo branch node containing the text <q>two</q>. If you had done another undo and typed the text <q>four</q>, you would have at three nodes: a main node containing the text <q>four</q> and two nodes containing the texts <q>three</q> and <q>two</q>.</p>
+<p>To traverse each undo tree nodes, you can use <code>g+</code> to go to a newer state and <code>g-</code> to go to an older state. The difference between <code>u</code>, <code>Ctrl-R</code>, <code>g+</code>, and <code>g-</code> is that both <code>u</code> and <code>Ctrl-R</code> traverse only the <em>main</em> nodes in undo tree while <code>g+</code> and <code>g-</code> traverse <em>all</em> nodes in the undo tree.</p>
+<p>Undo tree is not easy to visualize. I find <a href="https://github.com/simnalamburt/vim-mundo">vim-mundo</a> plugin to be very useful to help visualize Vim’s undo tree. Give it some time to play around with it.</p>
+</section>
+<section id="persistent-undo" class="level2" data-number="10.4">
+<h2 data-number="10.4" class="anchored" data-anchor-id="persistent-undo"><span class="header-section-number">10.4</span> Persistent Undo</h2>
+<p>If you start Vim, open a file, and immediately press <code>u</code>, Vim will probably display <q><em>Already at oldest change</em></q> warning. There is nothing to undo because you haven’t made any changes.</p>
+<p>To rollover the undo history from the last editing session, Vim can preserve your undo history with an undo file with <code>:wundo</code>.</p>
+<p>Create a file <code>mynumbers.txt</code>. Type:</p>
+<pre><code>one</code></pre>
+<p>Then type another line (make sure each line counts as a change):</p>
+<pre><code>one
+two</code></pre>
+<p>Type another line:</p>
+<pre><code>one
+two
+three</code></pre>
+<p>Now create your undo file with <code>:wundo {my-undo-file}</code>. If you need to overwrite an existing undo file, you can add <code>!</code> after <code>wundo</code>.</p>
+<pre><code>:wundo! mynumbers.undo</code></pre>
+<p>Then exit Vim.</p>
+<p>By now you should have <code>mynumbers.txt</code> and <code>mynumbers.undo</code> files in your directory. Open up <code>mynumbers.txt</code> again and try pressing <code>u</code>. You can’t. You haven’t made any changes since you opened the file. Now load your undo history by reading the undo file with <code>:rundo</code>:</p>
+<pre><code>:rundo mynumbers.undo</code></pre>
+<p>Now if you press <code>u</code>, Vim removes <q>three</q>. Press <code>u</code> again to remove <q>two</q>. It is like you never even closed Vim!</p>
+<p>If you want to have an automatic undo persistence, one way to do it is by adding these in vimrc:</p>
+<pre><code>set undodir=~/.vim/undo_dir
+set undofile</code></pre>
+<p>The setting above will put all the undofile in one centralized directory, the <code>~/.vim</code> directory. The name <code>undo_dir</code> is arbitrary. <code>set undofile</code> tells Vim to turn on <code>undofile</code> feature because it is off by default. Now whenever you save, Vim automatically creates and updates the relevant file inside the <code>undo_dir</code> directory (make sure that you create the actual <code>undo_dir</code> directory inside <code>~/.vim</code> directory before running this).</p>
+</section>
+<section id="time-travel" class="level2" data-number="10.5">
+<h2 data-number="10.5" class="anchored" data-anchor-id="time-travel"><span class="header-section-number">10.5</span> Time Travel</h2>
+<p>Who says that time travel doesn’t exist? Vim can travel to a text state in the past with <code>:earlier</code> command-line command.</p>
+<p>If you have this text:</p>
+<pre><code>one
+</code></pre>
+<p>Then later you add:</p>
+<pre><code>one
+two</code></pre>
+<p>If you had typed <q>two</q> less than ten seconds ago, you can go back to the state where <q>two</q> didn’t exist ten seconds ago with:</p>
+<pre><code>:earlier 10s</code></pre>
+<p>You can use <code>:undolist</code> to see when the last change was made. <code>:earlier</code> also accepts different arguments:</p>
+<pre><code>:earlier 10s    Go to the state 10 seconds before
+:earlier 10m    Go to the state 10 minutes before
+:earlier 10h    Go to the state 10 hours before
+:earlier 10d    Go to the state 10 days before</code></pre>
+<p>In addition, it also accepts a regular <code>count</code> as argument to tell Vim to go to the older state <code>count</code> times. For example, if you do <code>:earlier 2</code>, Vim will go back to an older text state two changes ago. It is the same as doing <code>g-</code> twice. You can also tell it to go to the older text state 10 saves ago with <code>:earlier 10f</code>.</p>
+<p>The same set of arguments work with <code>:earlier</code> counterpart: <code>:later</code>.</p>
+<pre><code>:later 10s    go to the state 10 seconds later
+:later 10m    go to the state 10 minutes later
+:later 10h    go to the state 10 hours later
+:later 10d    go to the state 10 days later
+:later 10     go to the newer state 10 times
+:later 10f    go to the state 10 saves later</code></pre>
+</section>
+<section id="learn-undo-the-smart-way" class="level2" data-number="10.6">
+<h2 data-number="10.6" class="anchored" data-anchor-id="learn-undo-the-smart-way"><span class="header-section-number">10.6</span> Learn Undo the Smart Way</h2>
+<p><code>u</code> and <code>Ctrl-R</code> are two indispensable Vim commands for correcting mistakes. Learn them first. Next, learn how to use <code>:earlier</code> and <code>:later</code> using the time arguments first. After that, take your time to understand the undo tree. The <a href="https://github.com/simnalamburt/vim-mundo">vim-mundo</a> plugin helped me a lot. Type along the texts in this chapter and check the undo tree as you make each change. Once you grasp it, you will never see undo system the same way again.</p>
+<p>Prior to this chapter, you learned how to find any text in a project space, with undo, you can now find any text in a time dimension. You are now able to search for any text by its location and time written. You have achieved Vim-omnipresence.</p>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const disableStylesheet = (stylesheets) => {
+    for (let i=0; i < stylesheets.length; i++) {
+      const stylesheet = stylesheets[i];
+      stylesheet.rel = 'prefetch';
+    }
+  }
+  const enableStylesheet = (stylesheets) => {
+    for (let i=0; i < stylesheets.length; i++) {
+      const stylesheet = stylesheets[i];
+      stylesheet.rel = 'stylesheet';
+    }
+  }
+  const manageTransitions = (selector, allowTransitions) => {
+    const els = window.document.querySelectorAll(selector);
+    for (let i=0; i < els.length; i++) {
+      const el = els[i];
+      if (allowTransitions) {
+        el.classList.remove('notransition');
+      } else {
+        el.classList.add('notransition');
+      }
+    }
+  }
+  const toggleColorMode = (alternate) => {
+    // Switch the stylesheets
+    const alternateStylesheets = window.document.querySelectorAll('link.quarto-color-scheme.quarto-color-alternate');
+    manageTransitions('#quarto-margin-sidebar .nav-link', false);
+    if (alternate) {
+      enableStylesheet(alternateStylesheets);
+      for (const sheetNode of alternateStylesheets) {
+        if (sheetNode.id === "quarto-bootstrap") {
+          toggleBodyColorMode(sheetNode);
+        }
+      }
+    } else {
+      disableStylesheet(alternateStylesheets);
+      toggleBodyColorPrimary();
+    }
+    manageTransitions('#quarto-margin-sidebar .nav-link', true);
+    // Switch the toggles
+    const toggles = window.document.querySelectorAll('.quarto-color-scheme-toggle');
+    for (let i=0; i < toggles.length; i++) {
+      const toggle = toggles[i];
+      if (toggle) {
+        if (alternate) {
+          toggle.classList.add("alternate");     
+        } else {
+          toggle.classList.remove("alternate");
+        }
+      }
+    }
+    // Hack to workaround the fact that safari doesn't
+    // properly recolor the scrollbar when toggling (#1455)
+    if (navigator.userAgent.indexOf('Safari') > 0 && navigator.userAgent.indexOf('Chrome') == -1) {
+      manageTransitions("body", false);
+      window.scrollTo(0, 1);
+      setTimeout(() => {
+        window.scrollTo(0, 0);
+        manageTransitions("body", true);
+      }, 40);  
+    }
+  }
+  const isFileUrl = () => { 
+    return window.location.protocol === 'file:';
+  }
+  const hasAlternateSentinel = () => {  
+    let styleSentinel = getColorSchemeSentinel();
+    if (styleSentinel !== null) {
+      return styleSentinel === "alternate";
+    } else {
+      return false;
+    }
+  }
+  const setStyleSentinel = (alternate) => {
+    const value = alternate ? "alternate" : "default";
+    if (!isFileUrl()) {
+      window.localStorage.setItem("quarto-color-scheme", value);
+    } else {
+      localAlternateSentinel = value;
+    }
+  }
+  const getColorSchemeSentinel = () => {
+    if (!isFileUrl()) {
+      const storageValue = window.localStorage.getItem("quarto-color-scheme");
+      return storageValue != null ? storageValue : localAlternateSentinel;
+    } else {
+      return localAlternateSentinel;
+    }
+  }
+  let localAlternateSentinel = 'alternate';
+  // Dark / light mode switch
+  window.quartoToggleColorScheme = () => {
+    // Read the current dark / light value 
+    let toAlternate = !hasAlternateSentinel();
+    toggleColorMode(toAlternate);
+    setStyleSentinel(toAlternate);
+  };
+  // Ensure there is a toggle, if there isn't float one in the top right
+  if (window.document.querySelector('.quarto-color-scheme-toggle') === null) {
+    const a = window.document.createElement('a');
+    a.classList.add('top-right');
+    a.classList.add('quarto-color-scheme-toggle');
+    a.href = "";
+    a.onclick = function() { try { window.quartoToggleColorScheme(); } catch {} return false; };
+    const i = window.document.createElement("i");
+    i.classList.add('bi');
+    a.appendChild(i);
+    window.document.body.appendChild(a);
+  }
+  // Switch to dark mode if need be
+  if (hasAlternateSentinel()) {
+    toggleColorMode(true);
+  } else {
+    toggleColorMode(false);
+  }
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    target: function(trigger) {
+      return trigger.previousElementSibling;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="../chapters/ch09_macros.md.html" class="pagination-link">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Ch09. Macros</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="../chapters/ch11_visual_mode.md.html" class="pagination-link">
+        <span class="nav-page-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Ch11. Visual Mode</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+
+
+
+</body></html>

@@ -1,0 +1,699 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.2.313">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Learn Vim (the Smart Way) - 9&nbsp; Ch09. Macros</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1.6em;
+  vertical-align: middle;
+}
+q { quotes: "“" "”" "‘" "’"; }
+</style>
+
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<link href="../chapters/ch10_undo.md.html" rel="next">
+<link href="../chapters/ch08_registers.md.html" rel="prev">
+<script src="../site_libs/quarto-html/quarto.js"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-dark.min.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit"
+  }
+}</script>
+
+
+</head>
+
+<body class="nav-sidebar floating">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+    <div class="container-fluid d-flex justify-content-between">
+      <h1 class="quarto-secondary-nav-title"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Ch09. Macros</span></h1>
+      <button type="button" class="quarto-btn-toggle btn" aria-label="Show secondary navigation">
+        <i class="bi bi-chevron-right"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="../">Learn Vim (the Smart Way)</a> 
+        <div class="sidebar-tools-main">
+    <a href="https://github.com/iggredible/Learn-Vim" title="" class="sidebar-tool px-1"><i class="bi bi-github"></i></a>
+  <a href="" class="quarto-color-scheme-toggle sidebar-tool" onclick="window.quartoToggleColorScheme(); return false;" title="Toggle dark mode"><i class="bi"></i></a>
+</div>
+    </div>
+      </div>
+      <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+      </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../index.html" class="sidebar-item-text sidebar-link">Preface</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch01_starting_vim.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Ch01. Starting Vim</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch02_buffers_windows_tabs.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Ch02. Buffers, Windows, and Tabs</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch03_searching_files.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Ch03. Searching Files</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch04_vim_grammar.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Ch04. Vim Grammar</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch05_moving_in_file.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Ch05. Moving in a File</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch06_insert_mode.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Ch06. Insert Mode</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch07_the_dot_command.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Ch07. the Dot Command</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch08_registers.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Ch08. Registers</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch09_macros.md.html" class="sidebar-item-text sidebar-link active"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Ch09. Macros</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch10_undo.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Ch10. Undo</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch11_visual_mode.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Ch11. Visual Mode</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch12_search_and_substitute.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Ch12. Search and Substitute</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch13_the_global_command.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Ch13. the Global Command</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch14_external_commands.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Ch14. External Commands</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch15_command-line_mode.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">Ch15. Command-line Mode</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch16_tags.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Ch16. Tags</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch17_fold.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">Ch17. Fold</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch18_git.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">18</span>&nbsp; <span class="chapter-title">Ch18. Git</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch19_compile.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">19</span>&nbsp; <span class="chapter-title">Ch19. Compile</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch20_views_sessions_viminfo.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">20</span>&nbsp; <span class="chapter-title">Ch20. Views, Sessions, and Viminfo</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch21_multiple_file_operations.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">21</span>&nbsp; <span class="chapter-title">Multiple File Operations</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch22_vimrc.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">22</span>&nbsp; <span class="chapter-title">Ch22. Vimrc</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch23_vim_packages.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">23</span>&nbsp; <span class="chapter-title">Ch23. Vim Packages</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch24_vim_runtime.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">24</span>&nbsp; <span class="chapter-title">Ch24. Vim Runtime</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch25_vimscript_basic_data_types.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">25</span>&nbsp; <span class="chapter-title">Ch25. Vimscript Basic Data Types</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch26_vimscript_conditionals_and_loops.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">26</span>&nbsp; <span class="chapter-title">Ch26. Vimscript Conditionals and Loops</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch27_vimscript_variable_scopes.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">27</span>&nbsp; <span class="chapter-title">Ch27. Vimscript Variable Scopes</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch28_vimscript_functions.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">28</span>&nbsp; <span class="chapter-title">Ch28. Vimscript Functions</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch29_plugin_example_writing-a-titlecase-plugin.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">29</span>&nbsp; <span class="chapter-title">Ch29. Write a Plugin: Creating a Titlecase Operator</span></a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#basic-macros" id="toc-basic-macros" class="nav-link active" data-scroll-target="#basic-macros"><span class="toc-section-number">9.1</span>  Basic Macros</a></li>
+  <li><a href="#safety-guard" id="toc-safety-guard" class="nav-link" data-scroll-target="#safety-guard"><span class="toc-section-number">9.2</span>  Safety Guard</a></li>
+  <li><a href="#command-line-macro" id="toc-command-line-macro" class="nav-link" data-scroll-target="#command-line-macro"><span class="toc-section-number">9.3</span>  Command Line Macro</a></li>
+  <li><a href="#executing-a-macro-across-multiple-files" id="toc-executing-a-macro-across-multiple-files" class="nav-link" data-scroll-target="#executing-a-macro-across-multiple-files"><span class="toc-section-number">9.4</span>  Executing a Macro Across Multiple Files</a></li>
+  <li><a href="#recursive-macro" id="toc-recursive-macro" class="nav-link" data-scroll-target="#recursive-macro"><span class="toc-section-number">9.5</span>  Recursive Macro</a></li>
+  <li><a href="#appending-a-macro" id="toc-appending-a-macro" class="nav-link" data-scroll-target="#appending-a-macro"><span class="toc-section-number">9.6</span>  Appending a Macro</a></li>
+  <li><a href="#amending-a-macro" id="toc-amending-a-macro" class="nav-link" data-scroll-target="#amending-a-macro"><span class="toc-section-number">9.7</span>  Amending a Macro</a></li>
+  <li><a href="#macro-redundancy" id="toc-macro-redundancy" class="nav-link" data-scroll-target="#macro-redundancy"><span class="toc-section-number">9.8</span>  Macro Redundancy</a></li>
+  <li><a href="#series-vs-parallel-macro" id="toc-series-vs-parallel-macro" class="nav-link" data-scroll-target="#series-vs-parallel-macro"><span class="toc-section-number">9.9</span>  Series vs Parallel Macro</a></li>
+  <li><a href="#learn-macros-the-smart-way" id="toc-learn-macros-the-smart-way" class="nav-link" data-scroll-target="#learn-macros-the-smart-way"><span class="toc-section-number">9.10</span>  Learn Macros the Smart Way</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title d-none d-lg-block"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Ch09. Macros</span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+</header>
+
+<p>When editing files, you may find yourself repeating the same actions. Wouldn’t it be nice if you can do those actions once and replay them whenever you need it? With Vim macros, you can record actions and store them inside Vim registers to be executed whenever you need it.</p>
+<p>In this chapter, you will learn how to use macros to automate mundane tasks (plus it looks cool to watch your file edit itself).</p>
+<section id="basic-macros" class="level2" data-number="9.1">
+<h2 data-number="9.1" class="anchored" data-anchor-id="basic-macros"><span class="header-section-number">9.1</span> Basic Macros</h2>
+<p>Here is the basic syntax of a Vim macro:</p>
+<pre><code>qa                     Start recording a macro in register a
+q (while recording)    Stop recording macro</code></pre>
+<p>You can choose any lowercase letters (a-z) to store macros. Here is how you can execute a macro:</p>
+<pre><code>@a    Execute macro from register a
+@@    Execute the last executed macros</code></pre>
+<p>Suppose you have this text and you want to uppercase everything on each line:</p>
+<pre><code>hello
+vim
+macros
+are
+awesome</code></pre>
+<p>With your cursor at the start of the line <q>hello</q>, run:</p>
+<pre><code>qa0gU$jq</code></pre>
+<p>The breakdown: - <code>qa</code> starts recording a macro in the a register. - <code>0</code> goes to beginning of the line. - <code>gU$</code> uppercases the text from your current location to the end of the line. - <code>j</code> goes down one line. - <code>q</code> stops recording.</p>
+<p>To replay it, run <code>@a</code>. Just like many other Vim commands, you can pass a count argument to macros. For example, running <code>3@a</code> executes the macro three times.</p>
+</section>
+<section id="safety-guard" class="level2" data-number="9.2">
+<h2 data-number="9.2" class="anchored" data-anchor-id="safety-guard"><span class="header-section-number">9.2</span> Safety Guard</h2>
+<p>Macro execution automatically ends when it encounters an error. Suppose you have this text:</p>
+<pre><code>a. chocolate donut
+b. mochi donut
+c. powdered sugar donut
+d. plain donut</code></pre>
+<p>If you want to uppercase the first word on each line, this macro should work:</p>
+<pre><code>qa0W~jq</code></pre>
+<p>Here’s the breakdown of the command above: - <code>qa</code> starts recording a macro in the a register. - <code>0</code> goes to the beginning of the line. - <code>W</code> goes to the next WORD. - <code>~</code> toggles the case of the character under the cursor. - <code>j</code> goes down one line. - <code>q</code> stops recording.</p>
+<p>I prefer to overcount my macro execution than undercount it, so I usually call it ninety-nine times (<code>99@a</code>). With this command, Vim does not actually run this macro ninety-nine times. When Vim reaches the last line and runs <code>j</code> motion, it finds no more line to go down to, throws an error, and stops the macro execution.</p>
+<p>The fact that macro execution stops upon the first error encounter is a good feature, otherwise Vim will continue to execute this macro ninety-nine times even though it already reaches the end of the line.</p>
+</section>
+<section id="command-line-macro" class="level2" data-number="9.3">
+<h2 data-number="9.3" class="anchored" data-anchor-id="command-line-macro"><span class="header-section-number">9.3</span> Command Line Macro</h2>
+<p>Running <code>@a</code> in normal mode is not the only way you can execute macros in Vim. You can also run <code>:normal @a</code> command line. <code>:normal</code> allows the user to execute any normal mode command passed as argument. In the case above, it is the same as running <code>@a</code> from normal mode.</p>
+<p>The <code>:normal</code> command accepts range as arguments. You can use this to run macro in select ranges. If you want to execute your macro between lines 2 and 3, you can run <code>:2,3 normal @a</code>.</p>
+</section>
+<section id="executing-a-macro-across-multiple-files" class="level2" data-number="9.4">
+<h2 data-number="9.4" class="anchored" data-anchor-id="executing-a-macro-across-multiple-files"><span class="header-section-number">9.4</span> Executing a Macro Across Multiple Files</h2>
+<p>Suppose you have multiple <code>.txt</code> files, each contains some texts. Your task is to uppercase the first word only on lines containing the word <q>donut</q>. Assume you have <code>0W~j</code> in register a (the same macro as before). How can you quickly accomplish this?</p>
+<p>First file:</p>
+<pre><code>## savory.txt
+a. cheddar jalapeno donut
+b. mac n cheese donut
+c. fried dumpling</code></pre>
+<p>Second file:</p>
+<pre><code>## sweet.txt
+a. chocolate donut
+b. chocolate pancake
+c. powdered sugar donut</code></pre>
+<p>Third file:</p>
+<pre><code>## plain.txt
+a. wheat bread
+b. plain donut</code></pre>
+<p>Here is how you can do it: - <code>:args *.txt</code> to find all <code>.txt</code> files in your current directory. - <code>:argdo g/donut/normal @a</code> executes the global command <code>g/donut/normal @a</code> on each file inside <code>:args</code>. - <code>:argdo update</code> executes <code>update</code> command to save each file inside <code>:args</code> when the buffer has been modified.</p>
+<p>If you are not familiar with the global command <code>:g/donut/normal @a</code>, it executes the command you give (<code>normal @a</code>) on lines that match the pattern (<code>/donut/</code>). I will go over the global command in a later chapter.</p>
+</section>
+<section id="recursive-macro" class="level2" data-number="9.5">
+<h2 data-number="9.5" class="anchored" data-anchor-id="recursive-macro"><span class="header-section-number">9.5</span> Recursive Macro</h2>
+<p>You can recursively execute a macro by calling the same macro register while recording that macro. Suppose you have this list again and you need to toggle the case of the first word:</p>
+<pre><code>a. chocolate donut
+b. mochi donut
+c. powdered sugar donut
+d. plain donut</code></pre>
+<p>This time, let’s do it recursively. Run:</p>
+<pre><code>qaqqa0W~j@aq</code></pre>
+<p>Here is the breakdown of the steps: - <code>qaq</code> records an empty macro a. It is necessary to start with an empty register because when you recursively call the macro, it will run whatever is in that register. - <code>qa</code> starts recording on register a. - <code>0</code> goes to the first character in the current line. - <code>W</code> goes to the next WORD. - <code>~</code> toggles the case of the character under the cursor. - <code>j</code> goes down one line. - <code>@a</code> executes macro a. - <code>q</code> stops recording.</p>
+<p>Now you can just run <code>@a</code> and watch Vim execute the macro recursively.</p>
+<p>How did the macro know when to stop? When the macro was on the last line, it triedto run <code>j</code>, since there was no more line to go to, it stopped the macro execution.</p>
+</section>
+<section id="appending-a-macro" class="level2" data-number="9.6">
+<h2 data-number="9.6" class="anchored" data-anchor-id="appending-a-macro"><span class="header-section-number">9.6</span> Appending a Macro</h2>
+<p>If you need to add actions to an existing macro, instead of recreating the macro from scratch, you can append actions to an existing one. In the register chapter, you learned that you can append a named register by using its uppercased symbol. The same rule applies. To append actions to register a macro, use register A.</p>
+<p>Record a macro in register a: <code>qa0W~q</code> (this sequence toggles the case of the next WORD in a line). If you want to append a new sequence to also add a dot at the end of the line, run:</p>
+<pre><code>qAA.&lt;Esc&gt;q</code></pre>
+<p>The breakdown: - <code>qA</code> starts recording the macro in register A. - <code>A.&lt;Esc&gt;</code> inserts at the end of the line (here <code>A</code> is the insert mode command, not to be confused with the macro A) a dot, then exits insert mode. - <code>q</code> stops recording macro.</p>
+<p>Now when you execute <code>@a</code>, it not only toggles the case of the next WORD, it also adds a dot at the end of the line.</p>
+</section>
+<section id="amending-a-macro" class="level2" data-number="9.7">
+<h2 data-number="9.7" class="anchored" data-anchor-id="amending-a-macro"><span class="header-section-number">9.7</span> Amending a Macro</h2>
+<p>What if you need to add new actions in the middle of a macro?</p>
+<p>Assume that you have a macro that toggles the first actual word and adding a period at the end of the line, <code>0W~A.&lt;Esc&gt;</code> in register a. Suppose that between uppercasing the first word and adding a period at the end of the line, you need to add the word <q>deep fried</q> right before the word <q>donut</q> <em>(because the only thing better than regular donuts are deep fried donuts)</em>.</p>
+<p>I will reuse the text from earlier section:</p>
+<pre><code>a. chocolate donut
+b. mochi donut
+c. powdered sugar donut
+d. plain donut</code></pre>
+<p>First, let’s call the existing macro (assume you have kept the macro from the previous section in register a) with <code>:put a</code>:</p>
+<pre><code>0W~A.^[</code></pre>
+<p>What is this <code>^[</code>? Didn’t you do <code>0W~A.&lt;Esc&gt;</code>? Where is the <code>&lt;Esc&gt;</code>? <code>^[</code> is Vim’s <em>internal code</em> representation of <code>&lt;Esc&gt;</code>. With certain special keys, Vim prints the representation of those keys in the form of internal codes. Some common keys that have internal code representations are <code>&lt;Esc&gt;</code>, <code>&lt;Backspace&gt;</code>, and <code>&lt;Enter&gt;</code>. There are more special keys, but they are not within the scope of this chapter.</p>
+<p>Back to the macro, right after the toggle case operator (<code>~</code>), let’s add the instructions to go to the end of the line (<code>$</code>), go back one word (<code>b</code>), go to the insert mode (<code>i</code>), type <q>deep fried</q> (don’t forget the space after <q>fried</q>), and exit insert mode (<code>&lt;Esc&gt;</code>).</p>
+<p>Here is what you will end up with:</p>
+<pre><code>0W~$bideep fried &lt;Esc&gt;A.^[</code></pre>
+<p>There is a small problem. Vim does not understand <code>&lt;Esc&gt;</code>. You can’t literally type <code>&lt;Esc&gt;</code>. You will have to write the internal code representation for the <code>&lt;Esc&gt;</code> key. While in insert mode, you press <code>Ctrl-V</code> followed by <code>&lt;Esc&gt;</code>. Vim will print <code>^[</code>.<code>Ctrl-V</code> is an insert mode operator to insert the next non-digit character <em>literally</em>. Your macro code should look like this now:</p>
+<pre><code>0W~$bideep fried ^[A.^[</code></pre>
+<p>To add the amended instruction into register a, you can do it the same way as adding a new entry into a named register. At the start of the line, run <code>"ay$</code> to store the yanked text in register a.</p>
+<p>Now when you execute <code>@a</code>, your macro will toggle the case of the first word, add <q>deep fried</q> before <q>donut</q>, and add a <q>.</q> at the end of the line. Yum!</p>
+<p>An alternative way to amend a macro is to use a command line expression. Do <code>:let @a="</code>, then do <code>Ctrl-R a</code>, this will literally paste the content of register a. Finally, don’t forget to close the double quotes (<code>"</code>). You might have something like <code>:let @a="0W~$bideep fried ^[A.^["</code>.</p>
+</section>
+<section id="macro-redundancy" class="level2" data-number="9.8">
+<h2 data-number="9.8" class="anchored" data-anchor-id="macro-redundancy"><span class="header-section-number">9.8</span> Macro Redundancy</h2>
+<p>You can easily duplicate macros from one register to another. For example, to duplicate a macro in register a to register z, you can do <code>:let @z = @a</code>. <code>@a</code> represents the content of register a. Now if you run <code>@z</code>, it does the exact same actions as <code>@a</code>.</p>
+<p>I find creating a redundancy useful on my most frequently used macros. In my workflow, I usually record macros in the first seven alphabetical letters (a-g) and I often replace them without much thought. If I move the useful macros towards the end of the alphabets, I can preserve them without worrying that I might accidentally replace them.</p>
+</section>
+<section id="series-vs-parallel-macro" class="level2" data-number="9.9">
+<h2 data-number="9.9" class="anchored" data-anchor-id="series-vs-parallel-macro"><span class="header-section-number">9.9</span> Series vs Parallel Macro</h2>
+<p>Vim can execute macros in series and parallel. Suppose you have this text:</p>
+<pre><code>import { FUNC1 } from "library1";
+import { FUNC2 } from "library2";
+import { FUNC3 } from "library3";
+import { FUNC4 } from "library4";
+import { FUNC5 } from "library5";</code></pre>
+<p>If you want to record a macro to lowercase all the uppercased <q>FUNC</q>, this macro should work:</p>
+<pre><code>qa0f{gui{jq</code></pre>
+<p>The breakdown: - <code>qa</code> starts recording in register a. - <code>0</code> goes to first line. - <code>f{</code> finds the first instance of <q>{</q>. - <code>gui{</code> lowercases (<code>gu</code>) the text inside the bracket text-object (<code>i{</code>). - <code>j</code> goes down one line. - <code>q</code> stops macro recording.</p>
+<p>Now you can run <code>99@a</code> to execute it on the remaining lines. However, what if you have this import expression inside your file?</p>
+<pre><code>import { FUNC1 } from "library1";
+import { FUNC2 } from "library2";
+import { FUNC3 } from "library3";
+import foo from "bar";
+import { FUNC4 } from "library4";
+import { FUNC5 } from "library5";</code></pre>
+<p>Running <code>99@a</code>, only executes the macro three times. It does not execute the macro on last two lines because the execution fails to run <code>f{</code> on the <q>foo</q> line. This is expected when running the macro in series. You can always go to the next line where <q>FUNC4</q> is and replay that macro again. But what if you want to get everything done in one go?</p>
+<p>Run the macro in parallel.</p>
+<p>Recall from earlier section that macros can be executed using the command line command <code>:normal</code> (ex: <code>:3,5 normal @a</code> executes macro a on lines 3-5). If you run <code>:1,$ normal @a</code>, you will see that the macro is being executed on all lines except the <q>foo</q> line. It works!</p>
+<p>Although internally Vim does not actually run the macros in parallel, outwardly, it behaves like it. Vim executes <code>@a</code> <em>independently</em> on each line from the first to the last line (<code>1,$</code>). Since Vim executes these macros independently, each line does not know that one of the macro executions had failed on the <q>foo</q> line.</p>
+</section>
+<section id="learn-macros-the-smart-way" class="level2" data-number="9.10">
+<h2 data-number="9.10" class="anchored" data-anchor-id="learn-macros-the-smart-way"><span class="header-section-number">9.10</span> Learn Macros the Smart Way</h2>
+<p>Many things you do in editing are repetitive. To get better at editing, get into the habit of detecting repetitive actions. Use macros (or dot command) so you don’t have to perform the same action twice. Almost everything that you can do in Vim can be replicated with macros.</p>
+<p>In the beginning, I find it very awkward to write macros, but don’t give up. With enough practice, you will get into the habit of automating everything.</p>
+<p>You might find it helpful to use mnemonics to help remember your macros. If you have a macro that creates a function, use the <q>f register (<code>qf</code>). If you have a macro for numerical operations, the</q>n register should work (<code>qn</code>). Name it with the <em>first named register</em> that comes to your mind when you think of that operation. I also find that the “q register makes a good default macro register because <code>qq</code> requires less brain power to come up with. Lastly, I also like to increment my macros in alphabetical orders, like <code>qa</code>, then <code>qb</code>, then <code>qc</code>, and so on.</p>
+<p>Find a method that works best for you.</p>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const disableStylesheet = (stylesheets) => {
+    for (let i=0; i < stylesheets.length; i++) {
+      const stylesheet = stylesheets[i];
+      stylesheet.rel = 'prefetch';
+    }
+  }
+  const enableStylesheet = (stylesheets) => {
+    for (let i=0; i < stylesheets.length; i++) {
+      const stylesheet = stylesheets[i];
+      stylesheet.rel = 'stylesheet';
+    }
+  }
+  const manageTransitions = (selector, allowTransitions) => {
+    const els = window.document.querySelectorAll(selector);
+    for (let i=0; i < els.length; i++) {
+      const el = els[i];
+      if (allowTransitions) {
+        el.classList.remove('notransition');
+      } else {
+        el.classList.add('notransition');
+      }
+    }
+  }
+  const toggleColorMode = (alternate) => {
+    // Switch the stylesheets
+    const alternateStylesheets = window.document.querySelectorAll('link.quarto-color-scheme.quarto-color-alternate');
+    manageTransitions('#quarto-margin-sidebar .nav-link', false);
+    if (alternate) {
+      enableStylesheet(alternateStylesheets);
+      for (const sheetNode of alternateStylesheets) {
+        if (sheetNode.id === "quarto-bootstrap") {
+          toggleBodyColorMode(sheetNode);
+        }
+      }
+    } else {
+      disableStylesheet(alternateStylesheets);
+      toggleBodyColorPrimary();
+    }
+    manageTransitions('#quarto-margin-sidebar .nav-link', true);
+    // Switch the toggles
+    const toggles = window.document.querySelectorAll('.quarto-color-scheme-toggle');
+    for (let i=0; i < toggles.length; i++) {
+      const toggle = toggles[i];
+      if (toggle) {
+        if (alternate) {
+          toggle.classList.add("alternate");     
+        } else {
+          toggle.classList.remove("alternate");
+        }
+      }
+    }
+    // Hack to workaround the fact that safari doesn't
+    // properly recolor the scrollbar when toggling (#1455)
+    if (navigator.userAgent.indexOf('Safari') > 0 && navigator.userAgent.indexOf('Chrome') == -1) {
+      manageTransitions("body", false);
+      window.scrollTo(0, 1);
+      setTimeout(() => {
+        window.scrollTo(0, 0);
+        manageTransitions("body", true);
+      }, 40);  
+    }
+  }
+  const isFileUrl = () => { 
+    return window.location.protocol === 'file:';
+  }
+  const hasAlternateSentinel = () => {  
+    let styleSentinel = getColorSchemeSentinel();
+    if (styleSentinel !== null) {
+      return styleSentinel === "alternate";
+    } else {
+      return false;
+    }
+  }
+  const setStyleSentinel = (alternate) => {
+    const value = alternate ? "alternate" : "default";
+    if (!isFileUrl()) {
+      window.localStorage.setItem("quarto-color-scheme", value);
+    } else {
+      localAlternateSentinel = value;
+    }
+  }
+  const getColorSchemeSentinel = () => {
+    if (!isFileUrl()) {
+      const storageValue = window.localStorage.getItem("quarto-color-scheme");
+      return storageValue != null ? storageValue : localAlternateSentinel;
+    } else {
+      return localAlternateSentinel;
+    }
+  }
+  let localAlternateSentinel = 'alternate';
+  // Dark / light mode switch
+  window.quartoToggleColorScheme = () => {
+    // Read the current dark / light value 
+    let toAlternate = !hasAlternateSentinel();
+    toggleColorMode(toAlternate);
+    setStyleSentinel(toAlternate);
+  };
+  // Ensure there is a toggle, if there isn't float one in the top right
+  if (window.document.querySelector('.quarto-color-scheme-toggle') === null) {
+    const a = window.document.createElement('a');
+    a.classList.add('top-right');
+    a.classList.add('quarto-color-scheme-toggle');
+    a.href = "";
+    a.onclick = function() { try { window.quartoToggleColorScheme(); } catch {} return false; };
+    const i = window.document.createElement("i");
+    i.classList.add('bi');
+    a.appendChild(i);
+    window.document.body.appendChild(a);
+  }
+  // Switch to dark mode if need be
+  if (hasAlternateSentinel()) {
+    toggleColorMode(true);
+  } else {
+    toggleColorMode(false);
+  }
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    target: function(trigger) {
+      return trigger.previousElementSibling;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="../chapters/ch08_registers.md.html" class="pagination-link">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Ch08. Registers</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="../chapters/ch10_undo.md.html" class="pagination-link">
+        <span class="nav-page-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Ch10. Undo</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+
+
+
+</body></html>

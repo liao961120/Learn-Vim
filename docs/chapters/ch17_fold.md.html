@@ -1,0 +1,757 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.2.313">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Learn Vim (the Smart Way) - 17&nbsp; Ch17. Fold</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1.6em;
+  vertical-align: middle;
+}
+q { quotes: "“" "”" "‘" "’"; }
+</style>
+
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<link href="../chapters/ch18_git.md.html" rel="next">
+<link href="../chapters/ch16_tags.md.html" rel="prev">
+<script src="../site_libs/quarto-html/quarto.js"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-dark.min.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit"
+  }
+}</script>
+
+
+</head>
+
+<body class="nav-sidebar floating">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+    <div class="container-fluid d-flex justify-content-between">
+      <h1 class="quarto-secondary-nav-title"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">Ch17. Fold</span></h1>
+      <button type="button" class="quarto-btn-toggle btn" aria-label="Show secondary navigation">
+        <i class="bi bi-chevron-right"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="../">Learn Vim (the Smart Way)</a> 
+        <div class="sidebar-tools-main">
+    <a href="https://github.com/iggredible/Learn-Vim" title="" class="sidebar-tool px-1"><i class="bi bi-github"></i></a>
+  <a href="" class="quarto-color-scheme-toggle sidebar-tool" onclick="window.quartoToggleColorScheme(); return false;" title="Toggle dark mode"><i class="bi"></i></a>
+</div>
+    </div>
+      </div>
+      <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+      </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../index.html" class="sidebar-item-text sidebar-link">Preface</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch01_starting_vim.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Ch01. Starting Vim</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch02_buffers_windows_tabs.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Ch02. Buffers, Windows, and Tabs</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch03_searching_files.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Ch03. Searching Files</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch04_vim_grammar.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Ch04. Vim Grammar</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch05_moving_in_file.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Ch05. Moving in a File</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch06_insert_mode.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Ch06. Insert Mode</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch07_the_dot_command.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Ch07. the Dot Command</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch08_registers.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Ch08. Registers</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch09_macros.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Ch09. Macros</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch10_undo.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Ch10. Undo</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch11_visual_mode.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Ch11. Visual Mode</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch12_search_and_substitute.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Ch12. Search and Substitute</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch13_the_global_command.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Ch13. the Global Command</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch14_external_commands.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Ch14. External Commands</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch15_command-line_mode.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">Ch15. Command-line Mode</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch16_tags.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Ch16. Tags</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch17_fold.md.html" class="sidebar-item-text sidebar-link active"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">Ch17. Fold</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch18_git.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">18</span>&nbsp; <span class="chapter-title">Ch18. Git</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch19_compile.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">19</span>&nbsp; <span class="chapter-title">Ch19. Compile</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch20_views_sessions_viminfo.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">20</span>&nbsp; <span class="chapter-title">Ch20. Views, Sessions, and Viminfo</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch21_multiple_file_operations.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">21</span>&nbsp; <span class="chapter-title">Multiple File Operations</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch22_vimrc.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">22</span>&nbsp; <span class="chapter-title">Ch22. Vimrc</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch23_vim_packages.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">23</span>&nbsp; <span class="chapter-title">Ch23. Vim Packages</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch24_vim_runtime.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">24</span>&nbsp; <span class="chapter-title">Ch24. Vim Runtime</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch25_vimscript_basic_data_types.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">25</span>&nbsp; <span class="chapter-title">Ch25. Vimscript Basic Data Types</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch26_vimscript_conditionals_and_loops.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">26</span>&nbsp; <span class="chapter-title">Ch26. Vimscript Conditionals and Loops</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch27_vimscript_variable_scopes.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">27</span>&nbsp; <span class="chapter-title">Ch27. Vimscript Variable Scopes</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch28_vimscript_functions.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">28</span>&nbsp; <span class="chapter-title">Ch28. Vimscript Functions</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch29_plugin_example_writing-a-titlecase-plugin.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">29</span>&nbsp; <span class="chapter-title">Ch29. Write a Plugin: Creating a Titlecase Operator</span></a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#manual-fold" id="toc-manual-fold" class="nav-link active" data-scroll-target="#manual-fold"><span class="toc-section-number">17.1</span>  Manual Fold</a></li>
+  <li><a href="#different-fold-methods" id="toc-different-fold-methods" class="nav-link" data-scroll-target="#different-fold-methods"><span class="toc-section-number">17.2</span>  Different Fold Methods</a></li>
+  <li><a href="#indent-fold" id="toc-indent-fold" class="nav-link" data-scroll-target="#indent-fold"><span class="toc-section-number">17.3</span>  Indent Fold</a></li>
+  <li><a href="#expression-fold" id="toc-expression-fold" class="nav-link" data-scroll-target="#expression-fold"><span class="toc-section-number">17.4</span>  Expression Fold</a></li>
+  <li><a href="#syntax-fold" id="toc-syntax-fold" class="nav-link" data-scroll-target="#syntax-fold"><span class="toc-section-number">17.5</span>  Syntax Fold</a></li>
+  <li><a href="#diff-fold" id="toc-diff-fold" class="nav-link" data-scroll-target="#diff-fold"><span class="toc-section-number">17.6</span>  Diff Fold</a></li>
+  <li><a href="#marker-fold" id="toc-marker-fold" class="nav-link" data-scroll-target="#marker-fold"><span class="toc-section-number">17.7</span>  Marker Fold</a></li>
+  <li><a href="#persisting-fold" id="toc-persisting-fold" class="nav-link" data-scroll-target="#persisting-fold"><span class="toc-section-number">17.8</span>  Persisting Fold</a></li>
+  <li><a href="#learn-fold-the-smart-way" id="toc-learn-fold-the-smart-way" class="nav-link" data-scroll-target="#learn-fold-the-smart-way"><span class="toc-section-number">17.9</span>  Learn Fold the Smart Way</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title d-none d-lg-block"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">Ch17. Fold</span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+</header>
+
+<p>When you read a file, often there are many irrelevant texts that hinder you from understanding what that file does. To hide the unnecessary noise, use Vim fold.</p>
+<p>In this chapter, you will learn different ways to fold a file.</p>
+<section id="manual-fold" class="level2" data-number="17.1">
+<h2 data-number="17.1" class="anchored" data-anchor-id="manual-fold"><span class="header-section-number">17.1</span> Manual Fold</h2>
+<p>Imagine that you are folding a sheet of paper to cover some text. The actual text does not go away, it is still there. Vim fold works the same way. It folds a range of text, hiding it from display without actually deleting it.</p>
+<p>The fold operator is <code>z</code> (when a paper is folded, it is shaped like the letter z).</p>
+<p>Suppose you have this text:</p>
+<pre><code>Fold me
+Hold me</code></pre>
+<p>With the cursor in the first line, type <code>zfj</code>. Vim folds both lines into one. You should see something like this:</p>
+<pre><code>+-- 2 lines: Fold me -----</code></pre>
+<p>Here is the breakdown: - <code>zf</code> is the fold operator. - <code>j</code> is the motion for the fold operator.</p>
+<p>You can open a folded text with <code>zo</code>. To close the fold, use <code>zc</code>.</p>
+<p>Fold is an operator, so it follows the grammar rule (<code>verb + noun</code>). You can pass the fold operator with a motion or text object. To fold an inner paragraph, run <code>zfip</code>. To fold to the end of a file, run <code>zfG</code>. To fold the texts between <code>{</code> and <code>}</code>, run <code>zfa{</code>.</p>
+<p>You can fold from the visual mode. Highlight the area you want to fold (<code>v</code>, <code>V</code>, or <code>Ctrl-v</code>), then run <code>zf</code>.</p>
+<p>You can execute a fold from the command-line mode with the <code>:fold</code> command. To fold the current line and the line after it, run:</p>
+<pre><code>:,+1fold</code></pre>
+<p><code>,+1</code> is the range. If you don’t pass parameters to the range, it defaults to the current line. <code>+1</code> is the range indicator for the next line. To fold the lines 5 to 10, run <code>:5,10fold</code>. To fold from the current position to the end of the line, run <code>:,$fold</code>.</p>
+<p>There are many other fold and unfold commands. I find them too many to remember when starting out. The most useful ones are: - <code>zR</code> to open all folds. - <code>zM</code> to close all folds. - <code>za</code> toggle a fold.</p>
+<p>You can run <code>zR</code> and <code>zM</code> on any line, but <code>za</code> only works when you are on a folded / unfolded line. To learn more folding commands, check out <code>:h fold-commands</code>.</p>
+</section>
+<section id="different-fold-methods" class="level2" data-number="17.2">
+<h2 data-number="17.2" class="anchored" data-anchor-id="different-fold-methods"><span class="header-section-number">17.2</span> Different Fold Methods</h2>
+<p>The section above covers Vim’s manual fold. There are six different folding methods in Vim: 1. Manual 2. Indent 3. Expression 4. Syntax 5. Diff 6. Marker</p>
+<p>To see which folding method you are currently using, run <code>:set foldmethod?</code>. By default, Vim uses the <code>manual</code> method.</p>
+<p>In the rest of the chapter, you will learn the other five folding methods. Let’s get started with the indent fold.</p>
+</section>
+<section id="indent-fold" class="level2" data-number="17.3">
+<h2 data-number="17.3" class="anchored" data-anchor-id="indent-fold"><span class="header-section-number">17.3</span> Indent Fold</h2>
+<p>To use an indent fold, change the <code>'foldmethod'</code> to indent:</p>
+<pre><code>:set foldmethod=indent</code></pre>
+<p>Suppose that you have the text:</p>
+<pre><code>One
+  Two
+  Two again</code></pre>
+<p>If you run <code>:set foldmethod=indent</code>, you will see:</p>
+<pre><code>One
++-- 2 lines: Two -----</code></pre>
+<p>With indent fold, Vim looks at how many spaces each line has at the beginning and compares it with the <code>'shiftwidth'</code> option to determine its foldability. <code>'shiftwidth'</code> returns the number of spaces required for each step of the indent. If you run:</p>
+<pre><code>:set shiftwidth?</code></pre>
+<p>Vim’s default <code>'shiftwidth'</code> value is 2. On the text above, there are two spaces between the start of the line and the text <q>Two</q> and <q>Two again</q>. When Vim sees the number of spaces and that the <code>'shiftwidth'</code> value is 2, Vim considers that line to have an indent fold level of one.</p>
+<p>Suppose this time you only one space between the start of the line and the text:</p>
+<pre><code>One
+ Two
+ Two again</code></pre>
+<p>Right now if you run <code>:set foldmethod=indent</code>, Vim does not fold the indented line because there isn’t sufficient space on each line. One space is not considered an indentation. However, if you change the <code>'shiftwidth'</code> to 1:</p>
+<pre><code>:set shiftwidth=1</code></pre>
+<p>The text is now foldable. It is now considered an indentation.</p>
+<p>Restore the <code>shiftwidth</code> back to 2 and the spaces between the texts to two again. In addition, add two additional texts:</p>
+<pre><code>One
+  Two
+  Two again
+    Three
+    Three again</code></pre>
+<p>Run fold (<code>zM</code>), you will see:</p>
+<pre><code>One
++-- 4 lines: Two -----</code></pre>
+<p>Unfold the folded lines (<code>zR</code>), then put your cursor on <q>Three</q> and toggle the text’s folding state (<code>za</code>):</p>
+<pre><code>One
+  Two
+  Two again
++-- 2 lines: Three -----</code></pre>
+<p>What’s this? A fold within a fold?</p>
+<p>Nested folds are valid. The text <q>Two</q> and <q>Two again</q> have fold level of one. The text <q>Three</q> and <q>Three again</q> have fold level of two. If you have a foldable text with a higher fold level within a foldable text, you will have multiple fold layers.</p>
+</section>
+<section id="expression-fold" class="level2" data-number="17.4">
+<h2 data-number="17.4" class="anchored" data-anchor-id="expression-fold"><span class="header-section-number">17.4</span> Expression Fold</h2>
+<p>Expression fold allows you to define an expression to match for a fold. After you define the fold expressions, Vim scans each line for the value of <code>'foldexpr'</code>. This is the variable that you have to configure to return the appropriate value. If the <code>'foldexpr'</code> returns 0, then the line is not folded. If it returns 1, then that line has a fold level of 1. If it returns 2, then that line has a fold level of 2. There are more values other than integers, but I won’t go over them. If you are curious, check out <code>:h fold-expr</code>.</p>
+<p>First, let’s change the foldmethod:</p>
+<pre><code>:set foldmethod=expr</code></pre>
+<p>Suppose you have a list of breakfast foods and you want to fold all breakfast items starting with <q>p</q>:</p>
+<pre><code>donut
+pancake
+pop-tarts
+protein bar
+salmon
+scrambled eggs</code></pre>
+<p>Next, change the <code>foldexpr</code> to capture the expressions starting with <q>p</q>:</p>
+<pre><code>:set foldexpr=getline(v:lnum)[0]==\\"p\\"</code></pre>
+<p>The expression above looks complicated. Let’s break it down: - <code>:set foldexpr</code> sets up the <code>'foldexpr'</code> option to accept a custom expression. - <code>getline()</code> is a Vimscript function that returns the content of any given line. If you run <code>:echo getline(5)</code>, it will return the content of line 5. - <code>v:lnum</code> is Vim’s special variable for the <code>'foldexpr'</code> expression. Vim scans each line and at that moment stores each line’s number in <code>v:lnum</code> variable. On line 5, <code>v:lnum</code> has value of 5. On line 10, <code>v:lnum</code> has value of 10. - <code>[0]</code> in the context of <code>getline(v:lnum)[0]</code> is the first character of each line. When Vim scans a line, <code>getline(v:lnum)</code> returns the content of each line. <code>getline(v:lnum)[0]</code> returns the first character of each line. On the first line of our list, <q>donut</q>, <code>getline(v:lnum)[0]</code> returns <q>d</q>. On the second line of our list, <q>pancake</q>, <code>getline(v:lnum)[0]</code> returns <q>p</q>. - <code>==\\"p\\"</code> is the second half of the equality expression. It checks if the expression you just evaluated is equal to <q>p</q>. If it is true, it returns 1. If it is false, it returns 0. In Vim, 1 is truthy and 0 is falsy. So on the lines that start with an <q>p</q>, it returns 1. Recall if a <code>'foldexpr'</code> has a value of 1, then it has a fold level of 1.</p>
+<p>After running this expression, you should see:</p>
+<pre><code>donut
++-- 3 lines: pancake -----
+salmon
+scrambled eggs</code></pre>
+</section>
+<section id="syntax-fold" class="level2" data-number="17.5">
+<h2 data-number="17.5" class="anchored" data-anchor-id="syntax-fold"><span class="header-section-number">17.5</span> Syntax Fold</h2>
+<p>Syntax fold is determined by syntax language highlighting. If you use a language syntax plugin like <a href="https://github.com/sheerun/vim-polyglot">vim-polyglot</a>, the syntax fold will work right out of the box. Just change the fold method to syntax:</p>
+<pre><code>:set foldmethod=syntax</code></pre>
+<p>Let’s assume you are editing a JavaScript file and you have vim-polyglot installed. If you have an array like the following:</p>
+<pre><code>const nums = [
+  one,
+  two,
+  three,
+  four
+]</code></pre>
+<p>It will be folded with a syntax fold. When you define a syntax highlighting for a particular language (typically inside the <code>syntax/</code> directory), you can add a <code>fold</code> attribute to make it foldable. Below is a snippet from vim-polyglot JavaScript syntax file. Notice the <code>fold</code> keyword at the end.</p>
+<pre><code>syntax region  jsBracket                      matchgroup=jsBrackets            start=/\[/ end=/\]/ contains=@jsExpression,jsSpreadExpression extend fold</code></pre>
+<p>This guide won’t cover the <code>syntax</code> feature. If you’re curious, check out <code>:h syntax.txt</code>.</p>
+</section>
+<section id="diff-fold" class="level2" data-number="17.6">
+<h2 data-number="17.6" class="anchored" data-anchor-id="diff-fold"><span class="header-section-number">17.6</span> Diff Fold</h2>
+<p>Vim can do a diff procedure to compare two or more files.</p>
+<p>If you have <code>file1.txt</code>:</p>
+<pre><code>vim is awesome
+vim is awesome
+vim is awesome
+vim is awesome
+vim is awesome
+vim is awesome
+vim is awesome
+vim is awesome
+vim is awesome
+vim is awesome</code></pre>
+<p>And <code>file2.txt</code>:</p>
+<pre><code>vim is awesome
+vim is awesome
+vim is awesome
+vim is awesome
+vim is awesome
+vim is awesome
+vim is awesome
+vim is awesome
+vim is awesome
+emacs is ok</code></pre>
+<p>Run <code>vimdiff file1.txt file2.txt</code>:</p>
+<pre><code>+-- 3 lines: vim is awesome -----
+vim is awesome
+vim is awesome
+vim is awesome
+vim is awesome
+vim is awesome
+vim is awesome
+[vim is awesome] / [emacs is ok]</code></pre>
+<p>Vim automatically folds some of the identical lines. When you are running the <code>vimdiff</code> command, Vim automatically uses <code>foldmethod=diff</code>. If you run <code>:set foldmethod?</code>, it will return <code>diff</code>.</p>
+</section>
+<section id="marker-fold" class="level2" data-number="17.7">
+<h2 data-number="17.7" class="anchored" data-anchor-id="marker-fold"><span class="header-section-number">17.7</span> Marker Fold</h2>
+<p>To use a marker fold, run:</p>
+<pre><code>:set foldmethod=marker</code></pre>
+<p>Suppose you have the text:</p>
+<pre><code>Hello
+
+{{{
+world
+vim
+}}}</code></pre>
+<p>Run <code>zM</code>, you will see:</p>
+<pre><code>hello
+
++-- 4 lines: -----</code></pre>
+<p>Vim sees <code>{{{</code> and <code>}}}</code> as fold indicators and folds the texts between them. With the marker fold, Vim looks for special markers, defined by <code>'foldmarker'</code> option, to mark folding areas. To see what markers Vim uses, run:</p>
+<pre><code>:set foldmarker?</code></pre>
+<p>By default, Vim uses <code>{{{</code> and <code>}}}</code> as indicators. If you want to change the indicator to another texts, like <q>coffee1</q> and <q>coffee2</q>:</p>
+<pre><code>:set foldmarker=coffee1,coffee2</code></pre>
+<p>If you have the text:</p>
+<pre><code>hello
+
+coffee1
+world
+vim
+coffee2</code></pre>
+<p>Now Vim uses <code>coffee1</code> and <code>coffee2</code> as the new folding markers. As a side note, an indicator must be a literal string and cannot be a regex.</p>
+</section>
+<section id="persisting-fold" class="level2" data-number="17.8">
+<h2 data-number="17.8" class="anchored" data-anchor-id="persisting-fold"><span class="header-section-number">17.8</span> Persisting Fold</h2>
+<p>You loses all fold information when you close the Vim session. If you have this file, <code>count.txt</code>:</p>
+<pre><code>one
+two
+three
+four
+five</code></pre>
+<p>Then do a manual fold from line <q>three</q> down (<code>:3,$fold</code>):</p>
+<pre><code>one
+two
++-- 3 lines: three ---</code></pre>
+<p>When you exit Vim and reopen <code>count.txt</code>, the folds are no longer there!</p>
+<p>To preserve the folds, after folding, run:</p>
+<pre><code>:mkview</code></pre>
+<p>Then when you open up <code>count.txt</code>, run:</p>
+<pre><code>:loadview</code></pre>
+<p>Your folds are restored. However, you have to manually run <code>mkview</code> and <code>loadview</code>. I know that one of these days, I will forget to run <code>mkview</code> before closing the file and I will lose all the folds. How can we automate this process?</p>
+<p>To automatically run <code>mkview</code> when you close a <code>.txt</code> file and run <code>loadview</code> when you open a <code>.txt</code> file, add this in your vimrc:</p>
+<pre><code>autocmd BufWinLeave *.txt mkview
+autocmd BufWinEnter *.txt silent loadview</code></pre>
+<p>Recall that <code>autocmd</code> is used to execute a command on an event trigger. The two events here are: - <code>BufWinLeave</code> for when you remove a buffer from a window. - <code>BufWinEnter</code> for when you load a buffer in a window.</p>
+<p>Now after you fold inside a <code>.txt</code> file and exit Vim, the next time you open that file, your fold information will be restored.</p>
+<p>By default, Vim saves the fold information when running <code>mkview</code> inside <code>~/.vim/view</code> for the Unix system. For more information, check out <code>:h 'viewdir'</code>.</p>
+</section>
+<section id="learn-fold-the-smart-way" class="level2" data-number="17.9">
+<h2 data-number="17.9" class="anchored" data-anchor-id="learn-fold-the-smart-way"><span class="header-section-number">17.9</span> Learn Fold the Smart Way</h2>
+<p>When I first started Vim, I neglected to learn fold because I didn’t think it was useful. However, the longer I code, the more useful I find folding is. Strategically placed folds can give you a better overview of the text structure, like a book’s table of content.</p>
+<p>When you learn fold, start with the manual fold because that can be used on-the-go. Then gradually learn different tricks to do indent and marker folds. Finally, learn how to do syntax and expression folds. You can even use the latter two to write your own Vim plugins.</p>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const disableStylesheet = (stylesheets) => {
+    for (let i=0; i < stylesheets.length; i++) {
+      const stylesheet = stylesheets[i];
+      stylesheet.rel = 'prefetch';
+    }
+  }
+  const enableStylesheet = (stylesheets) => {
+    for (let i=0; i < stylesheets.length; i++) {
+      const stylesheet = stylesheets[i];
+      stylesheet.rel = 'stylesheet';
+    }
+  }
+  const manageTransitions = (selector, allowTransitions) => {
+    const els = window.document.querySelectorAll(selector);
+    for (let i=0; i < els.length; i++) {
+      const el = els[i];
+      if (allowTransitions) {
+        el.classList.remove('notransition');
+      } else {
+        el.classList.add('notransition');
+      }
+    }
+  }
+  const toggleColorMode = (alternate) => {
+    // Switch the stylesheets
+    const alternateStylesheets = window.document.querySelectorAll('link.quarto-color-scheme.quarto-color-alternate');
+    manageTransitions('#quarto-margin-sidebar .nav-link', false);
+    if (alternate) {
+      enableStylesheet(alternateStylesheets);
+      for (const sheetNode of alternateStylesheets) {
+        if (sheetNode.id === "quarto-bootstrap") {
+          toggleBodyColorMode(sheetNode);
+        }
+      }
+    } else {
+      disableStylesheet(alternateStylesheets);
+      toggleBodyColorPrimary();
+    }
+    manageTransitions('#quarto-margin-sidebar .nav-link', true);
+    // Switch the toggles
+    const toggles = window.document.querySelectorAll('.quarto-color-scheme-toggle');
+    for (let i=0; i < toggles.length; i++) {
+      const toggle = toggles[i];
+      if (toggle) {
+        if (alternate) {
+          toggle.classList.add("alternate");     
+        } else {
+          toggle.classList.remove("alternate");
+        }
+      }
+    }
+    // Hack to workaround the fact that safari doesn't
+    // properly recolor the scrollbar when toggling (#1455)
+    if (navigator.userAgent.indexOf('Safari') > 0 && navigator.userAgent.indexOf('Chrome') == -1) {
+      manageTransitions("body", false);
+      window.scrollTo(0, 1);
+      setTimeout(() => {
+        window.scrollTo(0, 0);
+        manageTransitions("body", true);
+      }, 40);  
+    }
+  }
+  const isFileUrl = () => { 
+    return window.location.protocol === 'file:';
+  }
+  const hasAlternateSentinel = () => {  
+    let styleSentinel = getColorSchemeSentinel();
+    if (styleSentinel !== null) {
+      return styleSentinel === "alternate";
+    } else {
+      return false;
+    }
+  }
+  const setStyleSentinel = (alternate) => {
+    const value = alternate ? "alternate" : "default";
+    if (!isFileUrl()) {
+      window.localStorage.setItem("quarto-color-scheme", value);
+    } else {
+      localAlternateSentinel = value;
+    }
+  }
+  const getColorSchemeSentinel = () => {
+    if (!isFileUrl()) {
+      const storageValue = window.localStorage.getItem("quarto-color-scheme");
+      return storageValue != null ? storageValue : localAlternateSentinel;
+    } else {
+      return localAlternateSentinel;
+    }
+  }
+  let localAlternateSentinel = 'alternate';
+  // Dark / light mode switch
+  window.quartoToggleColorScheme = () => {
+    // Read the current dark / light value 
+    let toAlternate = !hasAlternateSentinel();
+    toggleColorMode(toAlternate);
+    setStyleSentinel(toAlternate);
+  };
+  // Ensure there is a toggle, if there isn't float one in the top right
+  if (window.document.querySelector('.quarto-color-scheme-toggle') === null) {
+    const a = window.document.createElement('a');
+    a.classList.add('top-right');
+    a.classList.add('quarto-color-scheme-toggle');
+    a.href = "";
+    a.onclick = function() { try { window.quartoToggleColorScheme(); } catch {} return false; };
+    const i = window.document.createElement("i");
+    i.classList.add('bi');
+    a.appendChild(i);
+    window.document.body.appendChild(a);
+  }
+  // Switch to dark mode if need be
+  if (hasAlternateSentinel()) {
+    toggleColorMode(true);
+  } else {
+    toggleColorMode(false);
+  }
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    target: function(trigger) {
+      return trigger.previousElementSibling;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="../chapters/ch16_tags.md.html" class="pagination-link">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Ch16. Tags</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="../chapters/ch18_git.md.html" class="pagination-link">
+        <span class="nav-page-text"><span class="chapter-number">18</span>&nbsp; <span class="chapter-title">Ch18. Git</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+
+
+
+</body></html>

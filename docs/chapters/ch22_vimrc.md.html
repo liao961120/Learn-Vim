@@ -1,0 +1,806 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.2.313">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Learn Vim (the Smart Way) - 22&nbsp; Ch22. Vimrc</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1.6em;
+  vertical-align: middle;
+}
+q { quotes: "“" "”" "‘" "’"; }
+</style>
+
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<link href="../chapters/ch23_vim_packages.md.html" rel="next">
+<link href="../chapters/ch21_multiple_file_operations.md.html" rel="prev">
+<script src="../site_libs/quarto-html/quarto.js"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-dark.min.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit"
+  }
+}</script>
+
+
+</head>
+
+<body class="nav-sidebar floating">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+    <div class="container-fluid d-flex justify-content-between">
+      <h1 class="quarto-secondary-nav-title"><span class="chapter-number">22</span>&nbsp; <span class="chapter-title">Ch22. Vimrc</span></h1>
+      <button type="button" class="quarto-btn-toggle btn" aria-label="Show secondary navigation">
+        <i class="bi bi-chevron-right"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="../">Learn Vim (the Smart Way)</a> 
+        <div class="sidebar-tools-main">
+    <a href="https://github.com/iggredible/Learn-Vim" title="" class="sidebar-tool px-1"><i class="bi bi-github"></i></a>
+  <a href="" class="quarto-color-scheme-toggle sidebar-tool" onclick="window.quartoToggleColorScheme(); return false;" title="Toggle dark mode"><i class="bi"></i></a>
+</div>
+    </div>
+      </div>
+      <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+      </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../index.html" class="sidebar-item-text sidebar-link">Preface</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch01_starting_vim.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Ch01. Starting Vim</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch02_buffers_windows_tabs.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Ch02. Buffers, Windows, and Tabs</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch03_searching_files.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Ch03. Searching Files</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch04_vim_grammar.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Ch04. Vim Grammar</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch05_moving_in_file.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Ch05. Moving in a File</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch06_insert_mode.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Ch06. Insert Mode</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch07_the_dot_command.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Ch07. the Dot Command</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch08_registers.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Ch08. Registers</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch09_macros.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Ch09. Macros</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch10_undo.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Ch10. Undo</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch11_visual_mode.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Ch11. Visual Mode</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch12_search_and_substitute.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Ch12. Search and Substitute</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch13_the_global_command.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Ch13. the Global Command</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch14_external_commands.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Ch14. External Commands</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch15_command-line_mode.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">Ch15. Command-line Mode</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch16_tags.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Ch16. Tags</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch17_fold.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">Ch17. Fold</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch18_git.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">18</span>&nbsp; <span class="chapter-title">Ch18. Git</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch19_compile.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">19</span>&nbsp; <span class="chapter-title">Ch19. Compile</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch20_views_sessions_viminfo.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">20</span>&nbsp; <span class="chapter-title">Ch20. Views, Sessions, and Viminfo</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch21_multiple_file_operations.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">21</span>&nbsp; <span class="chapter-title">Multiple File Operations</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch22_vimrc.md.html" class="sidebar-item-text sidebar-link active"><span class="chapter-number">22</span>&nbsp; <span class="chapter-title">Ch22. Vimrc</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch23_vim_packages.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">23</span>&nbsp; <span class="chapter-title">Ch23. Vim Packages</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch24_vim_runtime.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">24</span>&nbsp; <span class="chapter-title">Ch24. Vim Runtime</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch25_vimscript_basic_data_types.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">25</span>&nbsp; <span class="chapter-title">Ch25. Vimscript Basic Data Types</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch26_vimscript_conditionals_and_loops.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">26</span>&nbsp; <span class="chapter-title">Ch26. Vimscript Conditionals and Loops</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch27_vimscript_variable_scopes.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">27</span>&nbsp; <span class="chapter-title">Ch27. Vimscript Variable Scopes</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch28_vimscript_functions.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">28</span>&nbsp; <span class="chapter-title">Ch28. Vimscript Functions</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch29_plugin_example_writing-a-titlecase-plugin.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">29</span>&nbsp; <span class="chapter-title">Ch29. Write a Plugin: Creating a Titlecase Operator</span></a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#how-vim-finds-vimrc" id="toc-how-vim-finds-vimrc" class="nav-link active" data-scroll-target="#how-vim-finds-vimrc"><span class="toc-section-number">22.1</span>  How Vim Finds Vimrc</a></li>
+  <li><a href="#what-to-put-in-my-vimrc" id="toc-what-to-put-in-my-vimrc" class="nav-link" data-scroll-target="#what-to-put-in-my-vimrc"><span class="toc-section-number">22.2</span>  What to Put in My Vimrc?</a></li>
+  <li><a href="#basic-vimrc-content" id="toc-basic-vimrc-content" class="nav-link" data-scroll-target="#basic-vimrc-content"><span class="toc-section-number">22.3</span>  Basic Vimrc Content</a>
+  <ul class="collapse">
+  <li><a href="#plugins" id="toc-plugins" class="nav-link" data-scroll-target="#plugins"><span class="toc-section-number">22.3.1</span>  Plugins</a></li>
+  <li><a href="#settings" id="toc-settings" class="nav-link" data-scroll-target="#settings"><span class="toc-section-number">22.3.2</span>  Settings</a></li>
+  <li><a href="#custom-functions" id="toc-custom-functions" class="nav-link" data-scroll-target="#custom-functions"><span class="toc-section-number">22.3.3</span>  Custom Functions</a></li>
+  <li><a href="#custom-commands" id="toc-custom-commands" class="nav-link" data-scroll-target="#custom-commands"><span class="toc-section-number">22.3.4</span>  Custom Commands</a></li>
+  <li><a href="#maps" id="toc-maps" class="nav-link" data-scroll-target="#maps"><span class="toc-section-number">22.3.5</span>  Maps</a></li>
+  </ul></li>
+  <li><a href="#organizing-vimrc" id="toc-organizing-vimrc" class="nav-link" data-scroll-target="#organizing-vimrc"><span class="toc-section-number">22.4</span>  Organizing Vimrc</a>
+  <ul class="collapse">
+  <li><a href="#splitting-your-vimrc" id="toc-splitting-your-vimrc" class="nav-link" data-scroll-target="#splitting-your-vimrc"><span class="toc-section-number">22.4.1</span>  Splitting Your Vimrc</a></li>
+  <li><a href="#keeping-one-vimrc-file" id="toc-keeping-one-vimrc-file" class="nav-link" data-scroll-target="#keeping-one-vimrc-file"><span class="toc-section-number">22.4.2</span>  Keeping One Vimrc File</a></li>
+  </ul></li>
+  <li><a href="#running-vim-with-or-without-vimrc-and-plugins" id="toc-running-vim-with-or-without-vimrc-and-plugins" class="nav-link" data-scroll-target="#running-vim-with-or-without-vimrc-and-plugins"><span class="toc-section-number">22.5</span>  Running Vim With or Without Vimrc and Plugins</a></li>
+  <li><a href="#configure-vimrc-the-smart-way" id="toc-configure-vimrc-the-smart-way" class="nav-link" data-scroll-target="#configure-vimrc-the-smart-way"><span class="toc-section-number">22.6</span>  Configure Vimrc the Smart Way</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title d-none d-lg-block"><span class="chapter-number">22</span>&nbsp; <span class="chapter-title">Ch22. Vimrc</span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+</header>
+
+<p>In the previous chapters, you learned how to use Vim. In this chapter, you will learn how to organize and configure vimrc.</p>
+<section id="how-vim-finds-vimrc" class="level2" data-number="22.1">
+<h2 data-number="22.1" class="anchored" data-anchor-id="how-vim-finds-vimrc"><span class="header-section-number">22.1</span> How Vim Finds Vimrc</h2>
+<p>The conventional wisdom for vimrc is to add a <code>.vimrc</code> dotfile in the home directory <code>~/.vimrc</code> (it might be different depending on your OS).</p>
+<p>Behind the scene, Vim looks at multiple places for a vimrc file. Here are the places that Vim checks: - <code>$VIMINIT</code> - <code>$HOME/.vimrc</code> - <code>$HOME/.vim/vimrc</code> - <code>$EXINIT</code> - <code>$HOME/.exrc</code> - <code>$VIMRUNTIME/defaults.vim</code></p>
+<p>When you start Vim, it will check the above six locations in that order for a vimrc file. The first found vimrc file will be used and the rest is ignored.</p>
+<p>First Vim will look for a <code>$VIMINIT</code>. If there is nothing there, Vim will check for <code>$HOME/.vimrc</code>. If there is nothing there, Vim will check for <code>$HOME/.vim/vimrc</code>. If Vim finds it, it will stop looking and use <code>$HOME/.vim/vimrc</code>.</p>
+<p>The first location, <code>$VIMINIT</code>, is an environment variable. By default it is undefined. If you want to use <code>~/dotfiles/testvimrc</code> as your <code>$VIMINIT</code> value, you can create an environment variable containing the path of that vimrc. After you run <code>export VIMINIT='let $MYVIMRC="$HOME/dotfiles/testvimrc" | source $MYVIMRC'</code>, Vim will now use <code>~/dotfiles/testvimrc</code> as your vimrc file.</p>
+<p>The second location, <code>$HOME/.vimrc</code>, is the conventional path for many Vim users. <code>$HOME</code> in many cases is your home directory (<code>~</code>). If you have a <code>~/.vimrc</code> file, Vim will use this as your vimrc file.</p>
+<p>The third, <code>$HOME/.vim/vimrc</code>, is located inside the <code>~/.vim</code> directory. You might have the <code>~/.vim</code> directory already for your plugins, custom scripts, or View files. Note that there is no dot in vimrc file name (<code>$HOME/.vim/.vimrc</code> won’t work, but <code>$HOME/.vim/vimrc</code> will).</p>
+<p>The fourth, <code>$EXINIT</code> works similar to <code>$VIMINIT</code>.</p>
+<p>The fifth, <code>$HOME/.exrc</code> works similar to <code>$HOME/.vimrc</code>.</p>
+<p>The sixth, <code>$VIMRUNTIME/defaults.vim</code> is the default vimrc that comes with your Vim build. In my case, I have Vim 8.2 installed using Homebrew, so my path is (<code>/usr/local/share/vim/vim82</code>). If Vim does not find any of the previous six vimrc files, it will use this file.</p>
+<p>For the remaining of this chapter, I am assuming that the vimrc uses the <code>~/.vimrc</code> path.</p>
+</section>
+<section id="what-to-put-in-my-vimrc" class="level2" data-number="22.2">
+<h2 data-number="22.2" class="anchored" data-anchor-id="what-to-put-in-my-vimrc"><span class="header-section-number">22.2</span> What to Put in My Vimrc?</h2>
+<p>A question I asked when I started was, <q>What should I put in my vimrc?</q></p>
+<p>The answer is, <q>anything you want</q>. The temptation to copy-paste other people’s vimrc is real, but you should resist it. If you insist to use someone else’s vimrc, make sure that you know what it does, why and how s/he uses it, and most importantly, if it is relevant to you. Just because someone uses it doesn’t mean you’ll use it too.</p>
+</section>
+<section id="basic-vimrc-content" class="level2" data-number="22.3">
+<h2 data-number="22.3" class="anchored" data-anchor-id="basic-vimrc-content"><span class="header-section-number">22.3</span> Basic Vimrc Content</h2>
+<p>In the nutshell, a vimrc is a collection of: - Plugins - Settings - Custom Functions - Custom Commands - Mappings</p>
+<p>There are other things not mentioned above, but in general, this covers most use cases.</p>
+<section id="plugins" class="level3" data-number="22.3.1">
+<h3 data-number="22.3.1" class="anchored" data-anchor-id="plugins"><span class="header-section-number">22.3.1</span> Plugins</h3>
+<p>In the previous chapters, I have mentioned different plugins, like <a href="https://github.com/junegunn/fzf.vim">fzf.vim</a>, <a href="https://github.com/simnalamburt/vim-mundo">vim-mundo</a>, and <a href="https://github.com/tpope/vim-fugitive">vim-fugitive</a>.</p>
+<p>Ten years ago, managing plugins was a nightmare. However, with the rise of modern plugin managers, installing plugins can now be done in seconds. I am currently using <a href="https://github.com/junegunn/vim-plug">vim-plug</a> as my plugin manager, so I will use it in this section. The concept should be similar with other popular plugin managers. I would strongly recommend you to check out different ones, such as: - <a href="https://github.com/VundleVim/Vundle.vim">vundle.vim</a> - <a href="https://github.com/tpope/vim-pathogen">vim-pathogen</a> - <a href="https://github.com/Shougo/dein.vim">dein.vim</a></p>
+<p>There are more plugin managers than the ones listed above, feel free to look around. To install vim-plug, if you have a Unix machine, run:</p>
+<pre><code>curl -fLo ~/.vim/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim</code></pre>
+<p>To add new plugins, drop your plugin names (<code>Plug 'github-username/repository-name'</code>) between the <code>call plug#begin()</code> and the <code>call plug#end()</code> lines. So if you want to install <code>emmet-vim</code> and <code>nerdtree</code>, put the following snippet down in your vimrc:</p>
+<pre><code>call plug#begin('~/.vim/plugged')
+  Plug 'mattn/emmet-vim'
+  Plug 'preservim/nerdtree'
+call plug#end()</code></pre>
+<p>Save the changes, source it (<code>:source %</code>), and run <code>:PlugInstall</code> to install them.</p>
+<p>In the future if you need to remove unused plugins, you just need to remove the plugin names from the <code>call</code> block, save and source, and run the <code>:PlugClean</code> command to remove it from your machine.</p>
+<p>Vim 8 has its own built-in package managers. You can check out <code>:h packages</code> for more information. In the next chapter, I will show you how to use it.</p>
+</section>
+<section id="settings" class="level3" data-number="22.3.2">
+<h3 data-number="22.3.2" class="anchored" data-anchor-id="settings"><span class="header-section-number">22.3.2</span> Settings</h3>
+<p>It is common to see a lot of <code>set</code> options in any vimrc. If you run the set command from the command-line mode, it is not permanent. You will lose it when you close Vim. For example, instead of running <code>:set relativenumber number</code> from the Command-line mode each time you run Vim, you could just put these inside vimrc:</p>
+<pre><code>set relativenumber number</code></pre>
+<p>Some settings require you to pass it a value, like <code>set tabstop=2</code>. Check out the help page for each setting to learn what kind of values it accepts.</p>
+<p>You can also use a <code>let</code> instead of <code>set</code> (make sure to prepend it with <code>&amp;</code>). With <code>let</code>, you can use an expression as a value. For example, to set the <code>'dictionary'</code> option to a path only if the path exists:</p>
+<pre><code>let s:english_dict = "/usr/share/dict/words"
+
+if filereadable(s:english_dict)
+  let &amp;dictionary=s:english_dict
+endif</code></pre>
+<p>You will learn about Vimscript assignments and conditionals in later chapters.</p>
+<p>For a list of all possible options in Vim, check out <code>:h E355</code>.</p>
+</section>
+<section id="custom-functions" class="level3" data-number="22.3.3">
+<h3 data-number="22.3.3" class="anchored" data-anchor-id="custom-functions"><span class="header-section-number">22.3.3</span> Custom Functions</h3>
+<p>Vimrc is a good place for custom functions. You will learn how to write your own Vimscript functions in a later chapter.</p>
+</section>
+<section id="custom-commands" class="level3" data-number="22.3.4">
+<h3 data-number="22.3.4" class="anchored" data-anchor-id="custom-commands"><span class="header-section-number">22.3.4</span> Custom Commands</h3>
+<p>You can create a custom Command-line command with <code>command</code>.</p>
+<p>To create a basic command <code>GimmeDate</code> to display today’s date:</p>
+<pre><code>:command! GimmeDate echo call("strftime", ["%F"])</code></pre>
+<p>When you run <code>:GimmeDate</code>, Vim will display a date like <q>2021-01-1</q>.</p>
+<p>To create a basic command with an input, you can use <code>&lt;args&gt;</code>. If you want to pass to <code>GimmeDate</code> a specific time/date format:</p>
+<pre><code>:command! GimmeDate echo call("strftime", [&lt;args&gt;])
+
+:GimmeDate "%F"
+" 2020-01-01
+
+:GimmeDate "%H:%M"
+" 11:30</code></pre>
+<p>If you want to restrict the number of arguments, you can pass it <code>-nargs</code> flag. Use <code>-nargs=0</code> to pass no argument, <code>-nargs=1</code> to pass one argument, <code>-nargs=+</code> to pass at least one argument, <code>-nargs=*</code> to pass any number of arguments, and <code>-nargs=?</code> to pass 0 or one arguments. If you want to pass nth argument, use <code>-nargs=n</code> (where <code>n</code> is any integer).</p>
+<p><code>&lt;args&gt;</code> has two variants: <code>&lt;f-args&gt;</code> and <code>&lt;q-args&gt;</code>. The former is used to pass arguments to Vimscript functions. The latter is used to automatically convert user input to strings.</p>
+<p>Using <code>args</code>:</p>
+<pre><code>:command! -nargs=1 Hello echo "Hello " . &lt;args&gt;
+:Hello "Iggy"
+" returns 'Hello Iggy'
+
+:Hello Iggy
+" Undefined variable error</code></pre>
+<p>Using <code>q-args</code>:</p>
+<pre><code>:command! -nargs=1 Hello echo "Hello " . &lt;q-args&gt;
+:Hello Iggy
+" returns 'Hello Iggy'</code></pre>
+<p>Using <code>f-args</code>:</p>
+<pre><code>:function! PrintHello(person1, person2)
+:  echo "Hello " . a:person1 . " and " . a:person2
+:endfunction
+
+:command! -nargs=* Hello call PrintHello(&lt;f-args&gt;)
+
+:Hello Iggy1 Iggy2
+" returns "Hello Iggy1 and Iggy2"</code></pre>
+<p>The functions above will make a lot more sense once you get to the Vimscript functions chapter.</p>
+<p>To learn more about command and args, check out <code>:h command</code> and <code>:args</code>.</p>
+</section>
+<section id="maps" class="level3" data-number="22.3.5">
+<h3 data-number="22.3.5" class="anchored" data-anchor-id="maps"><span class="header-section-number">22.3.5</span> Maps</h3>
+<p>If you find yourself repeatedly performing the same complex task, it is a good indicator that you should create a mapping for that task.</p>
+<p>For example, I have these two mappings in my vimrc:</p>
+<pre><code>nnoremap &lt;silent&gt; &lt;C-f&gt; :GFiles&lt;CR&gt;
+
+nnoremap &lt;Leader&gt;tn :call ToggleNumber()&lt;CR&gt;</code></pre>
+<p>On the first one, I map <code>Ctrl-F</code> to <a href="https://github.com/junegunn/fzf.vim">fzf.vim</a> plugin’s <code>:Gfiles</code> command (quickly search for Git files). On the second one, I map <code>&lt;Leader&gt;tn</code> to call a custom function <code>ToggleNumber</code> (toggles <code>norelativenumber</code> and <code>relativenumber</code> options). The <code>Ctrl-F</code> mapping overwrites Vim’s native page scroll. Your mapping will overwrite Vim controls if they collide. Because I almost never used that feature, I decided that it is safe to overwrite it.</p>
+<p>By the way, what is this <q>leader</q> key in <code>&lt;Leader&gt;tn</code>?</p>
+<p>Vim has a leader key to help with mappings. For example, I mapped <code>&lt;Leader&gt;tn</code> to run the <code>ToggleNumber()</code> function. Without the leader key, I would be using <code>tn</code>, but Vim already has <code>t</code> (the <q>till</q> search navigation). With the leader key, I can now press the key assigned as a leader, then <code>tn</code> without interfering with existing commands. The leader key is a key that you can setup to start your mapping combo. By default Vim uses the backslash as the leader key (so <code>&lt;Leader&gt;tn</code> becomes <q>backslash-t-n</q>).</p>
+<p>I personally like to use <code>&lt;Space&gt;</code> as the leader key instead of the backslash default. To change your leader key, add this in your vimrc:</p>
+<pre><code>let mapleader = "\&lt;space&gt;"</code></pre>
+<p>The <code>nnoremap</code> command used above can be broken down into three parts: - <code>n</code> represents the normal mode. - <code>nore</code> means non-recursive. - <code>map</code> is the map command.</p>
+<p>At minimum, you could have used <code>nmap</code> instead of <code>nnoremap</code> (<code>nmap &lt;silent&gt; &lt;C-f&gt; :Gfiles&lt;CR&gt;</code>). However, it is a good practice to use the non-recursive variant to avoid potential infinite loop.</p>
+<p>Here’s what could happen if you don’t map non-recursively. Suppose you want to add a mapping to <code>B</code> to add a semi-colon at the end of the line, then go back one WORD (recall that <code>B</code> n Vim is a normal-mode navigation key to go backward one WORD).</p>
+<pre><code>nmap B A;&lt;esc&gt;B</code></pre>
+<p>When you press <code>B</code>… oh no! Vim adds <code>;</code> uncontrollably (interrupt it with <code>Ctrl-C</code>). Why did that happen? Because in the mapping <code>A;&lt;esc&gt;B</code>, the <code>B</code> does not refer to Vim’s native <code>B</code> function (go back one WORD), but it refers to the mapped function. What you have is actually this:</p>
+<pre><code>A;&lt;esc&gt;A;&lt;esc&gt;A;&lt;esc&gt;A;esc&gt;...</code></pre>
+<p>To solve this problem, you need to add a non-recursive map:</p>
+<pre><code>nnoremap B A;&lt;esc&gt;B</code></pre>
+<p>Now try calling <code>B</code> again. This time it successfully adds a <code>;</code> at the end of the line and go back one WORD. The <code>B</code> in this mapping represents Vim’s original <code>B</code> functionality.</p>
+<p>Vim has different maps for different modes. If you want to create a map for insert mode to exit insert mode when you press <code>jk</code>:</p>
+<pre><code>inoremap jk &lt;esc&gt;</code></pre>
+<p>The other map modes are: <code>map</code> (Normal, Visual, Select, and Operator-pending), <code>vmap</code> (Visual and Select), <code>smap</code> (Select), <code>xmap</code> (Visual), <code>omap</code> (Operator-pending), <code>map!</code> (Insert and Command-line), <code>lmap</code> (Insert, Command-line, Lang-arg), <code>cmap</code> (Command-line), and <code>tmap</code> (terminal-job). I won’t cover them in detail. To learn more, check out <code>:h map.txt</code>.</p>
+<p>Create a map that’s most intuitive, consistent, and easy-to-remember.</p>
+</section>
+</section>
+<section id="organizing-vimrc" class="level2" data-number="22.4">
+<h2 data-number="22.4" class="anchored" data-anchor-id="organizing-vimrc"><span class="header-section-number">22.4</span> Organizing Vimrc</h2>
+<p>Over time, your vimrc will grow large and become convoluted. There are two ways to keep your vimrc to look clean: - Split your vimrc into several files. - Fold your vimrc file.</p>
+<section id="splitting-your-vimrc" class="level3" data-number="22.4.1">
+<h3 data-number="22.4.1" class="anchored" data-anchor-id="splitting-your-vimrc"><span class="header-section-number">22.4.1</span> Splitting Your Vimrc</h3>
+<p>You can split your vimrc to multiple files using Vim’s <code>source</code> command. This command reads command-line commands from the given file argument.</p>
+<p>Let’s create a file inside the <code>~/.vim</code> directory and name it <code>/settings</code> (<code>~/.vim/settings</code>). The name itself is arbitrary and you can name it whatever you like.</p>
+<p>You are going to split it into four components: - Third-party plugins (<code>~/.vim/settings/plugins.vim</code>). - General settings (<code>~/.vim/settings/configs.vim</code>). - Custom functions (<code>~/.vim/settings/functions.vim</code>). - Key mappings (<code>~/.vim/settings/mappings.vim</code>) .</p>
+<p>Inside <code>~/.vimrc</code>:</p>
+<pre><code>source $HOME/.vim/settings/plugins.vim
+source $HOME/.vim/settings/configs.vim
+source $HOME/.vim/settings/functions.vim
+source $HOME/.vim/settings/mappings.vim</code></pre>
+<p>You can edit these files by putting your cursor under the path and press <code>gf</code>.</p>
+<p>Inside <code>~/.vim/settings/plugins.vim</code>:</p>
+<pre><code>call plug#begin('~/.vim/plugged')
+  Plug 'mattn/emmet-vim'
+  Plug 'preservim/nerdtree'
+call plug#end()</code></pre>
+<p>Inside <code>~/.vim/settings/configs.vim</code>:</p>
+<pre><code>set nocompatible
+set relativenumber
+set number</code></pre>
+<p>Inside <code>~/.vim/settings/functions.vim</code>:</p>
+<pre><code>function! ToggleNumber()
+  if(&amp;relativenumber == 1)
+    set norelativenumber
+  else
+    set relativenumber
+  endif
+endfunc</code></pre>
+<p>Inside <code>~/.vim/settings/mappings.vim</code>:</p>
+<pre><code>inoremap jk &lt;esc&gt;
+nnoremap &lt;silent&gt; &lt;C-f&gt; :GFiles&lt;CR&gt;
+nnoremap &lt;Leader&gt;tn :call ToggleNumber()&lt;CR&gt;</code></pre>
+<p>Your vimrc should works as usual, but now it is only four lines long!</p>
+<p>With this setup, you easily know where to go. If you need to add more mappings, add them to the <code>/mappings.vim</code> file. In the future, you can always add more directories as your vimrc grows. For example, if you need to create a setting for your colorschemes, you can add a <code>~/.vim/settings/themes.vim</code>.</p>
+</section>
+<section id="keeping-one-vimrc-file" class="level3" data-number="22.4.2">
+<h3 data-number="22.4.2" class="anchored" data-anchor-id="keeping-one-vimrc-file"><span class="header-section-number">22.4.2</span> Keeping One Vimrc File</h3>
+<p>If you prefer to keep one vimrc file to keep it portable, you can use the marker folds to keep it organized. Add this at the top of your vimrc:</p>
+<pre><code>" setup folds {{{
+augroup filetype_vim
+  autocmd!
+  autocmd FileType vim setlocal foldmethod=marker
+augroup END
+" }}}</code></pre>
+<p>Vim can detect what kind of filetype the current buffer has (<code>:set filetype?</code>). If it is a <code>vim</code> filetype, you can use a marker fold method. Recall that a marker fold uses <code>{{{</code> and <code>}}}</code> to indicate the starting and ending folds.</p>
+<p>Add <code>{{{</code> and <code>}}}</code> folds to the rest of your vimrc (don’t forget to comment them with <code>"</code>):</p>
+<pre><code>" setup folds {{{
+augroup filetype_vim
+  autocmd!
+  autocmd FileType vim setlocal foldmethod=marker
+augroup END
+" }}}
+
+" plugins {{{
+call plug#begin('~/.vim/plugged')
+  Plug 'mattn/emmet-vim'
+  Plug 'preservim/nerdtree'
+call plug#end()
+" }}}
+
+" configs {{{
+set nocompatible
+set relativenumber
+set number
+" }}}
+
+" functions {{{
+function! ToggleNumber()
+  if(&amp;relativenumber == 1)
+    set norelativenumber
+  else
+    set relativenumber
+  endif
+endfunc
+" }}}
+
+" mappings {{{
+inoremap jk &lt;esc&gt;
+nnoremap &lt;silent&gt; &lt;C-f&gt; :GFiles&lt;CR&gt;
+nnoremap &lt;Leader&gt;tn :call ToggleNumber()&lt;CR&gt;
+" }}}</code></pre>
+<p>Your vimrc should look like this:</p>
+<pre><code>+-- 6 lines: setup folds -----
+
++-- 6 lines: plugins ---------
+
++-- 5 lines: configs ---------
+
++-- 9 lines: functions -------
+
++-- 5 lines: mappings --------</code></pre>
+</section>
+</section>
+<section id="running-vim-with-or-without-vimrc-and-plugins" class="level2" data-number="22.5">
+<h2 data-number="22.5" class="anchored" data-anchor-id="running-vim-with-or-without-vimrc-and-plugins"><span class="header-section-number">22.5</span> Running Vim With or Without Vimrc and Plugins</h2>
+<p>If you need to run Vim without both vimrc and plugins, run:</p>
+<pre><code>vim -u NONE</code></pre>
+<p>If you need to launch Vim without vimrc but with plugins, run:</p>
+<pre><code>vim -u NORC</code></pre>
+<p>If you need to run Vim with vimrc but without plugins, run:</p>
+<pre><code>vim --noplugin</code></pre>
+<p>If you need to run Vim with a <em>different</em> vimrc, say <code>~/.vimrc-backup</code>, run:</p>
+<pre><code>vim -u ~/.vimrc-backup</code></pre>
+<p>If you need to run Vim with only <code>defaults.vim</code> and without plugins, which is helpful to fix broken vimrc, run:</p>
+<pre><code>vim --clean</code></pre>
+</section>
+<section id="configure-vimrc-the-smart-way" class="level2" data-number="22.6">
+<h2 data-number="22.6" class="anchored" data-anchor-id="configure-vimrc-the-smart-way"><span class="header-section-number">22.6</span> Configure Vimrc the Smart Way</h2>
+<p>Vimrc is an important component of Vim customization. A good way to start building your vimrc is by reading other people’s vimrcs and gradually build it over time. The best vimrc is not the one that developer X uses, but the one that is tailored exactly to fit your thinking framework and editing style.</p>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const disableStylesheet = (stylesheets) => {
+    for (let i=0; i < stylesheets.length; i++) {
+      const stylesheet = stylesheets[i];
+      stylesheet.rel = 'prefetch';
+    }
+  }
+  const enableStylesheet = (stylesheets) => {
+    for (let i=0; i < stylesheets.length; i++) {
+      const stylesheet = stylesheets[i];
+      stylesheet.rel = 'stylesheet';
+    }
+  }
+  const manageTransitions = (selector, allowTransitions) => {
+    const els = window.document.querySelectorAll(selector);
+    for (let i=0; i < els.length; i++) {
+      const el = els[i];
+      if (allowTransitions) {
+        el.classList.remove('notransition');
+      } else {
+        el.classList.add('notransition');
+      }
+    }
+  }
+  const toggleColorMode = (alternate) => {
+    // Switch the stylesheets
+    const alternateStylesheets = window.document.querySelectorAll('link.quarto-color-scheme.quarto-color-alternate');
+    manageTransitions('#quarto-margin-sidebar .nav-link', false);
+    if (alternate) {
+      enableStylesheet(alternateStylesheets);
+      for (const sheetNode of alternateStylesheets) {
+        if (sheetNode.id === "quarto-bootstrap") {
+          toggleBodyColorMode(sheetNode);
+        }
+      }
+    } else {
+      disableStylesheet(alternateStylesheets);
+      toggleBodyColorPrimary();
+    }
+    manageTransitions('#quarto-margin-sidebar .nav-link', true);
+    // Switch the toggles
+    const toggles = window.document.querySelectorAll('.quarto-color-scheme-toggle');
+    for (let i=0; i < toggles.length; i++) {
+      const toggle = toggles[i];
+      if (toggle) {
+        if (alternate) {
+          toggle.classList.add("alternate");     
+        } else {
+          toggle.classList.remove("alternate");
+        }
+      }
+    }
+    // Hack to workaround the fact that safari doesn't
+    // properly recolor the scrollbar when toggling (#1455)
+    if (navigator.userAgent.indexOf('Safari') > 0 && navigator.userAgent.indexOf('Chrome') == -1) {
+      manageTransitions("body", false);
+      window.scrollTo(0, 1);
+      setTimeout(() => {
+        window.scrollTo(0, 0);
+        manageTransitions("body", true);
+      }, 40);  
+    }
+  }
+  const isFileUrl = () => { 
+    return window.location.protocol === 'file:';
+  }
+  const hasAlternateSentinel = () => {  
+    let styleSentinel = getColorSchemeSentinel();
+    if (styleSentinel !== null) {
+      return styleSentinel === "alternate";
+    } else {
+      return false;
+    }
+  }
+  const setStyleSentinel = (alternate) => {
+    const value = alternate ? "alternate" : "default";
+    if (!isFileUrl()) {
+      window.localStorage.setItem("quarto-color-scheme", value);
+    } else {
+      localAlternateSentinel = value;
+    }
+  }
+  const getColorSchemeSentinel = () => {
+    if (!isFileUrl()) {
+      const storageValue = window.localStorage.getItem("quarto-color-scheme");
+      return storageValue != null ? storageValue : localAlternateSentinel;
+    } else {
+      return localAlternateSentinel;
+    }
+  }
+  let localAlternateSentinel = 'alternate';
+  // Dark / light mode switch
+  window.quartoToggleColorScheme = () => {
+    // Read the current dark / light value 
+    let toAlternate = !hasAlternateSentinel();
+    toggleColorMode(toAlternate);
+    setStyleSentinel(toAlternate);
+  };
+  // Ensure there is a toggle, if there isn't float one in the top right
+  if (window.document.querySelector('.quarto-color-scheme-toggle') === null) {
+    const a = window.document.createElement('a');
+    a.classList.add('top-right');
+    a.classList.add('quarto-color-scheme-toggle');
+    a.href = "";
+    a.onclick = function() { try { window.quartoToggleColorScheme(); } catch {} return false; };
+    const i = window.document.createElement("i");
+    i.classList.add('bi');
+    a.appendChild(i);
+    window.document.body.appendChild(a);
+  }
+  // Switch to dark mode if need be
+  if (hasAlternateSentinel()) {
+    toggleColorMode(true);
+  } else {
+    toggleColorMode(false);
+  }
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    target: function(trigger) {
+      return trigger.previousElementSibling;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="../chapters/ch21_multiple_file_operations.md.html" class="pagination-link">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">21</span>&nbsp; <span class="chapter-title">Multiple File Operations</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="../chapters/ch23_vim_packages.md.html" class="pagination-link">
+        <span class="nav-page-text"><span class="chapter-number">23</span>&nbsp; <span class="chapter-title">Ch23. Vim Packages</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+
+
+
+</body></html>

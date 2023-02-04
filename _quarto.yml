@@ -1,0 +1,57 @@
+project:
+  type: book
+  output-dir: docs
+
+book:
+  title: "Learn Vim (the Smart Way)"
+  author: "Igor Irianto"
+  chapters:
+    - index.qmd
+    - chapters/ch01_starting_vim.md.qmd
+    - chapters/ch02_buffers_windows_tabs.md.qmd
+    - chapters/ch03_searching_files.md.qmd
+    - chapters/ch04_vim_grammar.md.qmd
+    - chapters/ch05_moving_in_file.md.qmd
+    - chapters/ch06_insert_mode.md.qmd
+    - chapters/ch07_the_dot_command.md.qmd
+    - chapters/ch08_registers.md.qmd
+    - chapters/ch09_macros.md.qmd
+    - chapters/ch10_undo.md.qmd
+    - chapters/ch11_visual_mode.md.qmd
+    - chapters/ch12_search_and_substitute.md.qmd
+    - chapters/ch13_the_global_command.md.qmd
+    - chapters/ch14_external_commands.md.qmd
+    - chapters/ch15_command-line_mode.md.qmd
+    - chapters/ch16_tags.md.qmd
+    - chapters/ch17_fold.md.qmd
+    - chapters/ch18_git.md.qmd
+    - chapters/ch19_compile.md.qmd
+    - chapters/ch20_views_sessions_viminfo.md.qmd
+    - chapters/ch21_multiple_file_operations.md.qmd
+    - chapters/ch22_vimrc.md.qmd
+    - chapters/ch23_vim_packages.md.qmd
+    - chapters/ch24_vim_runtime.md.qmd
+    - chapters/ch25_vimscript_basic_data_types.md.qmd
+    - chapters/ch26_vimscript_conditionals_and_loops.md.qmd
+    - chapters/ch27_vimscript_variable_scopes.md.qmd
+    - chapters/ch28_vimscript_functions.md.qmd
+    - chapters/ch29_plugin_example_writing-a-titlecase-plugin.md.qmd
+
+  sidebar:
+    search: true
+    tools:
+      - icon: github
+        href: https://github.com/liao961120/Learn-Vim
+# bibliography: references.bib
+format:
+  html:
+    theme: 
+      dark: darkly
+      light: cosmo
+    code-block-border-left: true
+    code-copy: true
+    code-line-numbers: true
+    # code-block-bg: true
+  # pdf:
+  #   documentclass: scrreprt
+

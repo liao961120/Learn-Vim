@@ -1,0 +1,737 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.2.313">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Learn Vim (the Smart Way) - 8&nbsp; Ch08. Registers</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1.6em;
+  vertical-align: middle;
+}
+q { quotes: "“" "”" "‘" "’"; }
+</style>
+
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<link href="../chapters/ch09_macros.md.html" rel="next">
+<link href="../chapters/ch07_the_dot_command.md.html" rel="prev">
+<script src="../site_libs/quarto-html/quarto.js"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-dark.min.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit"
+  }
+}</script>
+
+
+</head>
+
+<body class="nav-sidebar floating">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+    <div class="container-fluid d-flex justify-content-between">
+      <h1 class="quarto-secondary-nav-title"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Ch08. Registers</span></h1>
+      <button type="button" class="quarto-btn-toggle btn" aria-label="Show secondary navigation">
+        <i class="bi bi-chevron-right"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="../">Learn Vim (the Smart Way)</a> 
+        <div class="sidebar-tools-main">
+    <a href="https://github.com/iggredible/Learn-Vim" title="" class="sidebar-tool px-1"><i class="bi bi-github"></i></a>
+  <a href="" class="quarto-color-scheme-toggle sidebar-tool" onclick="window.quartoToggleColorScheme(); return false;" title="Toggle dark mode"><i class="bi"></i></a>
+</div>
+    </div>
+      </div>
+      <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+      </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../index.html" class="sidebar-item-text sidebar-link">Preface</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch01_starting_vim.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Ch01. Starting Vim</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch02_buffers_windows_tabs.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Ch02. Buffers, Windows, and Tabs</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch03_searching_files.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Ch03. Searching Files</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch04_vim_grammar.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Ch04. Vim Grammar</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch05_moving_in_file.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Ch05. Moving in a File</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch06_insert_mode.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Ch06. Insert Mode</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch07_the_dot_command.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Ch07. the Dot Command</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch08_registers.md.html" class="sidebar-item-text sidebar-link active"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Ch08. Registers</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch09_macros.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Ch09. Macros</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch10_undo.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Ch10. Undo</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch11_visual_mode.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Ch11. Visual Mode</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch12_search_and_substitute.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Ch12. Search and Substitute</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch13_the_global_command.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Ch13. the Global Command</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch14_external_commands.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Ch14. External Commands</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch15_command-line_mode.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">Ch15. Command-line Mode</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch16_tags.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Ch16. Tags</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch17_fold.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">Ch17. Fold</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch18_git.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">18</span>&nbsp; <span class="chapter-title">Ch18. Git</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch19_compile.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">19</span>&nbsp; <span class="chapter-title">Ch19. Compile</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch20_views_sessions_viminfo.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">20</span>&nbsp; <span class="chapter-title">Ch20. Views, Sessions, and Viminfo</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch21_multiple_file_operations.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">21</span>&nbsp; <span class="chapter-title">Multiple File Operations</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch22_vimrc.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">22</span>&nbsp; <span class="chapter-title">Ch22. Vimrc</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch23_vim_packages.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">23</span>&nbsp; <span class="chapter-title">Ch23. Vim Packages</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch24_vim_runtime.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">24</span>&nbsp; <span class="chapter-title">Ch24. Vim Runtime</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch25_vimscript_basic_data_types.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">25</span>&nbsp; <span class="chapter-title">Ch25. Vimscript Basic Data Types</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch26_vimscript_conditionals_and_loops.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">26</span>&nbsp; <span class="chapter-title">Ch26. Vimscript Conditionals and Loops</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch27_vimscript_variable_scopes.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">27</span>&nbsp; <span class="chapter-title">Ch27. Vimscript Variable Scopes</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch28_vimscript_functions.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">28</span>&nbsp; <span class="chapter-title">Ch28. Vimscript Functions</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch29_plugin_example_writing-a-titlecase-plugin.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">29</span>&nbsp; <span class="chapter-title">Ch29. Write a Plugin: Creating a Titlecase Operator</span></a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#the-ten-register-types" id="toc-the-ten-register-types" class="nav-link active" data-scroll-target="#the-ten-register-types"><span class="toc-section-number">8.1</span>  The Ten Register Types</a></li>
+  <li><a href="#register-operators" id="toc-register-operators" class="nav-link" data-scroll-target="#register-operators"><span class="toc-section-number">8.2</span>  Register Operators</a></li>
+  <li><a href="#calling-registers-from-insert-mode" id="toc-calling-registers-from-insert-mode" class="nav-link" data-scroll-target="#calling-registers-from-insert-mode"><span class="toc-section-number">8.3</span>  Calling Registers From Insert Mode</a></li>
+  <li><a href="#the-unnamed-register" id="toc-the-unnamed-register" class="nav-link" data-scroll-target="#the-unnamed-register"><span class="toc-section-number">8.4</span>  The Unnamed Register</a></li>
+  <li><a href="#the-numbered-registers" id="toc-the-numbered-registers" class="nav-link" data-scroll-target="#the-numbered-registers"><span class="toc-section-number">8.5</span>  The Numbered Registers</a>
+  <ul class="collapse">
+  <li><a href="#the-yanked-register" id="toc-the-yanked-register" class="nav-link" data-scroll-target="#the-yanked-register"><span class="toc-section-number">8.5.1</span>  The Yanked Register</a></li>
+  <li><a href="#the-non-zero-numbered-registers" id="toc-the-non-zero-numbered-registers" class="nav-link" data-scroll-target="#the-non-zero-numbered-registers"><span class="toc-section-number">8.5.2</span>  The Non-zero Numbered Registers</a></li>
+  </ul></li>
+  <li><a href="#the-small-delete-register" id="toc-the-small-delete-register" class="nav-link" data-scroll-target="#the-small-delete-register"><span class="toc-section-number">8.6</span>  The Small Delete Register</a></li>
+  <li><a href="#the-named-register" id="toc-the-named-register" class="nav-link" data-scroll-target="#the-named-register"><span class="toc-section-number">8.7</span>  The Named Register</a></li>
+  <li><a href="#the-read-only-registers" id="toc-the-read-only-registers" class="nav-link" data-scroll-target="#the-read-only-registers"><span class="toc-section-number">8.8</span>  The Read-only Registers</a></li>
+  <li><a href="#the-alternate-file-register" id="toc-the-alternate-file-register" class="nav-link" data-scroll-target="#the-alternate-file-register"><span class="toc-section-number">8.9</span>  The Alternate File Register</a></li>
+  <li><a href="#the-expression-register" id="toc-the-expression-register" class="nav-link" data-scroll-target="#the-expression-register"><span class="toc-section-number">8.10</span>  The Expression Register</a></li>
+  <li><a href="#the-selection-registers" id="toc-the-selection-registers" class="nav-link" data-scroll-target="#the-selection-registers"><span class="toc-section-number">8.11</span>  The Selection Registers</a></li>
+  <li><a href="#the-black-hole-register" id="toc-the-black-hole-register" class="nav-link" data-scroll-target="#the-black-hole-register"><span class="toc-section-number">8.12</span>  The Black Hole Register</a></li>
+  <li><a href="#the-last-search-pattern-register" id="toc-the-last-search-pattern-register" class="nav-link" data-scroll-target="#the-last-search-pattern-register"><span class="toc-section-number">8.13</span>  The Last Search Pattern Register</a></li>
+  <li><a href="#viewing-the-registers" id="toc-viewing-the-registers" class="nav-link" data-scroll-target="#viewing-the-registers"><span class="toc-section-number">8.14</span>  Viewing the Registers</a></li>
+  <li><a href="#executing-a-register" id="toc-executing-a-register" class="nav-link" data-scroll-target="#executing-a-register"><span class="toc-section-number">8.15</span>  Executing a Register</a></li>
+  <li><a href="#clearing-a-register" id="toc-clearing-a-register" class="nav-link" data-scroll-target="#clearing-a-register"><span class="toc-section-number">8.16</span>  Clearing a Register</a></li>
+  <li><a href="#putting-the-content-of-a-register" id="toc-putting-the-content-of-a-register" class="nav-link" data-scroll-target="#putting-the-content-of-a-register"><span class="toc-section-number">8.17</span>  Putting the Content of a Register</a></li>
+  <li><a href="#learning-registers-the-smart-way" id="toc-learning-registers-the-smart-way" class="nav-link" data-scroll-target="#learning-registers-the-smart-way"><span class="toc-section-number">8.18</span>  Learning Registers the Smart Way</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title d-none d-lg-block"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Ch08. Registers</span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+</header>
+
+<p>Learning Vim registers is like learning algebra for the first time. You didn’t think you need it until you needed it.</p>
+<p>You’ve probably used Vim registers when you yanked or deleted a text then pasted it with <code>p</code> or <code>P</code>. However, did you know that Vim has 10 different types of registers? Used correctly, Vim registers can save you from repetitive typing.</p>
+<p>In this chapter, I will go over all Vim register types and how to use them efficiently.</p>
+<section id="the-ten-register-types" class="level2" data-number="8.1">
+<h2 data-number="8.1" class="anchored" data-anchor-id="the-ten-register-types"><span class="header-section-number">8.1</span> The Ten Register Types</h2>
+<p>Here are the 10 Vim register types:</p>
+<ol type="1">
+<li>The unnamed register (<code>""</code>).</li>
+<li>The numbered registers (<code>"0-9</code>).</li>
+<li>The small delete register (<code>"-</code>).</li>
+<li>The named registers (<code>"a-z</code>).</li>
+<li>The read-only registers (<code>":</code>, <code>".</code>,and <code>"%</code>).</li>
+<li>The alternate file register (<code>"#</code>).</li>
+<li>The expression register (<code>"=</code>).</li>
+<li>The selection registers (<code>"*</code> and <code>"+</code>).</li>
+<li>The black hole register (<code>"_</code>).</li>
+<li>The last search pattern register (<code>"/</code>).</li>
+</ol>
+</section>
+<section id="register-operators" class="level2" data-number="8.2">
+<h2 data-number="8.2" class="anchored" data-anchor-id="register-operators"><span class="header-section-number">8.2</span> Register Operators</h2>
+<p>To use registers, you need to first store them with operators. Here are some operators that store values to registers:</p>
+<pre><code>y    Yank (copy)
+c    Delete text and start insert mode
+d    Delete text</code></pre>
+<p>There are more operators (like <code>s</code> or <code>x</code>), but the above are the useful ones. The rule of thumb is, if an operator can remove a text, it probably stores the text to registers.</p>
+<p>To paste a text from registers, you can use:</p>
+<pre><code>p    Paste the text after the cursor
+P    Paste the text before the cursor</code></pre>
+<p>Both <code>p</code> and <code>P</code> accept a count and a register symbol as arguments. For example, to paste ten times, do <code>10p</code>. To paste the text from register a, do <code>"ap</code>. To paste the text from register a ten times, do <code>10"ap</code>. By the way, the <code>p</code> actually technically stands for <q>put</q>, not <q>paste</q>, but I figure paste is a more conventional word.</p>
+<p>The general syntax to get the content from a specific register is <code>"a</code>, where <code>a</code> is the register symbol.</p>
+</section>
+<section id="calling-registers-from-insert-mode" class="level2" data-number="8.3">
+<h2 data-number="8.3" class="anchored" data-anchor-id="calling-registers-from-insert-mode"><span class="header-section-number">8.3</span> Calling Registers From Insert Mode</h2>
+<p>Everything you learn in this chapter can also be executed in insert mode. To get the text from register a, normally you do <code>"ap</code>. But if you are in insert mode, run <code>Ctrl-R a</code>. The syntax to call registers from insert mode is:</p>
+<pre><code>Ctrl-R a</code></pre>
+<p>Where <code>a</code> is the register symbol. Now that you know how to store and retrieve registers, let’s dive in!</p>
+</section>
+<section id="the-unnamed-register" class="level2" data-number="8.4">
+<h2 data-number="8.4" class="anchored" data-anchor-id="the-unnamed-register"><span class="header-section-number">8.4</span> The Unnamed Register</h2>
+<p>To get the text from the unnamed register, do <code>""p</code>. It stores the last text you yanked, changed, or deleted. If you do another yank, change, or delete, Vim will automatically replace the old text. The unnamed register is like a computer’s standard copy / paste operation.</p>
+<p>By default, <code>p</code> (or <code>P</code>) is connected to the unnamed register (from now on I will refer to the unnamed register with <code>p</code> instead of <code>""p</code>).</p>
+</section>
+<section id="the-numbered-registers" class="level2" data-number="8.5">
+<h2 data-number="8.5" class="anchored" data-anchor-id="the-numbered-registers"><span class="header-section-number">8.5</span> The Numbered Registers</h2>
+<p>Numbered registers automatically fill themselves up in ascending order. There are 2 different numbered registers: the yanked register (<code>0</code>) and the numbered registers (<code>1-9</code>). Let’s discuss the yanked register first.</p>
+<section id="the-yanked-register" class="level3" data-number="8.5.1">
+<h3 data-number="8.5.1" class="anchored" data-anchor-id="the-yanked-register"><span class="header-section-number">8.5.1</span> The Yanked Register</h3>
+<p>If you yank an entire line of text (<code>yy</code>), Vim actually saves that text in two registers:</p>
+<ol type="1">
+<li>The unnamed register (<code>p</code>).</li>
+<li>The yanked register (<code>"0p</code>).</li>
+</ol>
+<p>When you yank a different text, Vim will update both the yanked register and the unnamed register. Any other operations (like delete) will not be stored in register 0. This can be used to your advantage, because unless you do another yank, the yanked text will always be there, no matter how many changes and deletions you do.</p>
+<p>For example, if you: 1. Yank a line (<code>yy</code>) 2. Delete a line (<code>dd</code>) 3. Delete another line (<code>dd</code>)</p>
+<p>The yanked register will have the text from step one.</p>
+<p>If you: 1. Yank a line (<code>yy</code>) 2. Delete a line (<code>dd</code>) 3. Yank another line (<code>yy</code>)</p>
+<p>The yanked register will have the text from step three.</p>
+<p>One last tip, while in insert mode, you can quickly paste the text you just yanked using <code>Ctrl-R 0</code>.</p>
+</section>
+<section id="the-non-zero-numbered-registers" class="level3" data-number="8.5.2">
+<h3 data-number="8.5.2" class="anchored" data-anchor-id="the-non-zero-numbered-registers"><span class="header-section-number">8.5.2</span> The Non-zero Numbered Registers</h3>
+<p>When you change or delete a text that is at least one line long, that text will be stored in the numbered registers 1-9 sorted by the most recent.</p>
+<p>For example, if you have these lines:</p>
+<pre><code>line three
+line two
+line one</code></pre>
+<p>With your cursor on <q>line three</q>, delete them one by one with <code>dd</code>. Once all lines are deleted, register 1 should contain <q>line one</q> (most recent), register two <q>line two</q> (second most recent), and register three <q>line three</q> (oldest). To get the content from register one, do <code>"1p</code>.</p>
+<p>As a side note, these numbered registers are automatically incremented when using the dot command. If your numbered register one (<code>"1</code>) contains <q>line one</q>, register two (<code>"2</code>) <q>line two</q>, and register three (<code>"3</code>) <q>line three</q>, you can paste them sequentially with this trick: - Do <code>"1P</code> to paste the content from the numbered register one (<q>1). - Do <code>.</code> to paste the content from the numbered register two (</q>2). - Do <code>.</code> to paste the content from the numbered register three (“3).</p>
+<p>This trick works with any numbered register. If you started with <code>"5P</code>, <code>.</code> would do <code>"6P</code>, <code>.</code> again would do <code>"7P</code>, and so on.</p>
+<p>Small deletions like a word deletion (<code>dw</code>) or word change (<code>cw</code>) do not get stored in the numbered registers. They are stored in the small delete register (<code>"-</code>), which I will discuss next.</p>
+</section>
+</section>
+<section id="the-small-delete-register" class="level2" data-number="8.6">
+<h2 data-number="8.6" class="anchored" data-anchor-id="the-small-delete-register"><span class="header-section-number">8.6</span> The Small Delete Register</h2>
+<p>Changes or deletions less than one line are not stored in the numbered registers 0-9, but in the small delete register (<code>"-</code>).</p>
+<p>For example: 1. Delete a word (<code>diw</code>) 2. Delete a line (<code>dd</code>) 3. Delete a line (<code>dd</code>)</p>
+<p><code>"-p</code> gives you the deleted word from step one.</p>
+<p>Another example: 1. I delete a word (<code>diw</code>) 2. I delete a line (<code>dd</code>) 3. I delete a word (<code>diw</code>)</p>
+<p><code>"-p</code> gives you the deleted word from step three. <code>"1p</code> gives you the deleted line from step two. Unfortunately, there is no way to retrieve the deleted word from step one because the small delete register only stores one item. However, if you want to preserve the text from step one, you can do it with the named registers.</p>
+</section>
+<section id="the-named-register" class="level2" data-number="8.7">
+<h2 data-number="8.7" class="anchored" data-anchor-id="the-named-register"><span class="header-section-number">8.7</span> The Named Register</h2>
+<p>The named registers are Vim’s most versatile register. It can store yanked, changed, and deleted texts into registers a-z. Unlike the previous 3 register types you’ve seen which automatically stores texts into registers, you have to explicitly tell Vim to use the named register, giving you full control.</p>
+<p>To yank a word into register a, you can do it with <code>"ayiw</code>. - <code>"a</code> tells Vim that the next action (delete / change / yank) will be stored in register a. - <code>yiw</code> yanks the word.</p>
+<p>To get the text from register a, run <code>"ap</code>. You can use all twenty-six alphabetical characters to store twenty-six different texts with named registers.</p>
+<p>Sometimes you may want to add to your existing named register. In this case, you can append your text instead of starting all over. To do that, you can use the uppercase version of that register. For example, suppose you have the word <q>Hello</q> already stored in register a. If you want to add <q>world</q> into register a, you can find the text <q>world</q> and yank it using A register (<code>"Ayiw</code>).</p>
+</section>
+<section id="the-read-only-registers" class="level2" data-number="8.8">
+<h2 data-number="8.8" class="anchored" data-anchor-id="the-read-only-registers"><span class="header-section-number">8.8</span> The Read-only Registers</h2>
+<p>Vim has three read-only registers: <code>.</code>, <code>:</code>, and <code>%</code>. They are pretty simple to use:</p>
+<pre><code>.    Stores the last inserted text
+:    Stores the last executed command-line
+%    Stores the name of current file</code></pre>
+<p>If the last text you wrote was <q>Hello Vim</q>, running <code>".p</code> will print out the text <q>Hello Vim</q>. If you want to get the name of current file, run <code>"%p</code>. If you run <code>:s/foo/bar/g</code> command, running <code>":p</code> will print out the literal text <q>s/foo/bar/g</q>.</p>
+</section>
+<section id="the-alternate-file-register" class="level2" data-number="8.9">
+<h2 data-number="8.9" class="anchored" data-anchor-id="the-alternate-file-register"><span class="header-section-number">8.9</span> The Alternate File Register</h2>
+<p>In Vim, <code>#</code> usually represents the alternate file. An alternative file is the last file you opened. To insert the name of the alternate file, you can use <code>"#p</code>.</p>
+</section>
+<section id="the-expression-register" class="level2" data-number="8.10">
+<h2 data-number="8.10" class="anchored" data-anchor-id="the-expression-register"><span class="header-section-number">8.10</span> The Expression Register</h2>
+<p>Vim has an expression register, <code>"=</code>, to evaluate expressions.</p>
+<p>To evaluate mathematical expressions <code>1 + 1</code>, run:</p>
+<pre><code>"=1+1&lt;Enter&gt;p</code></pre>
+<p>Here, you are telling Vim that you are using the expression register with <code>"=</code>. Your expression is (<code>1 + 1</code>). You need to type <code>p</code> to get the result. As mentioned earlier, you can also access the register from insert mode. To evaluate mathematical expression from insert mode, you can do:</p>
+<pre><code>Ctrl-R =1+1</code></pre>
+<p>You can also get the values from any register via the expression register when appended with <code>@</code>. If you wish to get the text from register a:</p>
+<pre><code>"=@a</code></pre>
+<p>Then press <code>&lt;Enter&gt;</code>, then <code>p</code>. Similarly, to get values from register a while in insert mode:</p>
+<pre><code>Ctrl-r =@a</code></pre>
+<p>Expression is a vast topic in Vim, so I will only cover the basics here. I will address expressions in more details in later Vimscript chapters.</p>
+</section>
+<section id="the-selection-registers" class="level2" data-number="8.11">
+<h2 data-number="8.11" class="anchored" data-anchor-id="the-selection-registers"><span class="header-section-number">8.11</span> The Selection Registers</h2>
+<p>Don’t you sometimes wish that you can copy a text from external programs and paste it locally in Vim, and vice versa? With Vim’s selection registers, you can. Vim has two selection registers: <code>quotestar</code> (<code>"*</code>) and <code>quoteplus</code> (<code>"+</code>). You can use them to access copied text from external programs.</p>
+<p>If you are on an external program (like Chrome browser) and you copy a block of text with <code>Ctrl-C</code> (or <code>Cmd-C</code>, depending on your OS), normally you wouldn’t be able to use <code>p</code> to paste the text in Vim. However, both Vim’s <code>"+</code> and <code>"*</code> are connected to your clipboard, so you can actually paste the text with <code>"+p</code> or <code>"*p</code>. Conversely, if you yank a word from Vim with <code>"+yiw</code> or <code>"*yiw</code>, you can paste that text in the external program with <code>Ctrl-V</code> (or <code>Cmd-V</code>). Note that this only works if your Vim program comes with the <code>+clipboard</code> option (to check it, run <code>:version</code>).</p>
+<p>You may wonder if <code>"*</code> and <code>"+</code> do the same thing, why does Vim have two different registers? Some machines use X11 window system. This system has 3 types of selections: primary, secondary, and clipboard. If your machine uses X11, Vim uses X11’s <em>primary</em> selection with the <code>quotestar</code> (<code>"*</code>) register and X11’s <em>clipboard</em> selection with the <code>quoteplus</code> (<code>"+</code>) register. This is only applicable if you have <code>+xterm_clipboard</code> option available in your Vim build. If your Vim doesn’t have <code>xterm_clipboard</code>, it’s not a big deal. It just means that both <code>quotestar</code> and <code>quoteplus</code> are interchangeable (mine doesn’t either).</p>
+<p>I find doing <code>=*p</code> or <code>=+p</code> (or <code>"*p</code> or <code>"+p</code>) to be cumbersome. To make Vim to paste copied text from the external program with just <code>p</code>, you can add this in your vimrc:</p>
+<pre><code>set clipboard=unnamed</code></pre>
+<p>Now when I copy a text from an external program, I can paste it with the unnamed register, <code>p</code>. I can also copy a text from Vim and paste it to an external program. If you have <code>+xterm_clipboard</code> on, you may want to use both <code>unnamed</code> and <code>unnamedplus</code> clipboard options.</p>
+</section>
+<section id="the-black-hole-register" class="level2" data-number="8.12">
+<h2 data-number="8.12" class="anchored" data-anchor-id="the-black-hole-register"><span class="header-section-number">8.12</span> The Black Hole Register</h2>
+<p>Each time you delete or change a text, that text is stored in Vim register automatically. There will be times when you don’t want to save anything into the register. How can you do that?</p>
+<p>You can use the black hole register (<code>"_</code>). To delete a line and not have Vim store the deleted line into any register, use <code>"_dd</code>.</p>
+<p>The black hole register is like the <code>/dev/null</code> of registers.</p>
+</section>
+<section id="the-last-search-pattern-register" class="level2" data-number="8.13">
+<h2 data-number="8.13" class="anchored" data-anchor-id="the-last-search-pattern-register"><span class="header-section-number">8.13</span> The Last Search Pattern Register</h2>
+<p>To paste your last search (<code>/</code> or <code>?</code>), you can use the last search pattern register (<code>"/</code>). To paste the last search term, use <code>"/p</code>.</p>
+</section>
+<section id="viewing-the-registers" class="level2" data-number="8.14">
+<h2 data-number="8.14" class="anchored" data-anchor-id="viewing-the-registers"><span class="header-section-number">8.14</span> Viewing the Registers</h2>
+<p>To view all your registers, use the <code>:register</code> command. To view only registers <q>a,</q>1, and “-, use <code>:register a 1 -</code>.</p>
+<p>There is a plugin called <a href="https://github.com/junegunn/vim-peekaboo">vim-peekaboo</a> that lets you to peek into the contents of the registers when you hit <code>"</code> or <code>@</code> in normal mode and <code>Ctrl-R</code> in insert mode. I find this plugin very useful because most times, I can’t remember the content in my registers. Give it a try!</p>
+</section>
+<section id="executing-a-register" class="level2" data-number="8.15">
+<h2 data-number="8.15" class="anchored" data-anchor-id="executing-a-register"><span class="header-section-number">8.15</span> Executing a Register</h2>
+<p>The named registers are not just for storing texts. They can also execute macros with <code>@</code>. I will go over macros in the next chapter.</p>
+<p>Keep in mind since macros are stored inside Vim registers, you can accidentally overwrite the stored text with macros. If you store the text <q>Hello Vim</q> in register a and you later record a macro in the same register (<code>qa{macro-sequence}q</code>), that macro will overwrite your <q>Hello Vim</q> text stored earlier.</p>
+</section>
+<section id="clearing-a-register" class="level2" data-number="8.16">
+<h2 data-number="8.16" class="anchored" data-anchor-id="clearing-a-register"><span class="header-section-number">8.16</span> Clearing a Register</h2>
+<p>Technically, there is no need to clear any register because the next text that you store under the same register name will overwrite it. However, you can quickly clear any named register by recording an empty macro. For example, if you run <code>qaq</code>, Vim will record an empty macro in the register a.</p>
+<p>Another alternative is to run the command <code>:call setreg('a', 'hello register a')</code> where a is the register a and <q>hello register a</q> is the text that you want to store.</p>
+<p>One more way to clear register is to set the content of “a register to an empty string with the expression <code>:let @a = ''</code>.</p>
+</section>
+<section id="putting-the-content-of-a-register" class="level2" data-number="8.17">
+<h2 data-number="8.17" class="anchored" data-anchor-id="putting-the-content-of-a-register"><span class="header-section-number">8.17</span> Putting the Content of a Register</h2>
+<p>You can use the <code>:put</code> command to paste the content of any one register. For example, if you run <code>:put a</code>, Vim will print the content of register a below the current line. This behaves much like <code>"ap</code>, with the difference that the normal mode command <code>p</code> prints the register content after the cursor and the command <code>:put</code> prints the register content at newline.</p>
+<p>Since <code>:put</code> is a command-line command, you can pass it an address. <code>:10put a</code> will paste text from register a to below line 10.</p>
+<p>One cool trick to pass <code>:put</code> with the black hole register (<code>"_</code>). Since the black hole register does not store any text, <code>:put _</code> will insert a blank line instead. You can combine this with the global command to insert multiple blank lines. For example, to insert blank lines below all lines that contain the text <q>end</q>, run <code>:g/end/put _</code>. You will learn about the global command later.</p>
+</section>
+<section id="learning-registers-the-smart-way" class="level2" data-number="8.18">
+<h2 data-number="8.18" class="anchored" data-anchor-id="learning-registers-the-smart-way"><span class="header-section-number">8.18</span> Learning Registers the Smart Way</h2>
+<p>You made it to the end. Congratulations! If you are feeling overwhelmed by the sheer information, you are not alone. When I first started learning about Vim registers, there were way too much information to take at once.</p>
+<p>I don’t think you should memorize all the registers immediately. To become productive, you can start by using only these 3 registers: 1. The unnamed register (<code>""</code>). 2. The named registers (<code>"a-z</code>). 3. The numbered registers (<code>"0-9</code>).</p>
+<p>Since the unnamed register defaults to <code>p</code> and <code>P</code>, you only have to learn two registers: the named registers and the numbered registers. Gradually learn more registers when you need them. Take your time.</p>
+<p>The average human has a limited short-term memory capacity, about 5 - 7 items at once. That is why in my everyday editing, I only use about 5 - 7 named registers. There is no way I can remember all twenty-six in my head. I normally start with register a, then b, ascending the alphabetical order. Try it and experiment around to see what technique works best for you.</p>
+<p>Vim registers are powerful. Used strategically, it can save you from typing countless repeating texts. Next, let’s learn about macros.</p>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const disableStylesheet = (stylesheets) => {
+    for (let i=0; i < stylesheets.length; i++) {
+      const stylesheet = stylesheets[i];
+      stylesheet.rel = 'prefetch';
+    }
+  }
+  const enableStylesheet = (stylesheets) => {
+    for (let i=0; i < stylesheets.length; i++) {
+      const stylesheet = stylesheets[i];
+      stylesheet.rel = 'stylesheet';
+    }
+  }
+  const manageTransitions = (selector, allowTransitions) => {
+    const els = window.document.querySelectorAll(selector);
+    for (let i=0; i < els.length; i++) {
+      const el = els[i];
+      if (allowTransitions) {
+        el.classList.remove('notransition');
+      } else {
+        el.classList.add('notransition');
+      }
+    }
+  }
+  const toggleColorMode = (alternate) => {
+    // Switch the stylesheets
+    const alternateStylesheets = window.document.querySelectorAll('link.quarto-color-scheme.quarto-color-alternate');
+    manageTransitions('#quarto-margin-sidebar .nav-link', false);
+    if (alternate) {
+      enableStylesheet(alternateStylesheets);
+      for (const sheetNode of alternateStylesheets) {
+        if (sheetNode.id === "quarto-bootstrap") {
+          toggleBodyColorMode(sheetNode);
+        }
+      }
+    } else {
+      disableStylesheet(alternateStylesheets);
+      toggleBodyColorPrimary();
+    }
+    manageTransitions('#quarto-margin-sidebar .nav-link', true);
+    // Switch the toggles
+    const toggles = window.document.querySelectorAll('.quarto-color-scheme-toggle');
+    for (let i=0; i < toggles.length; i++) {
+      const toggle = toggles[i];
+      if (toggle) {
+        if (alternate) {
+          toggle.classList.add("alternate");     
+        } else {
+          toggle.classList.remove("alternate");
+        }
+      }
+    }
+    // Hack to workaround the fact that safari doesn't
+    // properly recolor the scrollbar when toggling (#1455)
+    if (navigator.userAgent.indexOf('Safari') > 0 && navigator.userAgent.indexOf('Chrome') == -1) {
+      manageTransitions("body", false);
+      window.scrollTo(0, 1);
+      setTimeout(() => {
+        window.scrollTo(0, 0);
+        manageTransitions("body", true);
+      }, 40);  
+    }
+  }
+  const isFileUrl = () => { 
+    return window.location.protocol === 'file:';
+  }
+  const hasAlternateSentinel = () => {  
+    let styleSentinel = getColorSchemeSentinel();
+    if (styleSentinel !== null) {
+      return styleSentinel === "alternate";
+    } else {
+      return false;
+    }
+  }
+  const setStyleSentinel = (alternate) => {
+    const value = alternate ? "alternate" : "default";
+    if (!isFileUrl()) {
+      window.localStorage.setItem("quarto-color-scheme", value);
+    } else {
+      localAlternateSentinel = value;
+    }
+  }
+  const getColorSchemeSentinel = () => {
+    if (!isFileUrl()) {
+      const storageValue = window.localStorage.getItem("quarto-color-scheme");
+      return storageValue != null ? storageValue : localAlternateSentinel;
+    } else {
+      return localAlternateSentinel;
+    }
+  }
+  let localAlternateSentinel = 'alternate';
+  // Dark / light mode switch
+  window.quartoToggleColorScheme = () => {
+    // Read the current dark / light value 
+    let toAlternate = !hasAlternateSentinel();
+    toggleColorMode(toAlternate);
+    setStyleSentinel(toAlternate);
+  };
+  // Ensure there is a toggle, if there isn't float one in the top right
+  if (window.document.querySelector('.quarto-color-scheme-toggle') === null) {
+    const a = window.document.createElement('a');
+    a.classList.add('top-right');
+    a.classList.add('quarto-color-scheme-toggle');
+    a.href = "";
+    a.onclick = function() { try { window.quartoToggleColorScheme(); } catch {} return false; };
+    const i = window.document.createElement("i");
+    i.classList.add('bi');
+    a.appendChild(i);
+    window.document.body.appendChild(a);
+  }
+  // Switch to dark mode if need be
+  if (hasAlternateSentinel()) {
+    toggleColorMode(true);
+  } else {
+    toggleColorMode(false);
+  }
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    target: function(trigger) {
+      return trigger.previousElementSibling;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="../chapters/ch07_the_dot_command.md.html" class="pagination-link">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Ch07. the Dot Command</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="../chapters/ch09_macros.md.html" class="pagination-link">
+        <span class="nav-page-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Ch09. Macros</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+
+
+
+</body></html>

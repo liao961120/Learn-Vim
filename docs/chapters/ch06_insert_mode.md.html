@@ -1,0 +1,659 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.2.313">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Learn Vim (the Smart Way) - 6&nbsp; Ch06. Insert Mode</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1.6em;
+  vertical-align: middle;
+}
+q { quotes: "“" "”" "‘" "’"; }
+</style>
+
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<link href="../chapters/ch07_the_dot_command.md.html" rel="next">
+<link href="../chapters/ch05_moving_in_file.md.html" rel="prev">
+<script src="../site_libs/quarto-html/quarto.js"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-dark.min.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit"
+  }
+}</script>
+
+
+</head>
+
+<body class="nav-sidebar floating">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+    <div class="container-fluid d-flex justify-content-between">
+      <h1 class="quarto-secondary-nav-title"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Ch06. Insert Mode</span></h1>
+      <button type="button" class="quarto-btn-toggle btn" aria-label="Show secondary navigation">
+        <i class="bi bi-chevron-right"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="../">Learn Vim (the Smart Way)</a> 
+        <div class="sidebar-tools-main">
+    <a href="https://github.com/iggredible/Learn-Vim" title="" class="sidebar-tool px-1"><i class="bi bi-github"></i></a>
+  <a href="" class="quarto-color-scheme-toggle sidebar-tool" onclick="window.quartoToggleColorScheme(); return false;" title="Toggle dark mode"><i class="bi"></i></a>
+</div>
+    </div>
+      </div>
+      <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+      </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../index.html" class="sidebar-item-text sidebar-link">Preface</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch01_starting_vim.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Ch01. Starting Vim</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch02_buffers_windows_tabs.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Ch02. Buffers, Windows, and Tabs</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch03_searching_files.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Ch03. Searching Files</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch04_vim_grammar.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Ch04. Vim Grammar</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch05_moving_in_file.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Ch05. Moving in a File</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch06_insert_mode.md.html" class="sidebar-item-text sidebar-link active"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Ch06. Insert Mode</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch07_the_dot_command.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Ch07. the Dot Command</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch08_registers.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Ch08. Registers</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch09_macros.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Ch09. Macros</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch10_undo.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Ch10. Undo</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch11_visual_mode.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Ch11. Visual Mode</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch12_search_and_substitute.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Ch12. Search and Substitute</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch13_the_global_command.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Ch13. the Global Command</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch14_external_commands.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Ch14. External Commands</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch15_command-line_mode.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">Ch15. Command-line Mode</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch16_tags.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Ch16. Tags</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch17_fold.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">Ch17. Fold</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch18_git.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">18</span>&nbsp; <span class="chapter-title">Ch18. Git</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch19_compile.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">19</span>&nbsp; <span class="chapter-title">Ch19. Compile</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch20_views_sessions_viminfo.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">20</span>&nbsp; <span class="chapter-title">Ch20. Views, Sessions, and Viminfo</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch21_multiple_file_operations.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">21</span>&nbsp; <span class="chapter-title">Multiple File Operations</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch22_vimrc.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">22</span>&nbsp; <span class="chapter-title">Ch22. Vimrc</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch23_vim_packages.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">23</span>&nbsp; <span class="chapter-title">Ch23. Vim Packages</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch24_vim_runtime.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">24</span>&nbsp; <span class="chapter-title">Ch24. Vim Runtime</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch25_vimscript_basic_data_types.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">25</span>&nbsp; <span class="chapter-title">Ch25. Vimscript Basic Data Types</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch26_vimscript_conditionals_and_loops.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">26</span>&nbsp; <span class="chapter-title">Ch26. Vimscript Conditionals and Loops</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch27_vimscript_variable_scopes.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">27</span>&nbsp; <span class="chapter-title">Ch27. Vimscript Variable Scopes</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch28_vimscript_functions.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">28</span>&nbsp; <span class="chapter-title">Ch28. Vimscript Functions</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch29_plugin_example_writing-a-titlecase-plugin.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">29</span>&nbsp; <span class="chapter-title">Ch29. Write a Plugin: Creating a Titlecase Operator</span></a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#ways-to-go-to-insert-mode" id="toc-ways-to-go-to-insert-mode" class="nav-link active" data-scroll-target="#ways-to-go-to-insert-mode"><span class="toc-section-number">6.1</span>  Ways to Go to Insert Mode</a></li>
+  <li><a href="#different-ways-to-exit-insert-mode" id="toc-different-ways-to-exit-insert-mode" class="nav-link" data-scroll-target="#different-ways-to-exit-insert-mode"><span class="toc-section-number">6.2</span>  Different Ways to Exit Insert Mode</a></li>
+  <li><a href="#repeating-insert-mode" id="toc-repeating-insert-mode" class="nav-link" data-scroll-target="#repeating-insert-mode"><span class="toc-section-number">6.3</span>  Repeating Insert Mode</a></li>
+  <li><a href="#deleting-chunks-in-insert-mode" id="toc-deleting-chunks-in-insert-mode" class="nav-link" data-scroll-target="#deleting-chunks-in-insert-mode"><span class="toc-section-number">6.4</span>  Deleting Chunks in Insert Mode</a></li>
+  <li><a href="#insert-from-register" id="toc-insert-from-register" class="nav-link" data-scroll-target="#insert-from-register"><span class="toc-section-number">6.5</span>  Insert From Register</a></li>
+  <li><a href="#scrolling" id="toc-scrolling" class="nav-link" data-scroll-target="#scrolling"><span class="toc-section-number">6.6</span>  Scrolling</a></li>
+  <li><a href="#autocompletion" id="toc-autocompletion" class="nav-link" data-scroll-target="#autocompletion"><span class="toc-section-number">6.7</span>  Autocompletion</a></li>
+  <li><a href="#executing-a-normal-mode-command" id="toc-executing-a-normal-mode-command" class="nav-link" data-scroll-target="#executing-a-normal-mode-command"><span class="toc-section-number">6.8</span>  Executing a Normal Mode Command</a></li>
+  <li><a href="#learn-insert-mode-the-smart-way" id="toc-learn-insert-mode-the-smart-way" class="nav-link" data-scroll-target="#learn-insert-mode-the-smart-way"><span class="toc-section-number">6.9</span>  Learn Insert Mode the Smart Way</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title d-none d-lg-block"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Ch06. Insert Mode</span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+</header>
+
+<p>Insert mode is the default mode of many text editors. In this mode, what you type is what you get.</p>
+<p>However, that does not mean there isn’t much to learn. Vim’s insert mode contains many useful features. In this chapter, you will learn how to use these insert mode features in Vim to improve your typing efficiency.</p>
+<section id="ways-to-go-to-insert-mode" class="level2" data-number="6.1">
+<h2 data-number="6.1" class="anchored" data-anchor-id="ways-to-go-to-insert-mode"><span class="header-section-number">6.1</span> Ways to Go to Insert Mode</h2>
+<p>There are many ways to get into insert mode from the normal mode. Here are some of them:</p>
+<pre><code>i    Insert text before the cursor
+I    Insert text before the first non-blank character of the line
+a    Append text after the cursor
+A    Append text at the end of line
+o    Starts a new line below the cursor and insert text
+O    Starts a new line above the cursor and insert text
+s    Delete the character under the cursor and insert text
+S    Delete the current line and insert text, synonym for "cc"
+gi   Insert text in same position where the last insert mode was stopped
+gI   Insert text at the start of line (column 1)</code></pre>
+<p>Notice the lowercase / uppercase pattern. For each lowercase command, there is an uppercase counterpart. If you are new, don’t worry if you don’t remember the whole list above. Start with <code>i</code> and <code>o</code>. They should be enough to get you started. Gradually learn more over time.</p>
+</section>
+<section id="different-ways-to-exit-insert-mode" class="level2" data-number="6.2">
+<h2 data-number="6.2" class="anchored" data-anchor-id="different-ways-to-exit-insert-mode"><span class="header-section-number">6.2</span> Different Ways to Exit Insert Mode</h2>
+<p>There are a few different ways to return to the normal mode while in the insert mode:</p>
+<pre><code>&lt;Esc&gt;     Exits insert mode and go to normal mode
+Ctrl-[    Exits insert mode and go to normal mode
+Ctrl-C    Like Ctrl-[ and &lt;Esc&gt;, but does not check for abbreviation</code></pre>
+<p>I find <code>&lt;Esc&gt;</code> key too far to reach, so I map my computer <code>&lt;Caps-Lock&gt;</code> to behave like <code>&lt;Esc&gt;</code>. If you search for Bill Joy’s ADM-3A keyboard (Vi creator), you will see that the <code>&lt;Esc&gt;</code> key is not located on far top left like modern keyboards, but to the left of <code>q</code> key. This is why I think it makes sense to map <code>&lt;Caps lock&gt;</code> to <code>&lt;Esc&gt;</code>.</p>
+<p>Another common convention I have seen Vim users do is mapping <code>&lt;Esc&gt;</code> to <code>jj</code> or <code>jk</code> in insert mode. If you prefer this option add this one of those lines (or both) in your vimrc file.</p>
+<pre><code>inoremap jj &lt;Esc&gt;
+inoremap jk &lt;Esc&gt;</code></pre>
+</section>
+<section id="repeating-insert-mode" class="level2" data-number="6.3">
+<h2 data-number="6.3" class="anchored" data-anchor-id="repeating-insert-mode"><span class="header-section-number">6.3</span> Repeating Insert Mode</h2>
+<p>You can pass a count parameter before entering insert mode. For example:</p>
+<pre><code>10i</code></pre>
+<p>If you type <q>hello world!</q> and exit insert mode, Vim will repeat the text 10 times. This will work with any insert mode method (ex: <code>10I</code>, <code>11a</code>, <code>12o</code>).</p>
+</section>
+<section id="deleting-chunks-in-insert-mode" class="level2" data-number="6.4">
+<h2 data-number="6.4" class="anchored" data-anchor-id="deleting-chunks-in-insert-mode"><span class="header-section-number">6.4</span> Deleting Chunks in Insert Mode</h2>
+<p>When you make a typing mistake, it can be cumbersome to type <code>&lt;Backspace&gt;</code> repeatedly. It may make more sense to go to normal mode and delete your mistake. You can also delete several characters at a time while in insert mode.</p>
+<pre><code>Ctrl-h    Delete one character
+Ctrl-w    Delete one word
+Ctrl-u    Delete the entire line</code></pre>
+</section>
+<section id="insert-from-register" class="level2" data-number="6.5">
+<h2 data-number="6.5" class="anchored" data-anchor-id="insert-from-register"><span class="header-section-number">6.5</span> Insert From Register</h2>
+<p>Vim registers can store texts for future use. To insert a text from any named register while in insert mode, type <code>Ctrl-R</code> plus the register symbol. There are many symbols you can use, but for this section, let’s cover only the named registers (a-z).</p>
+<p>To see it in action, first you need to yank a word to register a. Move your cursor on any word. Then type:</p>
+<pre><code>"ayiw</code></pre>
+<ul>
+<li><code>"a</code> tells Vim that the target of your next action will go to register a.</li>
+<li><code>yiw</code> yanks inner word. Review the chapter on Vim grammar for a refresher.</li>
+</ul>
+<p>Register a now contains the word you just yanked. While in insert mode, to paste the text stored in register a:</p>
+<pre><code>Ctrl-R a</code></pre>
+<p>There are multiple types of registers in Vim. I will cover them in greater detail in a later chapter.</p>
+</section>
+<section id="scrolling" class="level2" data-number="6.6">
+<h2 data-number="6.6" class="anchored" data-anchor-id="scrolling"><span class="header-section-number">6.6</span> Scrolling</h2>
+<p>Did you know that you can scroll while inside insert mode? While in insert mode, if you go to <code>Ctrl-X</code> sub-mode, you can do additional operations. Scrolling is one of them.</p>
+<pre><code>Ctrl-X Ctrl-Y    Scroll up
+Ctrl-X Ctrl-E    Scroll down</code></pre>
+</section>
+<section id="autocompletion" class="level2" data-number="6.7">
+<h2 data-number="6.7" class="anchored" data-anchor-id="autocompletion"><span class="header-section-number">6.7</span> Autocompletion</h2>
+<p>As mentioned above, if you press <code>Ctrl-X</code> from insert mode, Vim will enter a sub-mode. You can do text autocompletion while in this insert mode sub-mode. Although it is not as good as <a href="https://code.visualstudio.com/docs/editor/intellisense">intellisense</a> or any other Language Server Protocol (LSP), but for something that is available right out of the box, it is a very capable feature.</p>
+<p>Here are some useful autocomplete commands to get started:</p>
+<pre><code>Ctrl-X Ctrl-L      Insert a whole line
+Ctrl-X Ctrl-N      Insert a text from current file
+Ctrl-X Ctrl-I      Insert a text from included files
+Ctrl-X Ctrl-F      Insert a file name</code></pre>
+<p>When you trigger autocompletion, Vim will display a pop-up window. To navigate up and down the pop-up window, use <code>Ctrl-N</code> and <code>Ctrl-P</code>.</p>
+<p>Vim also has two autocompletion shortcuts that don’t involve the <code>Ctrl-X</code> sub-mode:</p>
+<pre><code>Ctrl-N             Find the next word match
+Ctrl-P             Find the previous word match</code></pre>
+<p>In general, Vim looks at the text in all available buffers for autocompletion source. If you have an open buffer with a line that says <q>Chocolate donuts are the best</q>: - When you type <q>Choco</q> and do <code>Ctrl-X Ctrl-L</code>, it will match and print the entire line. - When you type <q>Choco</q> and do <code>Ctrl-P</code>, it will match and print the word <q>Chocolate</q>.</p>
+<p>Autocomplete is a vast topic in Vim. This is just the tip of the iceberg. To learn more, check out <code>:h ins-completion</code>.</p>
+</section>
+<section id="executing-a-normal-mode-command" class="level2" data-number="6.8">
+<h2 data-number="6.8" class="anchored" data-anchor-id="executing-a-normal-mode-command"><span class="header-section-number">6.8</span> Executing a Normal Mode Command</h2>
+<p>Did you know Vim can execute a normal mode command while in insert mode?</p>
+<p>While in insert mode, if you press <code>Ctrl-O</code>, you’ll be in insert-normal sub-mode. If you look at the mode indicator on bottom left, normally you will see <code>-- INSERT --</code>, but pressing <code>Ctrl-O</code> changes it to <code>-- (insert) --</code>. In this mode, you can do <em>one</em> normal mode command. Some things you can do:</p>
+<p><strong>Centering and jumping</strong></p>
+<pre><code>Ctrl-O zz       Center window
+Ctrl-O H/M/L    Jump to top/middle/bottom window
+Ctrl-O 'a       Jump to mark a</code></pre>
+<p><strong>Repeating text</strong></p>
+<pre><code>Ctrl-O 100ihello    Insert "hello" 100 times</code></pre>
+<p><strong>Executing terminal commands</strong></p>
+<pre><code>Ctrl-O !! curl https://google.com    Run curl
+Ctrl-O !! pwd                        Run pwd</code></pre>
+<p><strong>Deleting faster</strong></p>
+<pre><code>Ctrl-O dtz    Delete from current location till the letter "z"
+Ctrl-O D      Delete from current location to the end of the line</code></pre>
+</section>
+<section id="learn-insert-mode-the-smart-way" class="level2" data-number="6.9">
+<h2 data-number="6.9" class="anchored" data-anchor-id="learn-insert-mode-the-smart-way"><span class="header-section-number">6.9</span> Learn Insert Mode the Smart Way</h2>
+<p>If you are like me and you come from another text editor, it can be tempting to stay in insert mode. However, staying in insert mode when you’re not entering a text is an anti-pattern. Develop a habit to go to normal mode when your fingers aren’t typing new text.</p>
+<p>When you need to insert a text, first ask yourself if that text already exists. If it does, try to yank or move that text instead of typing it. If you have to use insert mode, see if you can autocomplete that text whenever possible. Avoid typing the same word more than once if you can.</p>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const disableStylesheet = (stylesheets) => {
+    for (let i=0; i < stylesheets.length; i++) {
+      const stylesheet = stylesheets[i];
+      stylesheet.rel = 'prefetch';
+    }
+  }
+  const enableStylesheet = (stylesheets) => {
+    for (let i=0; i < stylesheets.length; i++) {
+      const stylesheet = stylesheets[i];
+      stylesheet.rel = 'stylesheet';
+    }
+  }
+  const manageTransitions = (selector, allowTransitions) => {
+    const els = window.document.querySelectorAll(selector);
+    for (let i=0; i < els.length; i++) {
+      const el = els[i];
+      if (allowTransitions) {
+        el.classList.remove('notransition');
+      } else {
+        el.classList.add('notransition');
+      }
+    }
+  }
+  const toggleColorMode = (alternate) => {
+    // Switch the stylesheets
+    const alternateStylesheets = window.document.querySelectorAll('link.quarto-color-scheme.quarto-color-alternate');
+    manageTransitions('#quarto-margin-sidebar .nav-link', false);
+    if (alternate) {
+      enableStylesheet(alternateStylesheets);
+      for (const sheetNode of alternateStylesheets) {
+        if (sheetNode.id === "quarto-bootstrap") {
+          toggleBodyColorMode(sheetNode);
+        }
+      }
+    } else {
+      disableStylesheet(alternateStylesheets);
+      toggleBodyColorPrimary();
+    }
+    manageTransitions('#quarto-margin-sidebar .nav-link', true);
+    // Switch the toggles
+    const toggles = window.document.querySelectorAll('.quarto-color-scheme-toggle');
+    for (let i=0; i < toggles.length; i++) {
+      const toggle = toggles[i];
+      if (toggle) {
+        if (alternate) {
+          toggle.classList.add("alternate");     
+        } else {
+          toggle.classList.remove("alternate");
+        }
+      }
+    }
+    // Hack to workaround the fact that safari doesn't
+    // properly recolor the scrollbar when toggling (#1455)
+    if (navigator.userAgent.indexOf('Safari') > 0 && navigator.userAgent.indexOf('Chrome') == -1) {
+      manageTransitions("body", false);
+      window.scrollTo(0, 1);
+      setTimeout(() => {
+        window.scrollTo(0, 0);
+        manageTransitions("body", true);
+      }, 40);  
+    }
+  }
+  const isFileUrl = () => { 
+    return window.location.protocol === 'file:';
+  }
+  const hasAlternateSentinel = () => {  
+    let styleSentinel = getColorSchemeSentinel();
+    if (styleSentinel !== null) {
+      return styleSentinel === "alternate";
+    } else {
+      return false;
+    }
+  }
+  const setStyleSentinel = (alternate) => {
+    const value = alternate ? "alternate" : "default";
+    if (!isFileUrl()) {
+      window.localStorage.setItem("quarto-color-scheme", value);
+    } else {
+      localAlternateSentinel = value;
+    }
+  }
+  const getColorSchemeSentinel = () => {
+    if (!isFileUrl()) {
+      const storageValue = window.localStorage.getItem("quarto-color-scheme");
+      return storageValue != null ? storageValue : localAlternateSentinel;
+    } else {
+      return localAlternateSentinel;
+    }
+  }
+  let localAlternateSentinel = 'alternate';
+  // Dark / light mode switch
+  window.quartoToggleColorScheme = () => {
+    // Read the current dark / light value 
+    let toAlternate = !hasAlternateSentinel();
+    toggleColorMode(toAlternate);
+    setStyleSentinel(toAlternate);
+  };
+  // Ensure there is a toggle, if there isn't float one in the top right
+  if (window.document.querySelector('.quarto-color-scheme-toggle') === null) {
+    const a = window.document.createElement('a');
+    a.classList.add('top-right');
+    a.classList.add('quarto-color-scheme-toggle');
+    a.href = "";
+    a.onclick = function() { try { window.quartoToggleColorScheme(); } catch {} return false; };
+    const i = window.document.createElement("i");
+    i.classList.add('bi');
+    a.appendChild(i);
+    window.document.body.appendChild(a);
+  }
+  // Switch to dark mode if need be
+  if (hasAlternateSentinel()) {
+    toggleColorMode(true);
+  } else {
+    toggleColorMode(false);
+  }
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    target: function(trigger) {
+      return trigger.previousElementSibling;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="../chapters/ch05_moving_in_file.md.html" class="pagination-link">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Ch05. Moving in a File</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="../chapters/ch07_the_dot_command.md.html" class="pagination-link">
+        <span class="nav-page-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Ch07. the Dot Command</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+
+
+
+</body></html>

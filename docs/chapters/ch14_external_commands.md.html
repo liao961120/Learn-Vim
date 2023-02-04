@@ -1,0 +1,664 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.2.313">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Learn Vim (the Smart Way) - 14&nbsp; Ch14. External Commands</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1.6em;
+  vertical-align: middle;
+}
+q { quotes: "“" "”" "‘" "’"; }
+</style>
+
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<link href="../chapters/ch15_command-line_mode.md.html" rel="next">
+<link href="../chapters/ch13_the_global_command.md.html" rel="prev">
+<script src="../site_libs/quarto-html/quarto.js"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-dark.min.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit"
+  }
+}</script>
+
+
+</head>
+
+<body class="nav-sidebar floating">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+    <div class="container-fluid d-flex justify-content-between">
+      <h1 class="quarto-secondary-nav-title"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Ch14. External Commands</span></h1>
+      <button type="button" class="quarto-btn-toggle btn" aria-label="Show secondary navigation">
+        <i class="bi bi-chevron-right"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="../">Learn Vim (the Smart Way)</a> 
+        <div class="sidebar-tools-main">
+    <a href="https://github.com/iggredible/Learn-Vim" title="" class="sidebar-tool px-1"><i class="bi bi-github"></i></a>
+  <a href="" class="quarto-color-scheme-toggle sidebar-tool" onclick="window.quartoToggleColorScheme(); return false;" title="Toggle dark mode"><i class="bi"></i></a>
+</div>
+    </div>
+      </div>
+      <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+      </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../index.html" class="sidebar-item-text sidebar-link">Preface</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch01_starting_vim.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Ch01. Starting Vim</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch02_buffers_windows_tabs.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Ch02. Buffers, Windows, and Tabs</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch03_searching_files.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Ch03. Searching Files</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch04_vim_grammar.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Ch04. Vim Grammar</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch05_moving_in_file.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Ch05. Moving in a File</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch06_insert_mode.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Ch06. Insert Mode</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch07_the_dot_command.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Ch07. the Dot Command</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch08_registers.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Ch08. Registers</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch09_macros.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Ch09. Macros</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch10_undo.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Ch10. Undo</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch11_visual_mode.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Ch11. Visual Mode</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch12_search_and_substitute.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Ch12. Search and Substitute</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch13_the_global_command.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Ch13. the Global Command</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch14_external_commands.md.html" class="sidebar-item-text sidebar-link active"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Ch14. External Commands</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch15_command-line_mode.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">Ch15. Command-line Mode</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch16_tags.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Ch16. Tags</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch17_fold.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">Ch17. Fold</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch18_git.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">18</span>&nbsp; <span class="chapter-title">Ch18. Git</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch19_compile.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">19</span>&nbsp; <span class="chapter-title">Ch19. Compile</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch20_views_sessions_viminfo.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">20</span>&nbsp; <span class="chapter-title">Ch20. Views, Sessions, and Viminfo</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch21_multiple_file_operations.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">21</span>&nbsp; <span class="chapter-title">Multiple File Operations</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch22_vimrc.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">22</span>&nbsp; <span class="chapter-title">Ch22. Vimrc</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch23_vim_packages.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">23</span>&nbsp; <span class="chapter-title">Ch23. Vim Packages</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch24_vim_runtime.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">24</span>&nbsp; <span class="chapter-title">Ch24. Vim Runtime</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch25_vimscript_basic_data_types.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">25</span>&nbsp; <span class="chapter-title">Ch25. Vimscript Basic Data Types</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch26_vimscript_conditionals_and_loops.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">26</span>&nbsp; <span class="chapter-title">Ch26. Vimscript Conditionals and Loops</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch27_vimscript_variable_scopes.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">27</span>&nbsp; <span class="chapter-title">Ch27. Vimscript Variable Scopes</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch28_vimscript_functions.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">28</span>&nbsp; <span class="chapter-title">Ch28. Vimscript Functions</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch29_plugin_example_writing-a-titlecase-plugin.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">29</span>&nbsp; <span class="chapter-title">Ch29. Write a Plugin: Creating a Titlecase Operator</span></a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#the-bang-command" id="toc-the-bang-command" class="nav-link active" data-scroll-target="#the-bang-command"><span class="toc-section-number">14.1</span>  The Bang Command</a></li>
+  <li><a href="#reading-the-stdout-of-a-command-into-vim" id="toc-reading-the-stdout-of-a-command-into-vim" class="nav-link" data-scroll-target="#reading-the-stdout-of-a-command-into-vim"><span class="toc-section-number">14.2</span>  Reading the STDOUT of a Command Into Vim</a></li>
+  <li><a href="#writing-the-buffer-content-into-an-external-command" id="toc-writing-the-buffer-content-into-an-external-command" class="nav-link" data-scroll-target="#writing-the-buffer-content-into-an-external-command"><span class="toc-section-number">14.3</span>  Writing the Buffer Content Into an External Command</a></li>
+  <li><a href="#executing-an-external-command" id="toc-executing-an-external-command" class="nav-link" data-scroll-target="#executing-an-external-command"><span class="toc-section-number">14.4</span>  Executing an External Command</a></li>
+  <li><a href="#filtering-texts" id="toc-filtering-texts" class="nav-link" data-scroll-target="#filtering-texts"><span class="toc-section-number">14.5</span>  Filtering Texts</a></li>
+  <li><a href="#normal-mode-command" id="toc-normal-mode-command" class="nav-link" data-scroll-target="#normal-mode-command"><span class="toc-section-number">14.6</span>  Normal Mode Command</a></li>
+  <li><a href="#learn-external-commands-the-smart-way" id="toc-learn-external-commands-the-smart-way" class="nav-link" data-scroll-target="#learn-external-commands-the-smart-way"><span class="toc-section-number">14.7</span>  Learn External Commands the Smart Way</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title d-none d-lg-block"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Ch14. External Commands</span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+</header>
+
+<p>Inside the Unix system, you will find many small, hyper-specialized commands that does one thing (and does it well). You can chain these commands to work together to solve a complex problem. Wouldn’t it be great if you can use these commands from inside Vim?</p>
+<p>Definitely. In this chapter, you will learn how extend Vim to work seamlessly with external commands.</p>
+<section id="the-bang-command" class="level2" data-number="14.1">
+<h2 data-number="14.1" class="anchored" data-anchor-id="the-bang-command"><span class="header-section-number">14.1</span> The Bang Command</h2>
+<p>Vim has a bang (<code>!</code>) command that can do three things:</p>
+<ol type="1">
+<li>Read the STDOUT of an external command into the current buffer.</li>
+<li>Write the content of your buffer as the STDIN to an external command.</li>
+<li>Execute an external command from inside Vim.</li>
+</ol>
+<p>Let’s go through each of them.</p>
+</section>
+<section id="reading-the-stdout-of-a-command-into-vim" class="level2" data-number="14.2">
+<h2 data-number="14.2" class="anchored" data-anchor-id="reading-the-stdout-of-a-command-into-vim"><span class="header-section-number">14.2</span> Reading the STDOUT of a Command Into Vim</h2>
+<p>The syntax to read the STDOUT of an external command into the current buffer is:</p>
+<pre><code>:r !cmd</code></pre>
+<p><code>:r</code> is Vim’s read command. If you use it without <code>!</code>, you can use it to get the content of a file. If you have a file <code>file1.txt</code> in the current directory and you run:</p>
+<pre><code>:r file1.txt</code></pre>
+<p>Vim will put the content of <code>file1.txt</code> into the current buffer.</p>
+<p>If you run the <code>:r</code> command followed by a <code>!</code> and an external command, the output of that command will be inserted into the current buffer. To get the result of the <code>ls</code> command, run:</p>
+<pre><code>:r !ls</code></pre>
+<p>It returns something like:</p>
+<pre><code>file1.txt
+file2.txt
+file3.txt</code></pre>
+<p>You can read the data from the <code>curl</code> command:</p>
+<pre><code>:r !curl -s 'https://jsonplaceholder.typicode.com/todos/1'</code></pre>
+<p>The <code>r</code> command also accepts an address:</p>
+<pre><code>:10r !cat file1.txt</code></pre>
+<p>Now the STDOUT from running <code>cat file1.txt</code> will be inserted after line 10.</p>
+</section>
+<section id="writing-the-buffer-content-into-an-external-command" class="level2" data-number="14.3">
+<h2 data-number="14.3" class="anchored" data-anchor-id="writing-the-buffer-content-into-an-external-command"><span class="header-section-number">14.3</span> Writing the Buffer Content Into an External Command</h2>
+<p>The command <code>:w</code>, in addition to saving a file, can be used to pass the text in the current buffer as the STDIN for an external command. The syntax is:</p>
+<pre><code>:w !cmd</code></pre>
+<p>If you have these expressions:</p>
+<pre><code>console.log("Hello Vim");
+console.log("Vim is awesome");</code></pre>
+<p>Make sure you have <a href="https://nodejs.org/en/">node</a> installed in your machine, then run:</p>
+<pre><code>:w !node</code></pre>
+<p>Vim will use <code>node</code> to execute the JavaScript expressions to print <q>Hello Vim</q> and <q>Vim is awesome</q>.</p>
+<p>When using the <code>:w</code> command, Vim uses all texts in the current buffer, similar to the global command (most command-line commands, if you don’t pass it a range, only executes the command against the current line). If you pass <code>:w</code> a specific address:</p>
+<pre><code>:2w !node</code></pre>
+<p>Vim only uses the text from the second line into the <code>node</code> interpreter.</p>
+<p>There is a subtle but significant difference between <code>:w !node</code> and <code>:w! node</code>. With <code>:w !node</code>, you are <q>writing</q> the text in the current buffer into the external command <code>node</code>. With <code>:w! node</code>, you are force-saving a file and naming the file <q>node</q>.</p>
+</section>
+<section id="executing-an-external-command" class="level2" data-number="14.4">
+<h2 data-number="14.4" class="anchored" data-anchor-id="executing-an-external-command"><span class="header-section-number">14.4</span> Executing an External Command</h2>
+<p>You can execute an external command from inside Vim with the bang command. The syntax is:</p>
+<pre><code>:!cmd</code></pre>
+<p>To see the content of the current directory in the long format, run:</p>
+<pre><code>:!ls -ls</code></pre>
+<p>To kill a process that is running on PID 3456, you can run:</p>
+<pre><code>:!kill -9 3456</code></pre>
+<p>You can run any external command without leaving Vim so you can stay focused on your task.</p>
+</section>
+<section id="filtering-texts" class="level2" data-number="14.5">
+<h2 data-number="14.5" class="anchored" data-anchor-id="filtering-texts"><span class="header-section-number">14.5</span> Filtering Texts</h2>
+<p>If you give <code>!</code> a range, it can be used to filter texts. Suppose you have the following texts:</p>
+<pre><code>hello vim
+hello vim</code></pre>
+<p>Let’s uppercase the current line using the <code>tr</code> (translate) command. Run:</p>
+<pre><code>:.!tr '[:lower:]' '[:upper:]'</code></pre>
+<p>The result:</p>
+<pre><code>HELLO VIM
+hello vim</code></pre>
+<p>The breakdown: - <code>.!</code> executes the filter command on the current line. - <code>tr '[:lower:]' '[:upper:]'</code> calls the <code>tr</code> command to replace all lowercase characters with uppercase ones.</p>
+<p>It is imperative to pass a range to run the external command as a filter. If you try running the command above without the <code>.</code> (<code>:!tr '[:lower:]' '[:upper:]'</code>), you will see an error.</p>
+<p>Let’s assume that you need to remove the second column on both lines with the <code>awk</code> command:</p>
+<pre><code>:%!awk "{print $1}"</code></pre>
+<p>The result:</p>
+<pre><code>hello
+hello</code></pre>
+<p>The breakdown: - <code>:%!</code> executes the filter command on all lines (<code>%</code>). - <code>awk "{print $1}"</code> prints only the first column of the match.</p>
+<p>You can chain multiple commands with the chain operator (<code>|</code>) just like in the terminal. Let’s say you have a file with these delicious breakfast items:</p>
+<pre><code>name price
+chocolate pancake 10
+buttermilk pancake 9
+blueberry pancake 12</code></pre>
+<p>If you need to sort them based on the price and display only the menu with an even spacing, you can run:</p>
+<pre><code>:%!awk 'NR &gt; 1' | sort -nk 3 | column -t</code></pre>
+<p>The result:</p>
+<pre><code>buttermilk pancake 9
+chocolate pancake 10
+blueberry pancake 12</code></pre>
+<p>The breakdown: - <code>:%!</code> applies the filter to all lines (<code>%</code>). - <code>awk 'NR &gt; 1'</code> displays the texts only from row number two onwards. - <code>|</code> chains the next command. - <code>sort -nk 3</code> sorts numerically (<code>n</code>) using the values from column 3 (<code>k 3</code>). - <code>column -t</code> organizes the text with even spacing.</p>
+</section>
+<section id="normal-mode-command" class="level2" data-number="14.6">
+<h2 data-number="14.6" class="anchored" data-anchor-id="normal-mode-command"><span class="header-section-number">14.6</span> Normal Mode Command</h2>
+<p>Vim has a filter operator (<code>!</code>) in the normal mode. If you have the following greetings:</p>
+<pre><code>hello vim
+hola vim
+bonjour vim
+salve vim</code></pre>
+<p>To uppercase the current line and the line below, you can run:</p>
+<pre><code>!jtr '[a-z]' '[A-Z]'</code></pre>
+<p>The breakdown: - <code>!j</code> runs the normal command filter operator (<code>!</code>) targetting the current line and the line below it. Recall that because it is a normal mode operator, the grammar rule <code>verb + noun</code> applies. <code>!</code> is the verb and <code>j</code> is the noun. - <code>tr '[a-z]' '[A-Z]'</code> replaces the lowercase letters with the uppercase letters.</p>
+<p>The filter normal command only works on motions / text objects that are at least one line or longer. If you had tried running <code>!iwtr '[a-z]' '[A-Z]'</code> (execute <code>tr</code> on inner word), you will find that it applies the <code>tr</code> command on the entire line, not the word your cursor is on.</p>
+</section>
+<section id="learn-external-commands-the-smart-way" class="level2" data-number="14.7">
+<h2 data-number="14.7" class="anchored" data-anchor-id="learn-external-commands-the-smart-way"><span class="header-section-number">14.7</span> Learn External Commands the Smart Way</h2>
+<p>Vim is not an IDE. It is a lightweight modal editor that is highly extensible by design. Because of this extensibility, you have an easy access to any external command in your system. Armed with these external commands, Vim is one step closer from becoming an IDE. Someone said that the Unix system is the first IDE ever.</p>
+<p>The bang command is as useful as how many external commands you know. Don’t worry if your external command knowledge is limited. I still have a lot to learn too. Take this as a motivation for continuous learning. Whenever you need to modify a text, look if there is an external command that can solve your problem. Don’t worry about mastering everything, just learn the ones you need to complete the current task.</p>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const disableStylesheet = (stylesheets) => {
+    for (let i=0; i < stylesheets.length; i++) {
+      const stylesheet = stylesheets[i];
+      stylesheet.rel = 'prefetch';
+    }
+  }
+  const enableStylesheet = (stylesheets) => {
+    for (let i=0; i < stylesheets.length; i++) {
+      const stylesheet = stylesheets[i];
+      stylesheet.rel = 'stylesheet';
+    }
+  }
+  const manageTransitions = (selector, allowTransitions) => {
+    const els = window.document.querySelectorAll(selector);
+    for (let i=0; i < els.length; i++) {
+      const el = els[i];
+      if (allowTransitions) {
+        el.classList.remove('notransition');
+      } else {
+        el.classList.add('notransition');
+      }
+    }
+  }
+  const toggleColorMode = (alternate) => {
+    // Switch the stylesheets
+    const alternateStylesheets = window.document.querySelectorAll('link.quarto-color-scheme.quarto-color-alternate');
+    manageTransitions('#quarto-margin-sidebar .nav-link', false);
+    if (alternate) {
+      enableStylesheet(alternateStylesheets);
+      for (const sheetNode of alternateStylesheets) {
+        if (sheetNode.id === "quarto-bootstrap") {
+          toggleBodyColorMode(sheetNode);
+        }
+      }
+    } else {
+      disableStylesheet(alternateStylesheets);
+      toggleBodyColorPrimary();
+    }
+    manageTransitions('#quarto-margin-sidebar .nav-link', true);
+    // Switch the toggles
+    const toggles = window.document.querySelectorAll('.quarto-color-scheme-toggle');
+    for (let i=0; i < toggles.length; i++) {
+      const toggle = toggles[i];
+      if (toggle) {
+        if (alternate) {
+          toggle.classList.add("alternate");     
+        } else {
+          toggle.classList.remove("alternate");
+        }
+      }
+    }
+    // Hack to workaround the fact that safari doesn't
+    // properly recolor the scrollbar when toggling (#1455)
+    if (navigator.userAgent.indexOf('Safari') > 0 && navigator.userAgent.indexOf('Chrome') == -1) {
+      manageTransitions("body", false);
+      window.scrollTo(0, 1);
+      setTimeout(() => {
+        window.scrollTo(0, 0);
+        manageTransitions("body", true);
+      }, 40);  
+    }
+  }
+  const isFileUrl = () => { 
+    return window.location.protocol === 'file:';
+  }
+  const hasAlternateSentinel = () => {  
+    let styleSentinel = getColorSchemeSentinel();
+    if (styleSentinel !== null) {
+      return styleSentinel === "alternate";
+    } else {
+      return false;
+    }
+  }
+  const setStyleSentinel = (alternate) => {
+    const value = alternate ? "alternate" : "default";
+    if (!isFileUrl()) {
+      window.localStorage.setItem("quarto-color-scheme", value);
+    } else {
+      localAlternateSentinel = value;
+    }
+  }
+  const getColorSchemeSentinel = () => {
+    if (!isFileUrl()) {
+      const storageValue = window.localStorage.getItem("quarto-color-scheme");
+      return storageValue != null ? storageValue : localAlternateSentinel;
+    } else {
+      return localAlternateSentinel;
+    }
+  }
+  let localAlternateSentinel = 'alternate';
+  // Dark / light mode switch
+  window.quartoToggleColorScheme = () => {
+    // Read the current dark / light value 
+    let toAlternate = !hasAlternateSentinel();
+    toggleColorMode(toAlternate);
+    setStyleSentinel(toAlternate);
+  };
+  // Ensure there is a toggle, if there isn't float one in the top right
+  if (window.document.querySelector('.quarto-color-scheme-toggle') === null) {
+    const a = window.document.createElement('a');
+    a.classList.add('top-right');
+    a.classList.add('quarto-color-scheme-toggle');
+    a.href = "";
+    a.onclick = function() { try { window.quartoToggleColorScheme(); } catch {} return false; };
+    const i = window.document.createElement("i");
+    i.classList.add('bi');
+    a.appendChild(i);
+    window.document.body.appendChild(a);
+  }
+  // Switch to dark mode if need be
+  if (hasAlternateSentinel()) {
+    toggleColorMode(true);
+  } else {
+    toggleColorMode(false);
+  }
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    target: function(trigger) {
+      return trigger.previousElementSibling;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="../chapters/ch13_the_global_command.md.html" class="pagination-link">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Ch13. the Global Command</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="../chapters/ch15_command-line_mode.md.html" class="pagination-link">
+        <span class="nav-page-text"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">Ch15. Command-line Mode</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+
+
+
+</body></html>

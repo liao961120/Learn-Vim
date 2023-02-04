@@ -1,0 +1,734 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.2.313">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Learn Vim (the Smart Way) - 11&nbsp; Ch11. Visual Mode</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1.6em;
+  vertical-align: middle;
+}
+q { quotes: "“" "”" "‘" "’"; }
+</style>
+
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<link href="../chapters/ch12_search_and_substitute.md.html" rel="next">
+<link href="../chapters/ch10_undo.md.html" rel="prev">
+<script src="../site_libs/quarto-html/quarto.js"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-dark.min.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit"
+  }
+}</script>
+
+
+</head>
+
+<body class="nav-sidebar floating">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+    <div class="container-fluid d-flex justify-content-between">
+      <h1 class="quarto-secondary-nav-title"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Ch11. Visual Mode</span></h1>
+      <button type="button" class="quarto-btn-toggle btn" aria-label="Show secondary navigation">
+        <i class="bi bi-chevron-right"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="../">Learn Vim (the Smart Way)</a> 
+        <div class="sidebar-tools-main">
+    <a href="https://github.com/iggredible/Learn-Vim" title="" class="sidebar-tool px-1"><i class="bi bi-github"></i></a>
+  <a href="" class="quarto-color-scheme-toggle sidebar-tool" onclick="window.quartoToggleColorScheme(); return false;" title="Toggle dark mode"><i class="bi"></i></a>
+</div>
+    </div>
+      </div>
+      <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+      </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../index.html" class="sidebar-item-text sidebar-link">Preface</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch01_starting_vim.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Ch01. Starting Vim</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch02_buffers_windows_tabs.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Ch02. Buffers, Windows, and Tabs</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch03_searching_files.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Ch03. Searching Files</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch04_vim_grammar.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Ch04. Vim Grammar</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch05_moving_in_file.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Ch05. Moving in a File</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch06_insert_mode.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Ch06. Insert Mode</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch07_the_dot_command.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Ch07. the Dot Command</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch08_registers.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Ch08. Registers</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch09_macros.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Ch09. Macros</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch10_undo.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Ch10. Undo</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch11_visual_mode.md.html" class="sidebar-item-text sidebar-link active"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Ch11. Visual Mode</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch12_search_and_substitute.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Ch12. Search and Substitute</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch13_the_global_command.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Ch13. the Global Command</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch14_external_commands.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Ch14. External Commands</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch15_command-line_mode.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">Ch15. Command-line Mode</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch16_tags.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Ch16. Tags</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch17_fold.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">Ch17. Fold</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch18_git.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">18</span>&nbsp; <span class="chapter-title">Ch18. Git</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch19_compile.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">19</span>&nbsp; <span class="chapter-title">Ch19. Compile</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch20_views_sessions_viminfo.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">20</span>&nbsp; <span class="chapter-title">Ch20. Views, Sessions, and Viminfo</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch21_multiple_file_operations.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">21</span>&nbsp; <span class="chapter-title">Multiple File Operations</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch22_vimrc.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">22</span>&nbsp; <span class="chapter-title">Ch22. Vimrc</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch23_vim_packages.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">23</span>&nbsp; <span class="chapter-title">Ch23. Vim Packages</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch24_vim_runtime.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">24</span>&nbsp; <span class="chapter-title">Ch24. Vim Runtime</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch25_vimscript_basic_data_types.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">25</span>&nbsp; <span class="chapter-title">Ch25. Vimscript Basic Data Types</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch26_vimscript_conditionals_and_loops.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">26</span>&nbsp; <span class="chapter-title">Ch26. Vimscript Conditionals and Loops</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch27_vimscript_variable_scopes.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">27</span>&nbsp; <span class="chapter-title">Ch27. Vimscript Variable Scopes</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch28_vimscript_functions.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">28</span>&nbsp; <span class="chapter-title">Ch28. Vimscript Functions</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch29_plugin_example_writing-a-titlecase-plugin.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">29</span>&nbsp; <span class="chapter-title">Ch29. Write a Plugin: Creating a Titlecase Operator</span></a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#the-three-types-of-visual-modes" id="toc-the-three-types-of-visual-modes" class="nav-link active" data-scroll-target="#the-three-types-of-visual-modes"><span class="toc-section-number">11.1</span>  The Three Types of Visual Modes</a></li>
+  <li><a href="#visual-mode-navigation" id="toc-visual-mode-navigation" class="nav-link" data-scroll-target="#visual-mode-navigation"><span class="toc-section-number">11.2</span>  Visual Mode Navigation</a></li>
+  <li><a href="#visual-mode-grammar" id="toc-visual-mode-grammar" class="nav-link" data-scroll-target="#visual-mode-grammar"><span class="toc-section-number">11.3</span>  Visual Mode Grammar</a></li>
+  <li><a href="#visual-mode-and-command-line-commands" id="toc-visual-mode-and-command-line-commands" class="nav-link" data-scroll-target="#visual-mode-and-command-line-commands"><span class="toc-section-number">11.4</span>  Visual Mode and Command-line Commands</a></li>
+  <li><a href="#adding-text-on-multiple-lines" id="toc-adding-text-on-multiple-lines" class="nav-link" data-scroll-target="#adding-text-on-multiple-lines"><span class="toc-section-number">11.5</span>  Adding Text on Multiple Lines</a></li>
+  <li><a href="#incrementing-numbers" id="toc-incrementing-numbers" class="nav-link" data-scroll-target="#incrementing-numbers"><span class="toc-section-number">11.6</span>  Incrementing Numbers</a></li>
+  <li><a href="#selecting-the-last-visual-mode-area" id="toc-selecting-the-last-visual-mode-area" class="nav-link" data-scroll-target="#selecting-the-last-visual-mode-area"><span class="toc-section-number">11.7</span>  Selecting the Last Visual Mode Area</a></li>
+  <li><a href="#entering-visual-mode-from-insert-mode" id="toc-entering-visual-mode-from-insert-mode" class="nav-link" data-scroll-target="#entering-visual-mode-from-insert-mode"><span class="toc-section-number">11.8</span>  Entering Visual Mode From Insert Mode</a></li>
+  <li><a href="#select-mode" id="toc-select-mode" class="nav-link" data-scroll-target="#select-mode"><span class="toc-section-number">11.9</span>  Select Mode</a></li>
+  <li><a href="#learn-visual-mode-the-smart-way" id="toc-learn-visual-mode-the-smart-way" class="nav-link" data-scroll-target="#learn-visual-mode-the-smart-way"><span class="toc-section-number">11.10</span>  Learn Visual Mode the Smart Way</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title d-none d-lg-block"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Ch11. Visual Mode</span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+</header>
+
+<p>Highlighting and applying changes to a body of text is a common feature in many text editors and word processors. Vim can do this using visual mode. In this chapter, you will learn how to use the visual mode to manipulate texts efficiently.</p>
+<section id="the-three-types-of-visual-modes" class="level2" data-number="11.1">
+<h2 data-number="11.1" class="anchored" data-anchor-id="the-three-types-of-visual-modes"><span class="header-section-number">11.1</span> The Three Types of Visual Modes</h2>
+<p>Vim has three different visual modes. They are:</p>
+<pre><code>v         Character-wise visual mode
+V         Line-wise visual mode
+Ctrl-V    Block-wise visual mode</code></pre>
+<p>If you have the text:</p>
+<pre><code>one
+two
+three</code></pre>
+<p>Character-wise visual mode works with individual characters. Press <code>v</code> on the first character. Then go down to the next line with <code>j</code>. It highlights all texts from <q>one</q> up to your cursor location. If you press <code>gU</code>, Vim uppercases the highlighted characters.</p>
+<p>Line-wise visual mode works with lines. Press <code>V</code> and watch Vim selects the entire line your cursor is on. Just like character-wise visual mode, if you run <code>gU</code>, Vim uppercases the highlighted characters.</p>
+<p>Block-wise visual mode works with rows and columns. It gives you more freedom of movement than the other two modes. If you press <code>Ctrl-V</code>, Vim highlights the character under the cursor just like character-wise visual mode, except instead of highlighting each character until the end of the line before going down to the next line, it goes to the next line with minimal highlighting. Try moving around with <code>h/j/k/l</code> and watch the cursor move.</p>
+<p>On the bottom left of your Vim window, you will see either <code>-- VISUAL --</code>, <code>-- VISUAL LINE --</code>, or <code>-- VISUAL BLOCK --</code> displayed to indicate which visual mode you are in.</p>
+<p>While you are inside a visual mode, you can switch to another visual mode by pressing either <code>v</code>, <code>V</code>, or <code>Ctrl-V</code>. For example, if you are in line-wise visual mode and you want to switch to block-wise visual mode, run <code>Ctrl-V</code>. Try it!</p>
+<p>There are three ways to exit the visual mode: <code>&lt;Esc&gt;</code>, <code>Ctrl-C</code>, and the same key as your current visual mode. What the latter means is if you are currently in the line-wise visual mode (<code>V</code>), you can exit it by pressing <code>V</code> again. If you are in the character-wise visual mode, you can exit it by pressing <code>v</code>.</p>
+<p>There is actually one more way to enter the visual mode:</p>
+<pre><code>gv    Go to the previous visual mode</code></pre>
+<p>It will start the same visual mode on the same highlighted text block as you did last time.</p>
+</section>
+<section id="visual-mode-navigation" class="level2" data-number="11.2">
+<h2 data-number="11.2" class="anchored" data-anchor-id="visual-mode-navigation"><span class="header-section-number">11.2</span> Visual Mode Navigation</h2>
+<p>While in a visual mode, you can expand the highlighted text block with Vim motions.</p>
+<p>Let’s use the same text you used earlier:</p>
+<pre><code>one
+two
+three</code></pre>
+<p>This time let’s start from the line <q>two</q>. Press <code>v</code> to go to the character-wise visual mode (here the square brackets <code>[]</code> represent the character highlights):</p>
+<pre><code>one
+[t]wo
+three</code></pre>
+<p>Press <code>j</code> and Vim will highlight all the text from the line <q>two</q> down to the first character of the line <q>three</q>.</p>
+<pre><code>one
+[two
+t]hree</code></pre>
+<p>Assume from this position, you want to add the line <q>one</q> too. If you press <code>k</code>, to your dismay, the highlight moves away from the line <q>three</q>.</p>
+<pre><code>one
+[t]wo
+three</code></pre>
+<p>Is there a way to freely expand visual selection to move in any direction you want? Definitely. Let’s back up a little bit to where you have the line <q>two</q> and <q>three</q> highlighted.</p>
+<pre><code>one
+[two
+t]hree    &lt;-- cursor</code></pre>
+<p>Visual highlight follows the cursor movement. If you want to expand it upward to the line <q>one</q>, you need to move the cursor up to the line <q>two</q>. Right now the cursor is on the line <q>three</q>. You can toggle the cursor location with either <code>o</code> or <code>O</code>.</p>
+<pre><code>one
+[two     &lt;-- cursor
+t]hree</code></pre>
+<p>Now when you press <code>k</code>, it no longer reduces the selection, but expands it upward.</p>
+<pre><code>[one
+two
+t]hree</code></pre>
+<p>With <code>o</code> or <code>O</code> in visual mode, the cursor jumps from the beginning to the end of the highlighted block, allowing you to expand the highlight area.</p>
+</section>
+<section id="visual-mode-grammar" class="level2" data-number="11.3">
+<h2 data-number="11.3" class="anchored" data-anchor-id="visual-mode-grammar"><span class="header-section-number">11.3</span> Visual Mode Grammar</h2>
+<p>The visual mode shares many operations with normal mode.</p>
+<p>For example, if you have the following text and you want to delete the first two lines from visual mode:</p>
+<pre><code>one
+two
+three</code></pre>
+<p>Highlight the lines <q>one</q> and <q>two</q> with the line-wise visual mode (<code>V</code>):</p>
+<pre><code>[one
+two]
+three</code></pre>
+<p>Pressing <code>d</code> will delete the selection, similar to normal mode. Notice the grammar rule from normal mode, verb + noun, does not apply. The same verb is still there (<code>d</code>), but there is no noun in visual mode. The grammar rule in visual mode is noun + verb, where noun is the highlighted text. Select the text block first, then the command follows.</p>
+<p>In normal mode, there are some commands that do not require a motion, like <code>x</code> to delete a single character under the cursor and <code>r</code> to replace the character under the cursor (<code>rx</code> replaces the character under the cursor with <q>x</q>). In visual mode, these commands are now being applied to the entire highlighted text instead of a single character. Back at the highlighted text:</p>
+<pre><code>[one
+two]
+three</code></pre>
+<p>Running <code>x</code> deletes all highlighted texts.</p>
+<p>You can use this behavior to quickly create a header in markdown text. Suppose you need to quickly turn the following text into a first-level markdown header (<q>===</q>):</p>
+<pre><code>Chapter One</code></pre>
+<p>First, copy the text with <code>yy</code>, then paste it with <code>p</code>:</p>
+<pre><code>Chapter One
+Chapter One</code></pre>
+<p>Now, go to the second line and select it with line-wise visual mode:</p>
+<pre><code>Chapter One
+[Chapter One]</code></pre>
+<p>A first-level header is a series of <q>=</q> below a text. Run <code>r=</code>, voila! This saves you from typing <q>=</q> manually.</p>
+<pre><code>Chapter One
+===========</code></pre>
+<p>To learn more about operators in visual mode, check out <code>:h visual-operators</code>.</p>
+</section>
+<section id="visual-mode-and-command-line-commands" class="level2" data-number="11.4">
+<h2 data-number="11.4" class="anchored" data-anchor-id="visual-mode-and-command-line-commands"><span class="header-section-number">11.4</span> Visual Mode and Command-line Commands</h2>
+<p>You can selectively apply command-line commands on a highlighted text block. If you have these statements and you want to substitute <q>const</q> with <q>let</q> only on the first two lines:</p>
+<pre><code>const one = "one";
+const two = "two";
+const three = "three";</code></pre>
+<p>Highlight the first two lines with <em>any</em> visual mode and run the substitute command <code>:s/const/let/g</code>:</p>
+<pre><code>let one = "one";
+let two = "two";
+const three = "three";</code></pre>
+<p>Notice I said you can do this with <em>any</em> visual mode. You do not have to highlight the entire line to run the command on that line. As long as you select at least a character on each line, the command is applied.</p>
+</section>
+<section id="adding-text-on-multiple-lines" class="level2" data-number="11.5">
+<h2 data-number="11.5" class="anchored" data-anchor-id="adding-text-on-multiple-lines"><span class="header-section-number">11.5</span> Adding Text on Multiple Lines</h2>
+<p>You can add text on multiple lines in Vim using the block-wise visual mode. If you need to add a semicolon at the end of each line:</p>
+<pre><code>const one = "one"
+const two = "two"
+const three = "three"</code></pre>
+<p>With your cursor on the first line: - Run block-wise visual mode and go down two lines (<code>Ctrl-V jj</code>). - Highlight to the end of the line (<code>$</code>). - Append (<code>A</code>) then type <q>;</q>. - Exit visual mode (<code>&lt;Esc&gt;</code>).</p>
+<p>You should see the appended <q>;</q> on each line now. Pretty cool! There are two ways to enter the insert mode from block-wise visual mode: <code>A</code> to enter the text after the cursor or <code>I</code> to enter the text before the cursor. Do not confuse them with <code>A</code> (append text at the end of the line) and <code>I</code> (insert text before the first non-blank line) from normal mode.</p>
+<p>Alternatively, you can also use the <code>:normal</code> command to add text on multiple lines: - Highlight all 3 lines (<code>vjj</code>). - Type <code>:normal! A;</code>.</p>
+<p>Remember, <code>:normal</code> command executes normal mode commands. You can instruct it to run <code>A;</code> to append text <q>;</q> at the end of the line.</p>
+</section>
+<section id="incrementing-numbers" class="level2" data-number="11.6">
+<h2 data-number="11.6" class="anchored" data-anchor-id="incrementing-numbers"><span class="header-section-number">11.6</span> Incrementing Numbers</h2>
+<p>Vim has <code>Ctrl-X</code> and <code>Ctrl-A</code> commands to decrement and increment numbers. When used with visual mode, you can increment numbers across multiple lines.</p>
+<p>If you have these HTML elements:</p>
+<pre><code>&lt;div id="app-1"&gt;&lt;/div&gt;
+&lt;div id="app-1"&gt;&lt;/div&gt;
+&lt;div id="app-1"&gt;&lt;/div&gt;
+&lt;div id="app-1"&gt;&lt;/div&gt;
+&lt;div id="app-1"&gt;&lt;/div&gt;</code></pre>
+<p>It is a bad practice to have several ids having the same name, so let’s increment them to make them unique: - Move your cursor to the <q>1</q> on the second line. - Start block-wise visual mode and go down 3 lines (<code>Ctrl-V 3j</code>). This highlights the remaining <q>1</q>s. Now all <q>1</q> should be highlighted (except the first line). - Run <code>g Ctrl-A</code>.</p>
+<p>You should see this result:</p>
+<pre><code>&lt;div id="app-1"&gt;&lt;/div&gt;
+&lt;div id="app-2"&gt;&lt;/div&gt;
+&lt;div id="app-3"&gt;&lt;/div&gt;
+&lt;div id="app-4"&gt;&lt;/div&gt;
+&lt;div id="app-5"&gt;&lt;/div&gt;</code></pre>
+<p><code>g Ctrl-A</code> increments numbers on multiple lines. <code>Ctrl-X/Ctrl-A</code> can increment letters too, with the number formats option:</p>
+<pre><code>set nrformats+=alpha</code></pre>
+<p>The <code>nrformats</code> option instructs Vim which bases are considered as <q>numbers</q> for <code>Ctrl-A</code> and <code>Ctrl-X</code> to increment and decrement. By adding <code>alpha</code>, an alphabetical character is now considered as a number. If you have the following HTML elements:</p>
+<pre><code>&lt;div id="app-a"&gt;&lt;/div&gt;
+&lt;div id="app-a"&gt;&lt;/div&gt;
+&lt;div id="app-a"&gt;&lt;/div&gt;
+&lt;div id="app-a"&gt;&lt;/div&gt;
+&lt;div id="app-a"&gt;&lt;/div&gt;</code></pre>
+<p>Put your cursor on the second <q>app-a</q>. Use the same technique as above (<code>Ctrl-V 3j</code> then <code>g Ctrl-A</code>) to increment the ids.</p>
+<pre><code>&lt;div id="app-a"&gt;&lt;/div&gt;
+&lt;div id="app-b"&gt;&lt;/div&gt;
+&lt;div id="app-c"&gt;&lt;/div&gt;
+&lt;div id="app-d"&gt;&lt;/div&gt;
+&lt;div id="app-e"&gt;&lt;/div&gt;</code></pre>
+</section>
+<section id="selecting-the-last-visual-mode-area" class="level2" data-number="11.7">
+<h2 data-number="11.7" class="anchored" data-anchor-id="selecting-the-last-visual-mode-area"><span class="header-section-number">11.7</span> Selecting the Last Visual Mode Area</h2>
+<p>Earlier in this chapter, I mentioned that <code>gv</code> can quickly highlight the last visual mode highlight. You can also go to the location of the start and the end of the last visual mode with these two special marks:</p>
+<pre><code>`&lt;    Go to the first place of the previous visual mode highlight
+`&gt;    Go to the last place of the previous visual mode highlight</code></pre>
+<p>Earlier, I also mentioned that you can selectively execute command-line commands on a highlighted text, like <code>:s/const/let/g</code>. When you did that, you’d see this below:</p>
+<pre><code>:`&lt;,`&gt;s/const/let/g</code></pre>
+<p>You were actually executing a <em>ranged</em> <code>s/const/let/g</code> command (with the two marks as the addresses). Interesting!</p>
+<p>You can always edit these marks anytime you wish. If instead you needed to substitute from the start of the highlighted text to the end of the file, you just change the command to:</p>
+<pre><code>:`&lt;,$s/const/let/g</code></pre>
+</section>
+<section id="entering-visual-mode-from-insert-mode" class="level2" data-number="11.8">
+<h2 data-number="11.8" class="anchored" data-anchor-id="entering-visual-mode-from-insert-mode"><span class="header-section-number">11.8</span> Entering Visual Mode From Insert Mode</h2>
+<p>You can also enter visual mode from the insert mode. To go to character-wise visual mode while you are in insert mode:</p>
+<pre><code>Ctrl-O v</code></pre>
+<p>Recall that running <code>Ctrl-O</code> while in the insert mode lets you execute a normal mode command. While in this normal-mode-command-pending mode, run <code>v</code> to enter character-wise visual mode. Notice that on the bottom left of the screen, it says <code>--(insert) VISUAL--</code>. This trick works with any visual mode operator: <code>v</code>, <code>V</code>, and <code>Ctrl-V</code>.</p>
+</section>
+<section id="select-mode" class="level2" data-number="11.9">
+<h2 data-number="11.9" class="anchored" data-anchor-id="select-mode"><span class="header-section-number">11.9</span> Select Mode</h2>
+<p>Vim has a mode similar to visual mode called the select mode. Like the visual mode, it also has three different modes:</p>
+<pre><code>gh         Character-wise select mode
+gH         Line-wise select mode
+gCtrl-h    Block-wise select mode</code></pre>
+<p>Select mode emulates a regular editor’s text highlighting behavior closer than Vim’s visual mode does.</p>
+<p>In a regular editor, after you highlight a text block and type a letter, say the letter <q>y</q>, it will delete the highlighted text and insert the letter <q>y</q>. If you highlight a line with line-wise select mode (<code>gH</code>) and type <q>y</q>, it will delete the highlighted text and insert the letter <q>y</q>.</p>
+<p>Contrast this select mode with visual mode: if you highlight a line of text with line-wise visual mode (<code>V</code>) and type <q>y</q>, the highlighted text will not be deleted and replaced by the literal letter <q>y</q>, it will be yanked. You can’t execute normal mode commands on highlighted text in select mode.</p>
+<p>I personally never used select mode, but it’s good to know that it exists.</p>
+</section>
+<section id="learn-visual-mode-the-smart-way" class="level2" data-number="11.10">
+<h2 data-number="11.10" class="anchored" data-anchor-id="learn-visual-mode-the-smart-way"><span class="header-section-number">11.10</span> Learn Visual Mode the Smart Way</h2>
+<p>The visual mode is Vim’s representation of the text highlighting procedure.</p>
+<p>If you find yourself using visual mode operation far more often than normal mode operations, be careful. This is an anti-pattern. It takes more keystrokes to run a visual mode operation than its normal mode counterpart. For example, if you need to delete an inner word, why use four keystrokes, <code>viwd</code> (visually highlight an inner word then delete), if you can accomplish it with just three keystrokes (<code>diw</code>)? The latter is more direct and concise. Of course, there will be times when visual modes are appropriate, but in general, favor a more direct approach.</p>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const disableStylesheet = (stylesheets) => {
+    for (let i=0; i < stylesheets.length; i++) {
+      const stylesheet = stylesheets[i];
+      stylesheet.rel = 'prefetch';
+    }
+  }
+  const enableStylesheet = (stylesheets) => {
+    for (let i=0; i < stylesheets.length; i++) {
+      const stylesheet = stylesheets[i];
+      stylesheet.rel = 'stylesheet';
+    }
+  }
+  const manageTransitions = (selector, allowTransitions) => {
+    const els = window.document.querySelectorAll(selector);
+    for (let i=0; i < els.length; i++) {
+      const el = els[i];
+      if (allowTransitions) {
+        el.classList.remove('notransition');
+      } else {
+        el.classList.add('notransition');
+      }
+    }
+  }
+  const toggleColorMode = (alternate) => {
+    // Switch the stylesheets
+    const alternateStylesheets = window.document.querySelectorAll('link.quarto-color-scheme.quarto-color-alternate');
+    manageTransitions('#quarto-margin-sidebar .nav-link', false);
+    if (alternate) {
+      enableStylesheet(alternateStylesheets);
+      for (const sheetNode of alternateStylesheets) {
+        if (sheetNode.id === "quarto-bootstrap") {
+          toggleBodyColorMode(sheetNode);
+        }
+      }
+    } else {
+      disableStylesheet(alternateStylesheets);
+      toggleBodyColorPrimary();
+    }
+    manageTransitions('#quarto-margin-sidebar .nav-link', true);
+    // Switch the toggles
+    const toggles = window.document.querySelectorAll('.quarto-color-scheme-toggle');
+    for (let i=0; i < toggles.length; i++) {
+      const toggle = toggles[i];
+      if (toggle) {
+        if (alternate) {
+          toggle.classList.add("alternate");     
+        } else {
+          toggle.classList.remove("alternate");
+        }
+      }
+    }
+    // Hack to workaround the fact that safari doesn't
+    // properly recolor the scrollbar when toggling (#1455)
+    if (navigator.userAgent.indexOf('Safari') > 0 && navigator.userAgent.indexOf('Chrome') == -1) {
+      manageTransitions("body", false);
+      window.scrollTo(0, 1);
+      setTimeout(() => {
+        window.scrollTo(0, 0);
+        manageTransitions("body", true);
+      }, 40);  
+    }
+  }
+  const isFileUrl = () => { 
+    return window.location.protocol === 'file:';
+  }
+  const hasAlternateSentinel = () => {  
+    let styleSentinel = getColorSchemeSentinel();
+    if (styleSentinel !== null) {
+      return styleSentinel === "alternate";
+    } else {
+      return false;
+    }
+  }
+  const setStyleSentinel = (alternate) => {
+    const value = alternate ? "alternate" : "default";
+    if (!isFileUrl()) {
+      window.localStorage.setItem("quarto-color-scheme", value);
+    } else {
+      localAlternateSentinel = value;
+    }
+  }
+  const getColorSchemeSentinel = () => {
+    if (!isFileUrl()) {
+      const storageValue = window.localStorage.getItem("quarto-color-scheme");
+      return storageValue != null ? storageValue : localAlternateSentinel;
+    } else {
+      return localAlternateSentinel;
+    }
+  }
+  let localAlternateSentinel = 'alternate';
+  // Dark / light mode switch
+  window.quartoToggleColorScheme = () => {
+    // Read the current dark / light value 
+    let toAlternate = !hasAlternateSentinel();
+    toggleColorMode(toAlternate);
+    setStyleSentinel(toAlternate);
+  };
+  // Ensure there is a toggle, if there isn't float one in the top right
+  if (window.document.querySelector('.quarto-color-scheme-toggle') === null) {
+    const a = window.document.createElement('a');
+    a.classList.add('top-right');
+    a.classList.add('quarto-color-scheme-toggle');
+    a.href = "";
+    a.onclick = function() { try { window.quartoToggleColorScheme(); } catch {} return false; };
+    const i = window.document.createElement("i");
+    i.classList.add('bi');
+    a.appendChild(i);
+    window.document.body.appendChild(a);
+  }
+  // Switch to dark mode if need be
+  if (hasAlternateSentinel()) {
+    toggleColorMode(true);
+  } else {
+    toggleColorMode(false);
+  }
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    target: function(trigger) {
+      return trigger.previousElementSibling;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="../chapters/ch10_undo.md.html" class="pagination-link">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Ch10. Undo</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="../chapters/ch12_search_and_substitute.md.html" class="pagination-link">
+        <span class="nav-page-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Ch12. Search and Substitute</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+
+
+
+</body></html>

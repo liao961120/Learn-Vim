@@ -1,0 +1,803 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.2.313">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Learn Vim (the Smart Way) - 16&nbsp; Ch16. Tags</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1.6em;
+  vertical-align: middle;
+}
+q { quotes: "“" "”" "‘" "’"; }
+</style>
+
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<link href="../chapters/ch17_fold.md.html" rel="next">
+<link href="../chapters/ch15_command-line_mode.md.html" rel="prev">
+<script src="../site_libs/quarto-html/quarto.js"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-dark.min.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit"
+  }
+}</script>
+
+
+</head>
+
+<body class="nav-sidebar floating">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+    <div class="container-fluid d-flex justify-content-between">
+      <h1 class="quarto-secondary-nav-title"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Ch16. Tags</span></h1>
+      <button type="button" class="quarto-btn-toggle btn" aria-label="Show secondary navigation">
+        <i class="bi bi-chevron-right"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="../">Learn Vim (the Smart Way)</a> 
+        <div class="sidebar-tools-main">
+    <a href="https://github.com/iggredible/Learn-Vim" title="" class="sidebar-tool px-1"><i class="bi bi-github"></i></a>
+  <a href="" class="quarto-color-scheme-toggle sidebar-tool" onclick="window.quartoToggleColorScheme(); return false;" title="Toggle dark mode"><i class="bi"></i></a>
+</div>
+    </div>
+      </div>
+      <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+      </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../index.html" class="sidebar-item-text sidebar-link">Preface</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch01_starting_vim.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Ch01. Starting Vim</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch02_buffers_windows_tabs.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Ch02. Buffers, Windows, and Tabs</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch03_searching_files.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Ch03. Searching Files</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch04_vim_grammar.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Ch04. Vim Grammar</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch05_moving_in_file.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Ch05. Moving in a File</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch06_insert_mode.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Ch06. Insert Mode</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch07_the_dot_command.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Ch07. the Dot Command</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch08_registers.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Ch08. Registers</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch09_macros.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Ch09. Macros</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch10_undo.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Ch10. Undo</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch11_visual_mode.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Ch11. Visual Mode</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch12_search_and_substitute.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Ch12. Search and Substitute</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch13_the_global_command.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Ch13. the Global Command</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch14_external_commands.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Ch14. External Commands</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch15_command-line_mode.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">Ch15. Command-line Mode</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch16_tags.md.html" class="sidebar-item-text sidebar-link active"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Ch16. Tags</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch17_fold.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">Ch17. Fold</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch18_git.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">18</span>&nbsp; <span class="chapter-title">Ch18. Git</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch19_compile.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">19</span>&nbsp; <span class="chapter-title">Ch19. Compile</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch20_views_sessions_viminfo.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">20</span>&nbsp; <span class="chapter-title">Ch20. Views, Sessions, and Viminfo</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch21_multiple_file_operations.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">21</span>&nbsp; <span class="chapter-title">Multiple File Operations</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch22_vimrc.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">22</span>&nbsp; <span class="chapter-title">Ch22. Vimrc</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch23_vim_packages.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">23</span>&nbsp; <span class="chapter-title">Ch23. Vim Packages</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch24_vim_runtime.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">24</span>&nbsp; <span class="chapter-title">Ch24. Vim Runtime</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch25_vimscript_basic_data_types.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">25</span>&nbsp; <span class="chapter-title">Ch25. Vimscript Basic Data Types</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch26_vimscript_conditionals_and_loops.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">26</span>&nbsp; <span class="chapter-title">Ch26. Vimscript Conditionals and Loops</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch27_vimscript_variable_scopes.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">27</span>&nbsp; <span class="chapter-title">Ch27. Vimscript Variable Scopes</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch28_vimscript_functions.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">28</span>&nbsp; <span class="chapter-title">Ch28. Vimscript Functions</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch29_plugin_example_writing-a-titlecase-plugin.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">29</span>&nbsp; <span class="chapter-title">Ch29. Write a Plugin: Creating a Titlecase Operator</span></a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#tag-overview" id="toc-tag-overview" class="nav-link active" data-scroll-target="#tag-overview"><span class="toc-section-number">16.1</span>  Tag Overview</a></li>
+  <li><a href="#tag-generator" id="toc-tag-generator" class="nav-link" data-scroll-target="#tag-generator"><span class="toc-section-number">16.2</span>  Tag Generator</a></li>
+  <li><a href="#tags-anatomy" id="toc-tags-anatomy" class="nav-link" data-scroll-target="#tags-anatomy"><span class="toc-section-number">16.3</span>  Tags Anatomy</a></li>
+  <li><a href="#the-tag-file" id="toc-the-tag-file" class="nav-link" data-scroll-target="#the-tag-file"><span class="toc-section-number">16.4</span>  The Tag File</a></li>
+  <li><a href="#generating-tags-for-a-large-project" id="toc-generating-tags-for-a-large-project" class="nav-link" data-scroll-target="#generating-tags-for-a-large-project"><span class="toc-section-number">16.5</span>  Generating Tags for a Large Project</a></li>
+  <li><a href="#tags-navigation" id="toc-tags-navigation" class="nav-link" data-scroll-target="#tags-navigation"><span class="toc-section-number">16.6</span>  Tags Navigation</a></li>
+  <li><a href="#tag-priority" id="toc-tag-priority" class="nav-link" data-scroll-target="#tag-priority"><span class="toc-section-number">16.7</span>  Tag Priority</a></li>
+  <li><a href="#selective-tag-jumps" id="toc-selective-tag-jumps" class="nav-link" data-scroll-target="#selective-tag-jumps"><span class="toc-section-number">16.8</span>  Selective Tag Jumps</a></li>
+  <li><a href="#autocompletion-with-tags" id="toc-autocompletion-with-tags" class="nav-link" data-scroll-target="#autocompletion-with-tags"><span class="toc-section-number">16.9</span>  Autocompletion With Tags</a></li>
+  <li><a href="#tag-stack" id="toc-tag-stack" class="nav-link" data-scroll-target="#tag-stack"><span class="toc-section-number">16.10</span>  Tag Stack</a></li>
+  <li><a href="#automatic-tag-generation" id="toc-automatic-tag-generation" class="nav-link" data-scroll-target="#automatic-tag-generation"><span class="toc-section-number">16.11</span>  Automatic Tag Generation</a></li>
+  <li><a href="#generate-a-tag-on-save" id="toc-generate-a-tag-on-save" class="nav-link" data-scroll-target="#generate-a-tag-on-save"><span class="toc-section-number">16.12</span>  Generate a Tag on Save</a></li>
+  <li><a href="#using-plugins" id="toc-using-plugins" class="nav-link" data-scroll-target="#using-plugins"><span class="toc-section-number">16.13</span>  Using Plugins</a></li>
+  <li><a href="#ctags-and-git-hooks" id="toc-ctags-and-git-hooks" class="nav-link" data-scroll-target="#ctags-and-git-hooks"><span class="toc-section-number">16.14</span>  Ctags and Git Hooks</a></li>
+  <li><a href="#learn-tags-the-smart-way" id="toc-learn-tags-the-smart-way" class="nav-link" data-scroll-target="#learn-tags-the-smart-way"><span class="toc-section-number">16.15</span>  Learn Tags the Smart Way</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title d-none d-lg-block"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Ch16. Tags</span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+</header>
+
+<p>One useful feature in text editing is being able to go to any definition quickly. In this chapter, you will learn how to use Vim tags to do that.</p>
+<section id="tag-overview" class="level2" data-number="16.1">
+<h2 data-number="16.1" class="anchored" data-anchor-id="tag-overview"><span class="header-section-number">16.1</span> Tag Overview</h2>
+<p>Suppose someone handed you a new codebase:</p>
+<pre><code>one = One.new
+one.donut</code></pre>
+<p><code>One</code>? <code>donut</code>? Well, these might have been obvious to the developers writing the code way back then, but now those developers are no longer here and it is up to you to understand these obscure codes. One way to help understand this is to follow the source code where <code>One</code> and <code>donut</code> are defined.</p>
+<p>You can search for them with either <code>fzf</code> or <code>grep</code> (or <code>vimgrep</code>), but in this case, tags are faster.</p>
+<p>Think of tags like an address book:</p>
+<pre><code>Name    Address
+Iggy1   1234 Cool St, 11111
+Iggy2   9876 Awesome Ave, 2222</code></pre>
+<p>Instead of having a name-address pair, tags store definitions paired with addresses.</p>
+<p>Let’s assume that you have these two Ruby files inside the same directory:</p>
+<pre><code>## one.rb
+class One
+  def initialize
+    puts "Initialized"
+  end
+
+  def donut
+    puts "Bar"
+  end
+end</code></pre>
+<p>and</p>
+<pre><code>## two.rb
+require './one'
+
+one = One.new
+one.donut</code></pre>
+<p>To jump to a definition, you can use <code>Ctrl-]</code> in the normal mode. Inside <code>two.rb</code>, go to the line where <code>one.donut</code> is and move the cursor over <code>donut</code>. Press <code>Ctrl-]</code>.</p>
+<p>Whoops, Vim could not find the tag file. You need to generate the tag file first.</p>
+</section>
+<section id="tag-generator" class="level2" data-number="16.2">
+<h2 data-number="16.2" class="anchored" data-anchor-id="tag-generator"><span class="header-section-number">16.2</span> Tag Generator</h2>
+<p>Modern Vim does not come with tag generator, so you will have to download an external tag generator. There are several options to choose:</p>
+<ul>
+<li>ctags = C only. Available almost everywhere.</li>
+<li>exuberant ctags = One of the most popular ones. Has many language support.</li>
+<li>universal ctags = Similar to exuberant ctags, but newer.</li>
+<li>etags = For Emacs. Hmm…</li>
+<li>JTags = Java</li>
+<li>ptags.py = Python</li>
+<li>ptags = Perl</li>
+<li>gnatxref = Ada</li>
+</ul>
+<p>If you look at Vim tutorials online, many will recommend <a href="http://ctags.sourceforge.net/">exuberant ctags</a>. It supports <a href="http://ctags.sourceforge.net/languages.html">41 programming languages</a>. I used it and it worked great. However, because it has not been maintained since 2009, Universal ctags would be a better choice. It works similar to exuberant ctags and is currently being maintained.</p>
+<p>I won’t go into details on how to install the universal ctags. Check out the <a href="https://github.com/universal-ctags/ctags">universal ctags</a> repository for more instructions.</p>
+<p>Assuming you have the universal ctags installed, let’s generate a basic tag file. Run:</p>
+<pre><code>ctags -R .</code></pre>
+<p>The <code>R</code> option tells ctags to run a recursive scan from your current location (<code>.</code>). You should see a <code>tags</code> file in your current directory. Inside you will see something like this:</p>
+<pre><code>!_TAG_FILE_FORMAT   2   /extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED   1   /0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_OUTPUT_FILESEP    slash   /slash or backslash/
+!_TAG_OUTPUT_MODE   u-ctags /u-ctags or e-ctags/
+!_TAG_PATTERN_LENGTH_LIMIT  96  /0 for no limit/
+!_TAG_PROGRAM_AUTHOR    Universal Ctags Team    //
+!_TAG_PROGRAM_NAME  Universal Ctags /Derived from Exuberant Ctags/
+!_TAG_PROGRAM_URL   &lt;https://ctags.io/&gt; /official site/
+!_TAG_PROGRAM_VERSION   0.0.0   /b43eb39/
+One one.rb  /^class One$/;" c
+donut   one.rb  /^  def donut$/;"   f   class:One
+initialize  one.rb  /^  def initialize$/;"  f   class:One</code></pre>
+<p>Yours might look a little different depending on your Vim setting and the ctags generator. A tag file is composed of two parts: the tag metadata and the tag list. These metadata (<code>!TAG_FILE...</code>) are usually controlled by the ctags generator. I won’t discuss it here, but feel free to check their docs for more! The tag list is a list of all the definitions indexed by ctags.</p>
+<p>Now go to <code>two.rb</code>, put the cursor on <code>donut</code>, and type <code>Ctrl-]</code>. Vim will take you to the file <code>one.rb</code> on the line where <code>def donut</code> is. Success! But how did Vim do this?</p>
+</section>
+<section id="tags-anatomy" class="level2" data-number="16.3">
+<h2 data-number="16.3" class="anchored" data-anchor-id="tags-anatomy"><span class="header-section-number">16.3</span> Tags Anatomy</h2>
+<p>Let’s look at the <code>donut</code> tag item:</p>
+<pre><code>donut   one.rb  /^  def donut$/;"   f   class:One</code></pre>
+<p>The above tag item is composed of four components: a <code>tagname</code>, a <code>tagfile</code>, a <code>tagaddress</code>, and tag options. - <code>donut</code> is the <code>tagname</code>. When your cursor is on <q>donut</q>, Vim searches the tag file for a line that has the <q>donut</q> string. - <code>one.rb</code> is the <code>tagfile</code>. Vim looks for a file <code>one.rb</code>. - <code>/^ def donut$/</code> is the <code>tagaddress</code>. <code>/.../</code> is a pattern indicator. <code>^</code> is a pattern for the first element on a line. It is followed by two spaces, then the string <code>def donut</code>. Finally, <code>$</code> is a pattern for the last element on a line. - <code>f class:One</code> is the tag option that tells Vim that the function <code>donut</code> is a function (<code>f</code>) and is part of the <code>One</code> class.</p>
+<p>Let’s look at another item in the tag list:</p>
+<pre><code>One one.rb  /^class One$/;" c</code></pre>
+<p>This line works the same way as the <code>donut</code> pattern:</p>
+<ul>
+<li><code>One</code> is the <code>tagname</code>. Note that with tags, the first scan is case sensitive. If you have <code>One</code> and <code>one</code> on the list, Vim will prioritize <code>One</code> over <code>one</code>.</li>
+<li><code>one.rb</code> is the <code>tagfile</code>. Vim looks for a file <code>one.rb</code>.</li>
+<li><code>/^class One$/</code> is the <code>tagaddress</code> pattern. Vim looks for a line that starts with (<code>^</code>) <code>class</code> and ends with (<code>$</code>) <code>One</code>.</li>
+<li><code>c</code> is one of the possible tag options. Since <code>One</code> is a ruby class and not a procedure, it marks it with a <code>c</code>.</li>
+</ul>
+<p>Depending on which tag generator you use, the content of your tag file may look different. At minimum, a tag file must have either one of these formats:</p>
+<pre><code>1.  {tagname} {TAB} {tagfile} {TAB} {tagaddress}
+2.  {tagname} {TAB} {tagfile} {TAB} {tagaddress} {term} {field} ..</code></pre>
+</section>
+<section id="the-tag-file" class="level2" data-number="16.4">
+<h2 data-number="16.4" class="anchored" data-anchor-id="the-tag-file"><span class="header-section-number">16.4</span> The Tag File</h2>
+<p>You have learned that a new file, <code>tags</code>, is created after running <code>ctags -R .</code>. How does Vim know where to look for the tag file?</p>
+<p>If you run <code>:set tags?</code>, you might see <code>tags=./tags,tags</code> (depending on your Vim settings, it might be different). Here Vim looks for all tags in the path of the current file in the case of <code>./tags</code> and the current directory (your project root) in the case of <code>tags</code>.</p>
+<p>Also in the case of <code>./tags</code>, Vim will first look for a tag file inside the path of your current file regardless how nested it is, then it will look for a tag file of the current directory (project root). Vim stops after it finds the first match.</p>
+<p>If your <code>'tags'</code> file had said <code>tags=./tags,tags,/user/iggy/mytags/tags</code>, then Vim will also look at the <code>/user/iggy/mytags</code> directory for a tag file after Vim finishes searching <code>./tags</code> and <code>tags</code> directory. You don’t have to store your tag file inside your project, you can keep them separate.</p>
+<p>To add a new tag file location, use the following:</p>
+<pre><code>set tags+=path/to/my/tags/file</code></pre>
+</section>
+<section id="generating-tags-for-a-large-project" class="level2" data-number="16.5">
+<h2 data-number="16.5" class="anchored" data-anchor-id="generating-tags-for-a-large-project"><span class="header-section-number">16.5</span> Generating Tags for a Large Project</h2>
+<p>If you tried to run ctags in a large project, it may take a long time because Vim also looks inside every nested directories. If you are a Javascript developer, you know that <code>node_modules</code> can be very large. Imagine if you have a five sub-projects and each contains its own <code>node_modules</code> directory. If you run <code>ctags -R .</code>, ctags will try to scan through all 5 <code>node_modules</code>. You probably don’t need to run ctags on <code>node_modules</code>.</p>
+<p>To run ctags excluding the <code>node_modules</code>, run:</p>
+<pre><code>ctags -R --exclude=node_modules .</code></pre>
+<p>This time it should take less than a second. By the way, you can use the <code>exclude</code> option multiple times:</p>
+<pre><code>ctags -R --exclude=.git --exclude=vendor --exclude=node_modules --exclude=db --exclude=log .</code></pre>
+<p>The point is, if you want to omit a directory, <code>--exclude</code> is your best friend.</p>
+</section>
+<section id="tags-navigation" class="level2" data-number="16.6">
+<h2 data-number="16.6" class="anchored" data-anchor-id="tags-navigation"><span class="header-section-number">16.6</span> Tags Navigation</h2>
+<p>You can get good mileage using only <code>Ctrl-]</code>, but let’s learn a few more tricks. The tag jump key <code>Ctrl-]</code> has an command-line mode alternative: <code>:tag {tag-name}</code>. If you run:</p>
+<pre><code>:tag donut</code></pre>
+<p>Vim will jump to the <code>donut</code> method, just like doing <code>Ctrl-]</code> on <q>donut</q> string. You can autocomplete the argument too, with <code>&lt;Tab&gt;</code>:</p>
+<pre><code>:tag d&lt;Tab&gt;</code></pre>
+<p>Vim lists all tags that starts with <q>d</q>. In this case, <q>donut</q>.</p>
+<p>In a real project, you may encounter multiple methods with the same name. Let’s update the two ruby files from earlier. Inside <code>one.rb</code>:</p>
+<pre><code>## one.rb
+class One
+  def initialize
+    puts "Initialized"
+  end
+
+  def donut
+    puts "one donut"
+  end
+
+  def pancake
+    puts "one pancake"
+  end
+end</code></pre>
+<p>Inside <code>two.rb</code>:</p>
+<pre><code>## two.rb
+require './one.rb'
+
+def pancake
+  "Two pancakes"
+end
+
+one = One.new
+one.donut
+puts pancake</code></pre>
+<p>If you are coding along, don’t forget to run <code>ctags -R .</code> again since you now have several new procedures. You have two instances of the <code>pancake</code> procedure. If you are inside <code>two.rb</code> and you pressed <code>Ctrl-]</code>, what would happen?</p>
+<p>Vim will jump to <code>def pancake</code> inside <code>two.rb</code>, not the <code>def pancake</code> inside <code>one.rb</code>. This is because Vim sees the <code>pancake</code> procedure inside <code>two.rb</code> as having a higher priority than the other <code>pancake</code> procedure.</p>
+</section>
+<section id="tag-priority" class="level2" data-number="16.7">
+<h2 data-number="16.7" class="anchored" data-anchor-id="tag-priority"><span class="header-section-number">16.7</span> Tag Priority</h2>
+<p>Not all tags are equal. Some tags have higher priorities. If Vim is presented with duplicate item names, Vim checks the priority of the keyword. The order is:</p>
+<ol type="1">
+<li>A fully matched static tag in the current file.</li>
+<li>A fully matched global tag in the current file.</li>
+<li>A fully matched global tag in a different file.</li>
+<li>A fully matched static tag in another file.</li>
+<li>A case-insensitively matched static tag in the current file.</li>
+<li>A case-insensitively matched global tag in the current file.</li>
+<li>A case-insensitively matched global tag in the a different file.</li>
+<li>A case-insensitively matched static tag in the current file.</li>
+</ol>
+<p>According to the priority list, Vim prioritizes the exact match found on the same file. That’s why Vim chooses the <code>pancake</code> procedure inside <code>two.rb</code> over the <code>pancake</code> procedure inside <code>one.rb</code>. There are some exceptions to the priority list above depending on your <code>'tagcase'</code>, <code>'ignorecase'</code>, and <code>'smartcase'</code> settings, but I will not discuss them here. If you are interested, check out <code>:h tag-priority</code>.</p>
+</section>
+<section id="selective-tag-jumps" class="level2" data-number="16.8">
+<h2 data-number="16.8" class="anchored" data-anchor-id="selective-tag-jumps"><span class="header-section-number">16.8</span> Selective Tag Jumps</h2>
+<p>It would be nice if you can choose which tag items to jump to instead of always going to the highest priority tag item. Maybe you actually need to jump to the <code>pancake</code> method in <code>one.rb</code> and not the one in <code>two.rb</code>. To do that, you can use <code>:tselect</code>. Run:</p>
+<pre><code>:tselect pancake</code></pre>
+<p>You will see, on the bottom of the screen:</p>
+<pre><code>## pri kind tag               file
+1 F C f    pancake           two.rb
+             def pancake
+2 F   f    pancake           one.rb
+             class:One
+             def pancake</code></pre>
+<p>If you type 2, Vim will jump to the procedure in <code>one.rb</code>. If you type 1, Vim will jump to the procedure in <code>two.rb</code>.</p>
+<p>Pay attention to the <code>pri</code> column. You have <code>F C</code> on the first match and <code>F</code> on the second match. This is what Vim uses to determine the tag priotity. <code>F C</code> means a fully-matched (<code>F</code>) global tag in the current (<code>C</code>) file. <code>F</code> means only a fully-matched (<code>F</code>) global tag. <code>F C</code> always have a higher priority than <code>F</code>.</p>
+<p>If you run <code>:tselect donut</code>, Vim also prompts you to select which tag item to jump to, even though there is only one option to choose from. Is there a way for Vim to prompt the tag list only if there are multiple matches and to jump immediately if there is only one tag found?</p>
+<p>Of course! Vim has a <code>:tjump</code> method. Run:</p>
+<pre><code>:tjump donut</code></pre>
+<p>Vim will immediately jump to the <code>donut</code> procedure in <code>one.rb</code>, much like running <code>:tag donut</code>. Now run:</p>
+<pre><code>:tjump pancake</code></pre>
+<p>Vim will prompt you tag options to choose from, much like running <code>:tselect pancake</code>. With <code>tjump</code> you get the best of both methods.</p>
+<p>Vim has a normal mode key for <code>tjump</code>: <code>g Ctrl-]</code>. I personally like <code>g Ctrl-]</code> better than <code>Ctrl-]</code>.</p>
+</section>
+<section id="autocompletion-with-tags" class="level2" data-number="16.9">
+<h2 data-number="16.9" class="anchored" data-anchor-id="autocompletion-with-tags"><span class="header-section-number">16.9</span> Autocompletion With Tags</h2>
+<p>Tags can assist autocompletions. Recall from chapter 6, Insert Mode, that you can use <code>Ctrl-X</code> sub-mode to do various autocompletions. One autocompletion sub-mode that I did not mention was <code>Ctrl-]</code>. If you do <code>Ctrl-X Ctrl-]</code> while in the insert mode, Vim will use the tag file for autocompletion.</p>
+<p>If you go into the insert mode and type <code>Ctrl-x Ctrl-]</code>, you will see:</p>
+<pre><code>One
+donut
+initialize
+pancake</code></pre>
+</section>
+<section id="tag-stack" class="level2" data-number="16.10">
+<h2 data-number="16.10" class="anchored" data-anchor-id="tag-stack"><span class="header-section-number">16.10</span> Tag Stack</h2>
+<p>Vim keeps a list of all the tags you have jumped to and from in a tag stack. You can see this stack with <code>:tags</code>. If you had first tag-jumped to <code>pancake</code>, followed by <code>donut</code>, and run <code>:tags</code>, you will see:</p>
+<pre><code>  # TO tag         FROM line  in file/text
+  1  1 pancake            10  ch16_tags/two.rb
+  2  1 donut               9  ch16_tags/two.rb
+&gt;</code></pre>
+<p>Note the <code>&gt;</code> symbol above. It shows your current position in the stack. To <q>pop</q> the stack to go back to one previous stack, you can run <code>:pop</code>. Try it, then run <code>:tags</code> again:</p>
+<pre><code>  # TO tag         FROM line  in file/text
+  1  1 pancake            10  puts pancake
+&gt; 2  1 donut               9  one.donut
+</code></pre>
+<p>Note that the <code>&gt;</code> symbol is now on line two, where the <code>donut</code> is. <code>pop</code> one more time, then run <code>:tags</code> again:</p>
+<pre><code>  # TO tag         FROM line  in file/text
+&gt; 1  1 pancake            10  puts pancake
+  2  1 donut               9  one.donut</code></pre>
+<p>In normal mode, you can run <code>Ctrl-t</code> to achieve the same effect as <code>:pop</code>.</p>
+</section>
+<section id="automatic-tag-generation" class="level2" data-number="16.11">
+<h2 data-number="16.11" class="anchored" data-anchor-id="automatic-tag-generation"><span class="header-section-number">16.11</span> Automatic Tag Generation</h2>
+<p>One of the biggest drawbacks of Vim tags is that each time you make a significant change, you have to regenerate the tag file. If you recently renamed the <code>pancake</code> procedure to the <code>waffle</code> procedure, the tag file did not know that the <code>pancake</code> procedure had been renamed. It still stored <code>pancake</code> in the list of tags. You have to run <code>ctags -R .</code> to create an updated tag file. Recreating a new tag file this way can be cumbersome.</p>
+<p>Luckily there are several methods you can employ to generate tags automatically.</p>
+</section>
+<section id="generate-a-tag-on-save" class="level2" data-number="16.12">
+<h2 data-number="16.12" class="anchored" data-anchor-id="generate-a-tag-on-save"><span class="header-section-number">16.12</span> Generate a Tag on Save</h2>
+<p>Vim has an autocommand (<code>autocmd</code>) method to execute any command on an event trigger. You can use this to generate tags on each save. Run:</p>
+<pre><code>:autocmd BufWritePost *.rb silent !ctags -R .</code></pre>
+<p>Breakdown: - <code>autocmd</code> is a command-line command. It accepts an event, file pattern, and a command. - <code>BufWritePost</code> is an event for saving a buffer. Each time you save a file, you trigger a <code>BufWritePost</code> event. - <code>.rb</code> is a file pattern for ruby files. - <code>silent</code> is actually part of the command you are passing. Without this, Vim will display <code>press ENTER or type command to continue</code> each time you trigger the autocommand. - <code>!ctags -R .</code> is the command to execute. Recall that <code>!cmd</code> from inside Vim executes terminal command.</p>
+<p>Now each time you save from inside a ruby file, Vim will run <code>ctags -R .</code>.</p>
+</section>
+<section id="using-plugins" class="level2" data-number="16.13">
+<h2 data-number="16.13" class="anchored" data-anchor-id="using-plugins"><span class="header-section-number">16.13</span> Using Plugins</h2>
+<p>There are several plugins to generate ctags automatically:</p>
+<ul>
+<li><a href="https://github.com/ludovicchabant/vim-gutentags">vim-gutentags</a></li>
+<li><a href="https://github.com/szw/vim-tags">vim-tags</a></li>
+<li><a href="https://github.com/xolox/vim-easytags">vim-easytags</a></li>
+<li><a href="https://github.com/craigemery/vim-autotag">vim-autotag</a></li>
+</ul>
+<p>I use vim-gutentags. It is simple to use and will work right out of the box.</p>
+</section>
+<section id="ctags-and-git-hooks" class="level2" data-number="16.14">
+<h2 data-number="16.14" class="anchored" data-anchor-id="ctags-and-git-hooks"><span class="header-section-number">16.14</span> Ctags and Git Hooks</h2>
+<p>Tim Pope, author of many great Vim plugins, wrote a blog suggesting to use git hooks. <a href="https://tbaggery.com/2011/08/08/effortless-ctags-with-git.html">Check it out</a>.</p>
+</section>
+<section id="learn-tags-the-smart-way" class="level2" data-number="16.15">
+<h2 data-number="16.15" class="anchored" data-anchor-id="learn-tags-the-smart-way"><span class="header-section-number">16.15</span> Learn Tags the Smart Way</h2>
+<p>A tag is useful once configured properly. Suppose you are faced with a new codebase and you want to understand what <code>functionFood</code> does, you can easily read it by jumping to its definition. Inside it, you learn that it also calls <code>functionBreakfast</code>. You follow it and you learn that it calls <code>functionPancake</code>. Your function call graph looks something like this:</p>
+<pre><code>functionFood -&gt; functionBreakfast -&gt; functionPancake</code></pre>
+<p>This gives you insight that this code flow is related to having a pancake for breakfast.</p>
+<p>To learn more about tags, check out <code>:h tags</code>. Now that you know how to use tags, let’s explore a different feature: folding.</p>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const disableStylesheet = (stylesheets) => {
+    for (let i=0; i < stylesheets.length; i++) {
+      const stylesheet = stylesheets[i];
+      stylesheet.rel = 'prefetch';
+    }
+  }
+  const enableStylesheet = (stylesheets) => {
+    for (let i=0; i < stylesheets.length; i++) {
+      const stylesheet = stylesheets[i];
+      stylesheet.rel = 'stylesheet';
+    }
+  }
+  const manageTransitions = (selector, allowTransitions) => {
+    const els = window.document.querySelectorAll(selector);
+    for (let i=0; i < els.length; i++) {
+      const el = els[i];
+      if (allowTransitions) {
+        el.classList.remove('notransition');
+      } else {
+        el.classList.add('notransition');
+      }
+    }
+  }
+  const toggleColorMode = (alternate) => {
+    // Switch the stylesheets
+    const alternateStylesheets = window.document.querySelectorAll('link.quarto-color-scheme.quarto-color-alternate');
+    manageTransitions('#quarto-margin-sidebar .nav-link', false);
+    if (alternate) {
+      enableStylesheet(alternateStylesheets);
+      for (const sheetNode of alternateStylesheets) {
+        if (sheetNode.id === "quarto-bootstrap") {
+          toggleBodyColorMode(sheetNode);
+        }
+      }
+    } else {
+      disableStylesheet(alternateStylesheets);
+      toggleBodyColorPrimary();
+    }
+    manageTransitions('#quarto-margin-sidebar .nav-link', true);
+    // Switch the toggles
+    const toggles = window.document.querySelectorAll('.quarto-color-scheme-toggle');
+    for (let i=0; i < toggles.length; i++) {
+      const toggle = toggles[i];
+      if (toggle) {
+        if (alternate) {
+          toggle.classList.add("alternate");     
+        } else {
+          toggle.classList.remove("alternate");
+        }
+      }
+    }
+    // Hack to workaround the fact that safari doesn't
+    // properly recolor the scrollbar when toggling (#1455)
+    if (navigator.userAgent.indexOf('Safari') > 0 && navigator.userAgent.indexOf('Chrome') == -1) {
+      manageTransitions("body", false);
+      window.scrollTo(0, 1);
+      setTimeout(() => {
+        window.scrollTo(0, 0);
+        manageTransitions("body", true);
+      }, 40);  
+    }
+  }
+  const isFileUrl = () => { 
+    return window.location.protocol === 'file:';
+  }
+  const hasAlternateSentinel = () => {  
+    let styleSentinel = getColorSchemeSentinel();
+    if (styleSentinel !== null) {
+      return styleSentinel === "alternate";
+    } else {
+      return false;
+    }
+  }
+  const setStyleSentinel = (alternate) => {
+    const value = alternate ? "alternate" : "default";
+    if (!isFileUrl()) {
+      window.localStorage.setItem("quarto-color-scheme", value);
+    } else {
+      localAlternateSentinel = value;
+    }
+  }
+  const getColorSchemeSentinel = () => {
+    if (!isFileUrl()) {
+      const storageValue = window.localStorage.getItem("quarto-color-scheme");
+      return storageValue != null ? storageValue : localAlternateSentinel;
+    } else {
+      return localAlternateSentinel;
+    }
+  }
+  let localAlternateSentinel = 'alternate';
+  // Dark / light mode switch
+  window.quartoToggleColorScheme = () => {
+    // Read the current dark / light value 
+    let toAlternate = !hasAlternateSentinel();
+    toggleColorMode(toAlternate);
+    setStyleSentinel(toAlternate);
+  };
+  // Ensure there is a toggle, if there isn't float one in the top right
+  if (window.document.querySelector('.quarto-color-scheme-toggle') === null) {
+    const a = window.document.createElement('a');
+    a.classList.add('top-right');
+    a.classList.add('quarto-color-scheme-toggle');
+    a.href = "";
+    a.onclick = function() { try { window.quartoToggleColorScheme(); } catch {} return false; };
+    const i = window.document.createElement("i");
+    i.classList.add('bi');
+    a.appendChild(i);
+    window.document.body.appendChild(a);
+  }
+  // Switch to dark mode if need be
+  if (hasAlternateSentinel()) {
+    toggleColorMode(true);
+  } else {
+    toggleColorMode(false);
+  }
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    target: function(trigger) {
+      return trigger.previousElementSibling;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="../chapters/ch15_command-line_mode.md.html" class="pagination-link">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">Ch15. Command-line Mode</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="../chapters/ch17_fold.md.html" class="pagination-link">
+        <span class="nav-page-text"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">Ch17. Fold</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+
+
+
+</body></html>

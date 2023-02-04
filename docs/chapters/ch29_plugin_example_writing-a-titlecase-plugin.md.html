@@ -1,0 +1,1105 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.2.313">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Learn Vim (the Smart Way) - 29&nbsp; Ch29. Write a Plugin: Creating a Titlecase Operator</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1.6em;
+  vertical-align: middle;
+}
+q { quotes: "“" "”" "‘" "’"; }
+</style>
+
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<link href="../chapters/ch28_vimscript_functions.md.html" rel="prev">
+<script src="../site_libs/quarto-html/quarto.js"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-dark.min.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit"
+  }
+}</script>
+
+
+</head>
+
+<body class="nav-sidebar floating">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+    <div class="container-fluid d-flex justify-content-between">
+      <h1 class="quarto-secondary-nav-title"><span class="chapter-number">29</span>&nbsp; <span class="chapter-title">Ch29. Write a Plugin: Creating a Titlecase Operator</span></h1>
+      <button type="button" class="quarto-btn-toggle btn" aria-label="Show secondary navigation">
+        <i class="bi bi-chevron-right"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="../">Learn Vim (the Smart Way)</a> 
+        <div class="sidebar-tools-main">
+    <a href="https://github.com/iggredible/Learn-Vim" title="" class="sidebar-tool px-1"><i class="bi bi-github"></i></a>
+  <a href="" class="quarto-color-scheme-toggle sidebar-tool" onclick="window.quartoToggleColorScheme(); return false;" title="Toggle dark mode"><i class="bi"></i></a>
+</div>
+    </div>
+      </div>
+      <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+      </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../index.html" class="sidebar-item-text sidebar-link">Preface</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch01_starting_vim.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Ch01. Starting Vim</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch02_buffers_windows_tabs.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Ch02. Buffers, Windows, and Tabs</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch03_searching_files.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Ch03. Searching Files</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch04_vim_grammar.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Ch04. Vim Grammar</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch05_moving_in_file.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Ch05. Moving in a File</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch06_insert_mode.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Ch06. Insert Mode</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch07_the_dot_command.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Ch07. the Dot Command</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch08_registers.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Ch08. Registers</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch09_macros.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Ch09. Macros</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch10_undo.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Ch10. Undo</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch11_visual_mode.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Ch11. Visual Mode</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch12_search_and_substitute.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Ch12. Search and Substitute</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch13_the_global_command.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Ch13. the Global Command</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch14_external_commands.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Ch14. External Commands</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch15_command-line_mode.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">Ch15. Command-line Mode</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch16_tags.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Ch16. Tags</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch17_fold.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">Ch17. Fold</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch18_git.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">18</span>&nbsp; <span class="chapter-title">Ch18. Git</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch19_compile.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">19</span>&nbsp; <span class="chapter-title">Ch19. Compile</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch20_views_sessions_viminfo.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">20</span>&nbsp; <span class="chapter-title">Ch20. Views, Sessions, and Viminfo</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch21_multiple_file_operations.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">21</span>&nbsp; <span class="chapter-title">Multiple File Operations</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch22_vimrc.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">22</span>&nbsp; <span class="chapter-title">Ch22. Vimrc</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch23_vim_packages.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">23</span>&nbsp; <span class="chapter-title">Ch23. Vim Packages</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch24_vim_runtime.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">24</span>&nbsp; <span class="chapter-title">Ch24. Vim Runtime</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch25_vimscript_basic_data_types.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">25</span>&nbsp; <span class="chapter-title">Ch25. Vimscript Basic Data Types</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch26_vimscript_conditionals_and_loops.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">26</span>&nbsp; <span class="chapter-title">Ch26. Vimscript Conditionals and Loops</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch27_vimscript_variable_scopes.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">27</span>&nbsp; <span class="chapter-title">Ch27. Vimscript Variable Scopes</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch28_vimscript_functions.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">28</span>&nbsp; <span class="chapter-title">Ch28. Vimscript Functions</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch29_plugin_example_writing-a-titlecase-plugin.md.html" class="sidebar-item-text sidebar-link active"><span class="chapter-number">29</span>&nbsp; <span class="chapter-title">Ch29. Write a Plugin: Creating a Titlecase Operator</span></a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#the-problem" id="toc-the-problem" class="nav-link active" data-scroll-target="#the-problem"><span class="toc-section-number">29.1</span>  The Problem</a>
+  <ul class="collapse">
+  <li><a href="#planning-for-the-plugin" id="toc-planning-for-the-plugin" class="nav-link" data-scroll-target="#planning-for-the-plugin"><span class="toc-section-number">29.1.1</span>  Planning for the Plugin</a></li>
+  <li><a href="#planning-for-the-user-interface" id="toc-planning-for-the-user-interface" class="nav-link" data-scroll-target="#planning-for-the-user-interface"><span class="toc-section-number">29.1.2</span>  Planning for the User Interface</a></li>
+  </ul></li>
+  <li><a href="#vim-runtime" id="toc-vim-runtime" class="nav-link" data-scroll-target="#vim-runtime"><span class="toc-section-number">29.2</span>  Vim Runtime</a></li>
+  <li><a href="#mappings" id="toc-mappings" class="nav-link" data-scroll-target="#mappings"><span class="toc-section-number">29.3</span>  Mappings</a></li>
+  <li><a href="#the-totitle-function" id="toc-the-totitle-function" class="nav-link" data-scroll-target="#the-totitle-function"><span class="toc-section-number">29.4</span>  The ToTitle Function</a></li>
+  <li><a href="#the-operator-function" id="toc-the-operator-function" class="nav-link" data-scroll-target="#the-operator-function"><span class="toc-section-number">29.5</span>  The Operator Function</a></li>
+  <li><a href="#processing-the-input" id="toc-processing-the-input" class="nav-link" data-scroll-target="#processing-the-input"><span class="toc-section-number">29.6</span>  Processing the Input</a></li>
+  <li><a href="#creating-your-own-custom-function-operator" id="toc-creating-your-own-custom-function-operator" class="nav-link" data-scroll-target="#creating-your-own-custom-function-operator"><span class="toc-section-number">29.7</span>  Creating Your Own Custom Function Operator</a></li>
+  <li><a href="#totitle-as-a-function" id="toc-totitle-as-a-function" class="nav-link" data-scroll-target="#totitle-as-a-function"><span class="toc-section-number">29.8</span>  ToTitle As a Function</a></li>
+  <li><a href="#temporary-variables" id="toc-temporary-variables" class="nav-link" data-scroll-target="#temporary-variables"><span class="toc-section-number">29.9</span>  Temporary Variables</a></li>
+  <li><a href="#capitalizing-the-selections" id="toc-capitalizing-the-selections" class="nav-link" data-scroll-target="#capitalizing-the-selections"><span class="toc-section-number">29.10</span>  Capitalizing the Selections</a></li>
+  <li><a href="#handling-a-block-operation" id="toc-handling-a-block-operation" class="nav-link" data-scroll-target="#handling-a-block-operation"><span class="toc-section-number">29.11</span>  Handling a Block Operation</a></li>
+  <li><a href="#handling-line-and-char-operations" id="toc-handling-line-and-char-operations" class="nav-link" data-scroll-target="#handling-line-and-char-operations"><span class="toc-section-number">29.12</span>  Handling Line and Char Operations</a></li>
+  <li><a href="#cleanups" id="toc-cleanups" class="nav-link" data-scroll-target="#cleanups"><span class="toc-section-number">29.13</span>  Cleanups</a></li>
+  <li><a href="#the-capitalize-function" id="toc-the-capitalize-function" class="nav-link" data-scroll-target="#the-capitalize-function"><span class="toc-section-number">29.14</span>  The Capitalize Function</a></li>
+  <li><a href="#docs" id="toc-docs" class="nav-link" data-scroll-target="#docs"><span class="toc-section-number">29.15</span>  Docs</a>
+  <ul class="collapse">
+  <li><a href="#the-help-file-special-syntax" id="toc-the-help-file-special-syntax" class="nav-link" data-scroll-target="#the-help-file-special-syntax"><span class="toc-section-number">29.15.1</span>  The Help File Special Syntax</a></li>
+  </ul></li>
+  <li><a href="#conclusion" id="toc-conclusion" class="nav-link" data-scroll-target="#conclusion"><span class="toc-section-number">29.16</span>  Conclusion</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title d-none d-lg-block"><span class="chapter-number">29</span>&nbsp; <span class="chapter-title">Ch29. Write a Plugin: Creating a Titlecase Operator</span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+</header>
+
+<p>When you start to get good at Vim, you may want to write your own plugins. I recently wrote my first Vim plugin, <a href="https://github.com/iggredible/totitle-vim">totitle-vim</a>. It is a titlecase operator plugin, akin to Vim’s uppercase <code>gU</code>, lowercase <code>gu</code>, and togglecase <code>g~</code> operators.</p>
+<p>In this chapter, I will present the breakdown of the <code>totitle-vim</code> plugin. I hope to shed some light on the process and maybe inspire you to create your own unique plugin!</p>
+<section id="the-problem" class="level2" data-number="29.1">
+<h2 data-number="29.1" class="anchored" data-anchor-id="the-problem"><span class="header-section-number">29.1</span> The Problem</h2>
+<p>I use Vim to write my articles, including this very guide.</p>
+<p>One main issue was to create a proper title case for the headings. One way to automate this is to capitalize each word in the header with <code>g/^#/ s/\&lt;./\u\0/g</code>. For basic use, this command was good enough, but it is still not as good as having an actual title case. The words <q>The</q> and <q>Of</q> in <q>Capitalize The First Letter Of Each Word</q> should be capitalized. Without a proper capitalization, the sentence looks slightly off.</p>
+<p>At first, I wasn’t planning to write a plugin. Also it turns out that there is a titlecase plugin already: <a href="https://github.com/christoomey/vim-titlecase">vim-titlecase</a>. However, there were a few things that didn’t function quite the way I wanted them to. The main one was the blockwise visual mode behavior. If I have the phrase:</p>
+<pre><code>test title one
+test title two
+test title three</code></pre>
+<p>If I use a block visual highlight on the <q>tle</q>:</p>
+<pre><code>test ti[tle] one
+test ti[tle] two
+test ti[tle] three</code></pre>
+<p>If I press <code>gt</code>, the plugin won’t capitalize it. I find it inconsistent with the behaviors of <code>gu</code>, <code>gU</code>, and <code>g~</code>. So I decided to work off from that titlecase plugin repo and use that to a titlecase plugin myself that is consistent with <code>gu</code>, <code>gU</code>, and <code>g~</code>!. Again, the vim-titlecase plugin itself is an excellent plugin and worthy to be used on its own (the truth is, maybe deep down I just wanted to write my own Vim plugin. I can’t really see the blockwise titlecasing feature to be used that often in real life other than edge cases).</p>
+<section id="planning-for-the-plugin" class="level3" data-number="29.1.1">
+<h3 data-number="29.1.1" class="anchored" data-anchor-id="planning-for-the-plugin"><span class="header-section-number">29.1.1</span> Planning for the Plugin</h3>
+<p>Before writing the first line of code, I need to decide what the titlecase rules are. I found a neat table of different capitalization rules from the <a href="https://titlecaseconverter.com/rules/">titlecaseconverter site</a>. Did you know that there are at least 8 different capitalization rules in English language? <em>Gasp!</em></p>
+<p>In the end, I used the common denominators from that list to come up with a good enough basic rule for the plugin. Plus I doubt people will complain, <q>Hey man, you’re using AMA, why aren’t you using APA?</q>. Here are the basic rules: - First word is always uppercased. - Some adverbs, conjunctions, and prepositions are lowercased. - If the input word is totally uppercased, then don’t do anything (it could be an abbreviation).</p>
+<p>As for which words are lowercased, different rules have different lists. I decided to stick with <code>a an and at but by en for in nor of off on or out per so the to up yet vs via</code>.</p>
+</section>
+<section id="planning-for-the-user-interface" class="level3" data-number="29.1.2">
+<h3 data-number="29.1.2" class="anchored" data-anchor-id="planning-for-the-user-interface"><span class="header-section-number">29.1.2</span> Planning for the User Interface</h3>
+<p>I want the plugin to be an operator to complement Vim’s existing case operators: <code>gu</code>, <code>gU</code>, and <code>g~</code>. Being an operator, it must accept either a motion or a text object (<code>gtw</code> should titlecase the next word, <code>gtiw</code> should titlecase the inner word, <code>gt$</code> should titlecase the words from the current location until the end of the line, <code>gtt</code> should titlecase the current line, <code>gti(</code> should titlecase the words inside parentheses, etc). I also want it to be mapped to <code>gt</code> for easy mnemonics. Moreover, it should also work with all visual modes: <code>v</code>, <code>V</code>, and <code>Ctrl-V</code>. I should be able to highlight it in <em>any</em> visual mode, press <code>gt</code>, then all the highlighted texts will be titlecased.</p>
+</section>
+</section>
+<section id="vim-runtime" class="level2" data-number="29.2">
+<h2 data-number="29.2" class="anchored" data-anchor-id="vim-runtime"><span class="header-section-number">29.2</span> Vim Runtime</h2>
+<p>The first thing you see when you look at the repo is that it has two directories: <code>plugin/</code> and <code>doc/</code>. When you start Vim, it looks for special files and directories inside the <code>~/.vim</code> directory and runs all script files inside that directory. For more, review the Vim Runtime chapter.</p>
+<p>The plugin utilizes two Vim runtime directories: <code>doc/</code> and <code>plugin/</code>. <code>doc/</code> is a place to put the help documentation (so you can search for keywords later, like <code>:h totitle</code>). I’ll go over how to create a help page later. For now, let’s focus on <code>plugin/</code>. The <code>plugin/</code> directory is executed once when Vim boots up. There is one file inside this directory: <code>totitle.vim</code>. The naming doesn’t matter (I could’ve named it <code>whatever.vim</code> and it would still work). All the code responsible for the plugin to work is inside this file.</p>
+</section>
+<section id="mappings" class="level2" data-number="29.3">
+<h2 data-number="29.3" class="anchored" data-anchor-id="mappings"><span class="header-section-number">29.3</span> Mappings</h2>
+<p>Let’s go through the code!</p>
+<p>At the start of the file, you have:</p>
+<pre><code>if !exists('g:totitle_default_keys')
+  let g:totitle_default_keys = 1
+endif</code></pre>
+<p>When you start Vim, <code>g:totitle_default_keys</code> won’t exist yet, so <code>!exists(...)</code> returns true. In that case, define <code>g:totitle_default_keys</code> to equal 1. In Vim, 0 is falsy and non-zero is truthy (use 1 to indicate truthy).</p>
+<p>Let’s jump to the bottom of the file. You’ll see this:</p>
+<pre><code>if g:totitle_default_keys
+  nnoremap &lt;expr&gt; gt ToTitle()
+  xnoremap &lt;expr&gt; gt ToTitle()
+  nnoremap &lt;expr&gt; gtt ToTitle() .. '_'
+endif</code></pre>
+<p>This is where the main <code>gt</code> mapping is defined. In this case, by the time you get to the <code>if</code> conditionals at the bottom of the file, <code>if g:totitle_default_keys</code> would return 1 (truthy), so Vim performs the following maps: - <code>nnoremap &lt;expr&gt; gt ToTitle()</code> maps the normal mode <em>operator</em>. This lets you run operator + motion/text-object like <code>gtw</code> to titlecase the next word or <code>gtiw</code> to titlecase the inner word. I will go over the details of how the operator mapping works later. - <code>xnoremap &lt;expr&gt; gt ToTitle()</code> maps the visual mode operators. This lets you to titlecase the texts that are visually highlighted. - <code>nnoremap &lt;expr&gt; gtt ToTitle() .. '_'</code> maps the normal mode linewise operator (analogous to <code>guu</code> and <code>gUU</code>). You may wonder what <code>.. '_'</code> does at the end. <code>..</code> is Vim’s string interpolation operator. <code>_</code> is used as a motion with an operator. If you look in <code>:help _</code>, it says that the underscore is used to count 1 line downward. It performs an operator on the current line (try it with other operators, try running <code>gU_</code> or <code>d_</code>, notice that it does the same as <code>gUU</code> or <code>dd</code>). - Finally, the <code>&lt;expr&gt;</code> argument allows you to specify the count, so you can do <code>3gtw</code> to togglecase the next 3 words.</p>
+<p>What if you don’t want to use the default <code>gt</code> mapping? Afterall, you are overriding Vim’s default <code>gt</code> (tab next) mapping. What if you want to use <code>gz</code> instead of <code>gt</code>? Remember earlier how you went through the trouble of checking <code>if !exists('g:totitle_default_keys')</code> and <code>if g:totitle_default_keys</code>? If you put <code>let g:totitle_default_keys = 0</code> in your vimrc, then <code>g:totitle_default_keys</code> would already exist when the plugin is run (codes in your vimrc are executed before the <code>plugin/</code> runtime files), so <code>!exists('g:totitle_default_keys')</code> returns false. Furthermore, <code>if g:totitle_default_keys</code> would be falsy (because it would have the value of 0), so it also won’t perform the <code>gt</code> mapping! This effectively lets you define your own custom mapping in Vimrc.</p>
+<p>To define your own titlecase mapping to <code>gz</code>, add this in your vimrc:</p>
+<pre><code>let g:totitle_default_keys = 0
+
+nnoremap &lt;expr&gt; gz ToTitle()
+xnoremap &lt;expr&gt; gz ToTitle()
+nnoremap &lt;expr&gt; gzz ToTitle() .. '_'</code></pre>
+<p>Easy peasy.</p>
+</section>
+<section id="the-totitle-function" class="level2" data-number="29.4">
+<h2 data-number="29.4" class="anchored" data-anchor-id="the-totitle-function"><span class="header-section-number">29.4</span> The ToTitle Function</h2>
+<p>The <code>ToTitle()</code> function is easily the longest function in this file.</p>
+<pre><code> function! ToTitle(type = '')
+  if a:type ==# ''
+    set opfunc=ToTitle
+    return 'g@'
+  endif
+
+  " invoke this when calling the ToTitle() function
+  if a:type != 'block' &amp;&amp; a:type != 'line' &amp;&amp; a:type != 'char'
+    let l:words = a:type
+    let l:wordsArr = trim(l:words)-&gt;split('\s\+')
+    call map(l:wordsArr, 's:capitalize(v:val)')
+    return l:wordsArr-&gt;join(' ')
+  endif
+
+  " save the current settings
+  let l:sel_save = &amp;selection
+  let l:reg_save = getreginfo('"')
+  let l:cb_save = &amp;clipboard
+  let l:visual_marks_save = [getpos("'&lt;"), getpos("'&gt;")]
+
+  try
+    set clipboard= selection=inclusive
+    let l:commands = #{line: "'[V']y", char: "`[v`]y", block: "`[\&lt;c-v&gt;`]y"}
+
+    silent exe 'noautocmd keepjumps normal! ' .. get(l:commands, a:type, '')
+    let l:selected_phrase = getreg('"')
+    let l:WORD_PATTERN = '\&lt;\k*\&gt;'
+    let l:UPCASE_REPLACEMENT = '\=s:capitalize(submatch(0))'
+
+    let l:startLine = line("'&lt;")
+    let l:startCol = virtcol(".")
+
+    " when user calls a block operation
+    if a:type ==# "block"
+      sil! keepj norm! gv"ad
+      keepj $
+      keepj pu_
+
+      let l:lastLine = line("$")
+
+      sil! keepj norm "ap
+
+      let l:curLine = line(".")
+
+      sil! keepj norm! VGg@
+      exe "keepj norm! 0\&lt;c-v&gt;G$h\"ad"
+      exe "keepj " . l:startLine
+      exe "sil! keepj norm! " . l:startCol . "\&lt;bar&gt;\"aP"
+      exe "keepj " . l:lastLine
+      sil! keepj norm! "_dG
+      exe "keepj " . l:startLine
+      exe "sil! keepj norm! " . l:startCol . "\&lt;bar&gt;"
+
+    " when user calls a char or line operation
+    else
+      let l:titlecased = substitute(@@, l:WORD_PATTERN, l:UPCASE_REPLACEMENT, 'g')
+      let l:titlecased = s:capitalizeFirstWord(l:titlecased)
+      call setreg('"', l:titlecased)
+      let l:subcommands = #{line: "'[V']p", char: "`[v`]p", block: "`[\&lt;c-v&gt;`]p"}
+      silent execute "noautocmd keepjumps normal! " .. get(l:subcommands, a:type, "")
+      exe "keepj " . l:startLine
+      exe "sil! keepj norm! " . l:startCol . "\&lt;bar&gt;"
+    endif
+  finally
+
+    " restore the settings
+    call setreg('"', l:reg_save)
+    call setpos("'&lt;", l:visual_marks_save[0])
+    call setpos("'&gt;", l:visual_marks_save[1])
+    let &amp;clipboard = l:cb_save
+    let &amp;selection = l:sel_save
+  endtry
+  return
+endfunction</code></pre>
+<p>This is very long, so let’s break it apart.</p>
+<p><em>I could refactor this into smaller sections, but for the sake of completing this chapter, I just left it as is.</em></p>
+</section>
+<section id="the-operator-function" class="level2" data-number="29.5">
+<h2 data-number="29.5" class="anchored" data-anchor-id="the-operator-function"><span class="header-section-number">29.5</span> The Operator Function</h2>
+<p>Here is the first part of the code:</p>
+<pre><code>if a:type ==# ''
+  set opfunc=ToTitle
+  return 'g@'
+endif</code></pre>
+<p>What the heck is <code>opfunc</code>? Why is it returning <code>g@</code>?</p>
+<p>Vim has a special operator, the operator function, <code>g@</code>. This operator lets you to use <em>any</em> function assigned to the <code>opfunc</code> option. If I have the function <code>Foo()</code> assigned to <code>opfunc</code>, then when I run <code>g@w</code>, I am running <code>Foo()</code> on the next word. If I run <code>g@i(</code>, then I’m running <code>Foo()</code> on the inner parentheses. This operator function is critical to create your own Vim operator.</p>
+<p>The following line assigns the <code>opfunc</code> to the <code>ToTitle</code> function.</p>
+<pre><code>set opfunc=ToTitle</code></pre>
+<p>The next line is literally returning <code>g@</code>:</p>
+<pre><code>return g@</code></pre>
+<p>So exactly how do these two lines work and why is it returning <code>g@</code>?</p>
+<p>Let’s assume that you have the following map:</p>
+<pre><code>nnoremap &lt;expr&gt; gt ToTitle()`</code></pre>
+<p>Then you press <code>gtw</code> (titlecase the next word). The first time you run <code>gtw</code>, Vim calls the <code>ToTitle()</code> method. But right now <code>opfunc</code> is still blank. You are also not passing any argument to <code>ToTitle()</code>, so it will have <code>a:type</code> value of <code>''</code>. This causes the conditional expression to check the argument <code>a:type</code>, <code>if a:type ==# ''</code>, to be truthy. Inside, you assign <code>opfunc</code> to the <code>ToTitle</code> function with <code>set opfunc=ToTitle</code>. Now <code>opfunc</code> is assigned to <code>ToTitle</code>. Finally, after you assigned <code>opfunc</code> to the <code>ToTitle</code> function, you return <code>g@</code>. I will explain why it returns <code>g@</code> below.</p>
+<p>You are not done yet. Remember, you just pressed <code>gtw</code>. Pressing <code>gt</code> did all of the things above, but you still have <code>w</code> to process. By returning <code>g@</code>, at this point, you now technically have <code>g@w</code> (this is why you have <code>return g@</code>). Since <code>g@</code> is the function operator, you are passing to it the <code>w</code> motion. So Vim, upon receiving <code>g@w</code>, calls the <code>ToTitle</code> <em>one more time</em> (don’t worry, you won’t end up with an infinite loop as you will see in a little bit).</p>
+<p>To recap, by pressing <code>gtw</code>, Vim checks if <code>opfunc</code> is empty or not. If it is empty, then Vim will assign it with <code>ToTitle</code>. Then it returns <code>g@</code>, essentially calling the <code>ToTitle</code> again one more time so you can now use it as an operator. This is the trickiest part of creating a custom operator and you did it! Next, you need to build the logic for <code>ToTitle()</code> to actually titlecase the input.</p>
+</section>
+<section id="processing-the-input" class="level2" data-number="29.6">
+<h2 data-number="29.6" class="anchored" data-anchor-id="processing-the-input"><span class="header-section-number">29.6</span> Processing the Input</h2>
+<p>You now have <code>gt</code> functioning as an operator that executes <code>ToTitle()</code>. But what do you do next? How do you actually titlecase the text?</p>
+<p>Whenever you run any operator in Vim, there are three different action motion types: character, line, and block. <code>g@w</code> (word) is an example of a character operation. <code>g@j</code> (one line below) is an example of a line operation. Block operation is rare, but typically when you do <code>Ctrl-V</code> (visual block) operation, it will be counted as a block operation. Operations that target a few characters forward / backward are generally considered character operations (<code>b</code>, <code>e</code>, <code>w</code>, <code>ge</code>, etc). Operations that target a few lines downward / upward are generally considered line operations (<code>j</code>, <code>k</code>). Operations that target columns forward, backward, upward, or downward are generally considered block operations (they are usually either a columnar forced-motion or a blockwise visual mode; for more: <code>:h forced-motion</code>).</p>
+<p>This means, if you press <code>g@w</code>, <code>g@</code> will pass a literal string <code>"char"</code> as an argument to <code>ToTitle()</code>. If you do <code>g@j</code>, <code>g@</code> will pass a literal string <code>"line"</code> as an argument to <code>ToTitle()</code>. This string is what will be passed into the <code>ToTitle</code> function as the <code>type</code> argument.</p>
+</section>
+<section id="creating-your-own-custom-function-operator" class="level2" data-number="29.7">
+<h2 data-number="29.7" class="anchored" data-anchor-id="creating-your-own-custom-function-operator"><span class="header-section-number">29.7</span> Creating Your Own Custom Function Operator</h2>
+<p>Let’s pause and play with <code>g@</code> by writing a dummy function:</p>
+<pre><code>function! Test(some_arg)
+  echom a:some_arg 
+endfunction</code></pre>
+<p>Now assign that function to <code>opfunc</code> by running:</p>
+<pre><code>:set opfunc=Test</code></pre>
+<p>The <code>g@</code> operator will execute <code>Test(some_arg)</code> and passes it with either <code>"char"</code>, <code>"line"</code>, or <code>"block"</code> depending on what operation you do. Run different operations like <code>g@iw</code> (inner word), <code>g@j</code> (one line below), <code>g@$</code> (to the end of the line), etc. See what different values are being echoed. To test the block operation, you can use Vim’s forced motion for block operations: <code>g@Ctrl-Vj</code> (block operation one column below).</p>
+<p>You can also use it with the visual mode. Use the various visual highlights like <code>v</code>, <code>V</code>, and <code>Ctrl-V</code> then press <code>g@</code> (be warned, it will flash the output echo really quickly, so you need to have a quick eye - but the echo is definitely there. Also, since you are using <code>echom</code>, you can check the recorded echo messages with <code>:messages</code>).</p>
+<p>Pretty cool, isn’t it? The things you can program with Vim! Why didn’t they teach this at school? Let’s continue with our plugin.</p>
+</section>
+<section id="totitle-as-a-function" class="level2" data-number="29.8">
+<h2 data-number="29.8" class="anchored" data-anchor-id="totitle-as-a-function"><span class="header-section-number">29.8</span> ToTitle As a Function</h2>
+<p>Moving on to the next few lines:</p>
+<pre><code>if a:type != 'block' &amp;&amp; a:type != 'line' &amp;&amp; a:type != 'char'
+  let l:words = a:type
+  let l:wordsArr = trim(l:words)-&gt;split('\s\+')
+  call map(l:wordsArr, 's:capitalize(v:val)')
+  return l:wordsArr-&gt;join(' ')
+endif</code></pre>
+<p>This line actually has nothing to do with <code>ToTitle()</code> behavior an operator, but to enable it into a callable TitleCase function (yes, I know that I am violating the Single Responsibility Principle). The motivation is, Vim has native <code>toupper()</code> and <code>tolower()</code> functions that will uppercase and lowercase any given string. Ex: <code>:echo toupper('hello')</code> returns <code>'HELLO'</code> and <code>:echo tolower('HELLO')</code> returns <code>'hello'</code>. I want this plugin to have the ability to run <code>ToTitle</code> so you can do <code>:echo ToTitle('once upon a time')</code> and get a <code>'Once Upon a Time'</code> return value.</p>
+<p>By now, you know that when you are calling <code>ToTitle(type)</code> with <code>g@</code>, the <code>type</code> argument will have a value of either <code>'block'</code>, <code>'line'</code>, or <code>'char</code>’. If the argument is neither <code>'block'</code> nor <code>'line'</code> nor <code>'char'</code>, you can safely assume that <code>ToTitle()</code> is being called outside of <code>g@</code>. In that case, you split them by whitespaces (<code>\s\+</code>) with:</p>
+<pre><code>let l:wordsArr = trim(l:words)-&gt;split('\s\+')</code></pre>
+<p>Then capitalize each element:</p>
+<pre><code>call map(l:wordsArr, 's:capitalize(v:val)')</code></pre>
+<p>Before joining them back together:</p>
+<pre><code>l:wordsArr-&gt;join(' ')</code></pre>
+<p>The <code>capitalize()</code> function will be covered later.</p>
+</section>
+<section id="temporary-variables" class="level2" data-number="29.9">
+<h2 data-number="29.9" class="anchored" data-anchor-id="temporary-variables"><span class="header-section-number">29.9</span> Temporary Variables</h2>
+<p>The next few lines:</p>
+<pre><code>let l:sel_save = &amp;selection
+let l:reg_save = getreginfo('"')
+let l:cb_save = &amp;clipboard
+let l:visual_marks_save = [getpos("'&lt;"), getpos("'&gt;")]</code></pre>
+<p>These lines preserve various current states into temporary variables. Later in this you will use visual modes, marks, and registers. Doing these will tamper with the a few states. Since you don’t want to revise the history, you need to save them into temporary variables so you can restore the states later.</p>
+</section>
+<section id="capitalizing-the-selections" class="level2" data-number="29.10">
+<h2 data-number="29.10" class="anchored" data-anchor-id="capitalizing-the-selections"><span class="header-section-number">29.10</span> Capitalizing the Selections</h2>
+<p>The next lines are important:</p>
+<pre><code>try
+  set clipboard= selection=inclusive
+  let l:commands = #{line: "'[V']y", char: "`[v`]y", block: "`[\&lt;c-v&gt;`]y"}
+
+  silent exe 'noautocmd keepjumps normal! ' .. get(l:commands, a:type, '')
+  let l:selected_phrase = getreg('"')
+  let l:WORD_PATTERN = '\&lt;\k*\&gt;'
+  let l:UPCASE_REPLACEMENT = '\=s:capitalize(submatch(0))'
+
+  let l:startLine = line("'&lt;")
+  let l:startCol = virtcol(".")
+</code></pre>
+<p>Let’s go through them in small chunks. This line:</p>
+<pre><code>set clipboard= selection=inclusive</code></pre>
+<p>You first set the <code>selection</code> option to be inclusive and the <code>clipboard</code> to be empty. The selection attribute is typically used with the visual mode and there are three possible values: <code>old</code>, <code>inclusive</code>, and <code>exclusive</code>. Setting it to be inclusive means that the last character of the selection is included. I won’t cover them here, but the point is that choosing it to be inclusive makes it behave consistently in visual mode. By default Vim sets it to inclusive, but you set it here anyway just in case one of your plugins sets it to a different value. Check out <code>:h 'clipboard'</code> and <code>:h 'selection'</code> if you’re curious what they really do.</p>
+<p>Next you have this weird-looking hash followed by an execute command:</p>
+<pre><code>let l:commands = #{line: "'[V']y", char: "`[v`]y", block: "`[\&lt;c-v&gt;`]y"}
+silent exe 'noautocmd keepjumps normal! ' .. get(l:commands, a:type, '')</code></pre>
+<p>First, the <code>#{}</code> syntax is Vim’s dictionary data type. The local variable <code>l:commands</code> is a hash with <q>lines</q>, <q>char</q>, and <q>block</q> as its keys. The command <code>silent exe '...'</code> executes whatever command inside the string silently (otherwise it will display notifications to the bottom of your screen).</p>
+<p>Second, the executed commands are <code>'noautocmd keepjumps normal! ' .. get(l:commands, a:type, '')</code>. The first one, <code>noautocmd</code>, will execute the subsequent command without triggering any autocommand. The second one, <code>keepjumps</code>, is to not record the cursor movement while moving. In Vim, certain motions are automatically recorded in the change list, the jump list, and the mark list. This prevents that. The point of having <code>noautocmd</code> and <code>keepjumps</code> is to prevent side effects. Finally, the <code>normal</code> command executes the strings as normal commands. The <code>..</code> is Vim’s string interpolation syntax. <code>get()</code> is a getter method that accepts either a list, blob, or dictionary. In this case, you are passing it the dictionary <code>l:commands</code>. The key is <code>a:type</code>. You learned earlier that <code>a:type</code> is either one of the three string values: <q>char</q>, <q>line</q>, or <q>block</q>. So if <code>a:type</code> is <q>line</q>, you will be executing <code>"noautocmd keepjumps normal! '[V']y"</code> (for more, check out <code>:h silent</code>, <code>:h :exe</code>, <code>:h :noautocmd</code>, <code>:h :keepjumps</code>, <code>:h :normal</code>, and <code>:h get()</code>).</p>
+<p>Let’s go over what <code>'[V']y</code> does. First assume that you have this body of text:</p>
+<pre><code>the second breakfast
+is better than the first breakfast</code></pre>
+<p>Assume that your cursor is on the first line. Then you press <code>g@j</code> (run the operator function, <code>g@</code>, one line below, with <code>j</code>). <code>'[</code> moves the cursor to the start of the previously changed or yanked text. Although you technically didn’t change or yank any text with <code>g@j</code>, Vim remembers the locations of the start and the end motions of the <code>g@</code> command with <code>'[</code> and <code>']</code> (for more, check out <code>:h g@</code>). In your case, pressing <code>'[</code> moves your cursor to the first line because that’s where you started when you ran <code>g@</code>. <code>V</code> is a linewise visual mode command. Finally, <code>']</code> moves your cursor to the end of the previous changed or yanked text, but in this case, it moves your cursor to the end of your last <code>g@</code> operation. Finally, <code>y</code> yanks the selected text.</p>
+<p>What you just did was yanking the same body of text you performed <code>g@</code> on.</p>
+<p>If you look at the other two commands in here:</p>
+<pre><code>let l:commands = #{line: "'[V']y", char: "`[v`]y", block: "`[\&lt;c-v&gt;`]y"}</code></pre>
+<p>They all perform similar actions, except instead of using linewise actions, you would be using characterwise or blockwise actions. I’m going to sound redundant, but in any three cases you are effectively yanking the same body of text you performed <code>g@</code> on.</p>
+<p>Let’s look at the next line:</p>
+<pre><code>let l:selected_phrase = getreg('"')</code></pre>
+<p>This line gets the content of the unnamed register (<code>"</code>) and stores it inside the variable <code>l:selected_phrase</code>. Wait a minute… didn’t you just yank a body of text? The unnamed register currently contains the text that you had just yanked. This is how this plugin is able to get the copy of the text.</p>
+<p>The next line is a regular expression pattern:</p>
+<pre><code>let l:WORD_PATTERN = '\&lt;\k*\&gt;'</code></pre>
+<p><code>\&lt;</code> and <code>\&gt;</code> are word boundary patterns. The character following <code>\&lt;</code> matches the beginning of a word and the character preceding <code>\&gt;</code> matches the end of a word. <code>\k</code> is the keyword pattern. You can check what characters Vim accepts as keywords with <code>:set iskeyword?</code>. Recall that the <code>w</code> motion in Vim moves your cursor word-wise. Vim comes with a pre-conceied notion of what a <q>keyword</q> is (you can even edit them by altering the <code>iskeyword</code> option). Check out <code>:h /\&lt;</code>, <code>:h /\&gt;</code>, and <code>:h /\k</code>, and <code>:h 'iskeyword'</code> for more. Finally, <code>*</code> means zero or more of the subsequent pattern.</p>
+<p>In the big picture, <code>'\&lt;\k*\&gt;'</code> matches a word. If you have a string:</p>
+<pre><code>one two three</code></pre>
+<p>Matching it against the pattern will give you three matches: <q>one</q>, <q>two</q>, and <q>three</q>.</p>
+<p>Finally, you have another pattern:</p>
+<pre><code>let l:UPCASE_REPLACEMENT = '\=s:capitalize(submatch(0))'</code></pre>
+<p>Recall that Vim’s substitute command can be used with an expression with <code>\={your-expression}</code>. For example, if you want to uppercase the string <q>donut</q> in the current line, you can use Vim’s <code>toupper()</code> function. You can achieve this by running <code>:%s/donut/\=toupper(submatch(0))/g</code>. <code>submatch(0)</code> is a special expression used in the substitute command. It returns the whole matched text.</p>
+<p>The next two lines:</p>
+<pre><code>let l:startLine = line("'&lt;")
+let l:startCol = virtcol(".")</code></pre>
+<p>The <code>line()</code> expression returns a line number. Here you pass it with the mark <code>'&lt;</code>, representing the first line of the last selected visual area. Recall that you used visual mode to yank the text. <code>'&lt;</code> returns the line number of the beginning of that visual area selection. The <code>virtcol()</code> expression returns a column number of the current cursor. You will be moving your cursor all over the place in a little bit, so you need to store your cursor location so you can return here later.</p>
+<p>Take a break here and review everything so far. Make sure you are still following along. When you’re ready, let’s continue.</p>
+</section>
+<section id="handling-a-block-operation" class="level2" data-number="29.11">
+<h2 data-number="29.11" class="anchored" data-anchor-id="handling-a-block-operation"><span class="header-section-number">29.11</span> Handling a Block Operation</h2>
+<p>Let’s go through this section:</p>
+<pre><code>if a:type ==# "block"
+  sil! keepj norm! gv"ad
+  keepj $
+  keepj pu_
+
+  let l:lastLine = line("$")
+
+  sil! keepj norm "ap
+
+  let l:curLine = line(".")
+
+  sil! keepj norm! VGg@
+  exe "keepj norm! 0\&lt;c-v&gt;G$h\"ad" 
+  exe "keepj " . l:startLine
+  exe "sil! keepj norm! " . l:startCol . "\&lt;bar&gt;\"aP"
+  exe "keepj " . l:lastLine
+  sil! keepj norm! "_dG
+  exe "keepj " . l:startLine
+  exe "sil! keepj norm! " . l:startCol . "\&lt;bar&gt;"</code></pre>
+<p>It’s time to actually capitalize your text. Recall that you have the <code>a:type</code> to be either <q>char</q>, <q>line</q>, or <q>block</q>. In most cases, you’ll probably be getting <q>char</q> and <q>line</q>. But occasionally you may get a block. It is rare, but it must be addressed nonetheless. Unfortunately, handling a block is not as straight-forward as handling char and line. It will take a little extra effort, but it is doable.</p>
+<p>Before you start, let’s take an example of how you might get a block. Assume that you have this text:</p>
+<pre><code>pancake for breakfast
+pancake for lunch
+pancake for dinner</code></pre>
+<p>Assume that your cursor is on <q>c</q> on <q>pancake</q> on the first line. You then use the visual block (<code>Ctrl-V</code>) to select down and forward to select the <q>cake</q> in all three lines:</p>
+<pre><code>pan[cake] for breakfast
+pan[cake] for lunch
+pan[cake] for dinner</code></pre>
+<p>When you press <code>gt</code>, you want to get:</p>
+<pre><code>panCake for breakfast
+panCake for lunch
+panCake for dinner
+</code></pre>
+<p>Here are your basic assumptions: when you highlight the three <q>cakes</q> in <q>pancakes</q>, you are telling Vim that you have three lines of words that you want to highlight. These words are <q>cake</q>, <q>cake</q>, and <q>cake</q>. You expect to get <q>Cake</q>, <q>Cake</q>, and <q>Cake</q>.</p>
+<p>Let’s move on to the implementation details. The next few lines have:</p>
+<pre><code>sil! keepj norm! gv"ad
+keepj $
+keepj pu_
+let l:lastLine = line("$")
+sil! keepj norm "ap
+let l:curLine = line(".")</code></pre>
+<p>The first line:</p>
+<pre><code>sil! keepj norm! gv"ad</code></pre>
+<p>Recall that <code>sil!</code> runs silently and <code>keepj</code> keeps the jump history when moving. You then execute the normal command <code>gv"ad</code>. <code>gv</code> selects the last visually highlighted text (in the pancakes example, it will re-highlight all three <q>cakes</q>). <code>"ad</code> deletes the visually highlighted texts and stores them in register a. As a result, you now have:</p>
+<pre><code>pan for breakfast
+pan for lunch
+pan for dinner</code></pre>
+<p>Now you have 3 <em>blocks</em> (not lines) of <q>cakes</q> stored in the register a. This distinction is important. Yanking a text with linewise visual mode is different from yanking a text with blockwise visual mode. Keep this in mind because you will see this again later.</p>
+<p>Next you have:</p>
+<pre><code>keepj $
+keepj pu_</code></pre>
+<p><code>$</code> moves you to the last line in your file. <code>pu_</code> inserts one line below where your cursor is. You want to run them with <code>keepj</code> so you don’t alter the jump history.</p>
+<p>Then you store the line number of your last line (<code>line("$")</code>) in the local variable <code>lastLine</code>.</p>
+<pre><code>let l:lastLine = line("$")</code></pre>
+<p>Then paste the content from the register with <code>norm "ap</code>.</p>
+<pre><code>sil! keepj norm "ap</code></pre>
+<p>Keep in mind that this is happening on the new line you created below the last line of the file - you are currently at the bottom of the file. Pasting give you these <em>block</em> texts:</p>
+<pre><code>cake
+cake
+cake</code></pre>
+<p>Next, you store the location of the current line where your cursor is.</p>
+<pre><code>let l:curLine = line(".")</code></pre>
+<p>Now let’s go the next few lines:</p>
+<pre><code>sil! keepj norm! VGg@
+exe "keepj norm! 0\&lt;c-v&gt;G$h\"ad"
+exe "keepj " . l:startLine
+exe "sil! keepj norm! " . l:startCol . "\&lt;bar&gt;\"aP"
+exe "keepj " . l:lastLine
+sil! keepj norm! "_dG
+exe "keepj " . l:startLine
+exe "sil! keepj norm! " . l:startCol . "\&lt;bar&gt;"</code></pre>
+<p>This line:</p>
+<pre><code>sil! keepj norm! VGg@</code></pre>
+<p><code>VG</code> visually highlights them with line visual mode from the current line to the end of the file. So here you are highlighting the three blocks of <q>cake</q> texts with linewise highlight (recall the block vs line distinction). Note that the first time you pasted the three <q>cake</q> texts, you were pasting them as blocks. Now you are highlighting them as lines. They may look the same from the outside, but internally, Vim knows the difference between pasting blocks of texts and pasting lines of texts.</p>
+<pre><code>cake
+cake
+cake</code></pre>
+<p><code>g@</code> is the function operator, so you are essentially doing a recursive call to itself. But why? What does this accomplish?</p>
+<p>You are making a recursive call to <code>g@</code> and passing it with all 3 lines (after running it with <code>V</code>, you now have lines, not blocks) of <q>cake</q> texts so it will be handled by the other part of the code (you will go over this later). The result of running <code>g@</code> is three lines of properly titlecased texts:</p>
+<pre><code>Cake
+Cake
+Cake</code></pre>
+<p>The next line:</p>
+<pre><code>exe "keepj norm! 0\&lt;c-v&gt;G$h\"ad"</code></pre>
+<p>This runs the normal mode command to go to the beginning of the line (<code>0</code>), use the block visual highlight to go to the last line and last character on that line (<code>&lt;c-v&gt;G$</code>). The <code>h</code> is to adjust the cursor (when doing <code>$</code> Vim moves one extra line to the right). Finally, you delete the highlighted text and store it in the register a (<code>"ad</code>).</p>
+<p>The next line:</p>
+<pre><code>exe "keepj " . l:startLine</code></pre>
+<p>You move your cursor back to where the <code>startLine</code> was.</p>
+<p>Next:</p>
+<pre><code>exe "sil! keepj norm! " . l:startCol . "\&lt;bar&gt;\"aP"</code></pre>
+<p>Being in the <code>startLine</code> location, you now jump to the column marked by <code>startCol</code>. <code>\&lt;bar&gt;\</code> is the bar <code>|</code> motion. The bar motion in Vim moves your cursor to the nth column (let’s say the <code>startCol</code> was 4. Running <code>4|</code> will make your cursor jump to the column position of 4). Recall that you <code>startCol</code> was the location where you stored the column position of the text you wanted to titlecase. Finally, <code>"aP</code> pastes the texts stored in the register a. This puts the text back to where it was deleted before.</p>
+<p>Let’s look at the next 4 lines:</p>
+<pre><code>exe "keepj " . l:lastLine
+sil! keepj norm! "_dG
+exe "keepj " . l:startLine
+exe "sil! keepj norm! " . l:startCol . "\&lt;bar&gt;"</code></pre>
+<p><code>exe "keepj " . l:lastLine</code> moves your cursor back to the <code>lastLine</code> location from earlier. <code>sil! keepj norm! "_dG</code> deletes the extra space(s) that were created using the blackhole register (<code>"_dG</code>) so your unnamed register stays clean. <code>exe "keepj " . l:startLine</code> moves your cursor back to <code>startLine</code>. Finally, <code>exe "sil! keepj norm! " . l:startCol . "\&lt;bar&gt;"</code> moves your cursor to the <code>startCol</code> column.</p>
+<p>These are all the actions you could’ve done manually in Vim. However, the benefit of turning these actions into reusable functions is that they will save you from running 30+ lines of instructions every single time you need to titlecase anything. The take home here is, anything that you can do manually in Vim, you can turn it into a reusable function, hence a plugin!</p>
+<p>Here is what it would look like.</p>
+<p>Given some text:</p>
+<pre><code>pancake for breakfast
+pancake for lunch
+pancake for dinner
+
+... some text</code></pre>
+<p>First, you visually highlight it blockwise:</p>
+<pre><code>pan[cake] for breakfast
+pan[cake] for lunch
+pan[cake] for dinner
+
+... some text</code></pre>
+<p>Then you delete it and store that text in register a:</p>
+<pre><code>pan for breakfast
+pan for lunch
+pan for dinner
+
+... some text</code></pre>
+<p>Then you paste it at the bottom of the file:</p>
+<pre><code>pan for breakfast
+pan for lunch
+pan for dinner
+
+... some text
+cake
+cake
+cake</code></pre>
+<p>Then you capitalize it:</p>
+<pre><code>pan for breakfast
+pan for lunch
+pan for dinner
+
+... some text
+Cake
+Cake
+Cake</code></pre>
+<p>Finally, you put the capitalized text back:</p>
+<pre><code>panCake for breakfast
+panCake for lunch
+panCake for dinner
+
+... some text</code></pre>
+</section>
+<section id="handling-line-and-char-operations" class="level2" data-number="29.12">
+<h2 data-number="29.12" class="anchored" data-anchor-id="handling-line-and-char-operations"><span class="header-section-number">29.12</span> Handling Line and Char Operations</h2>
+<p>You are not done yet. You’ve only addressed the edge case when you run <code>gt</code> on block texts. You still need to handle the <q>line</q> and <q>char</q> operations. Let’s look at the <code>else</code> code to see how tthis is done.</p>
+<p>Here are the codes:</p>
+<pre><code>if a:type ==# "block"
+  # ... 
+else
+  let l:titlecased = substitute(@@, l:WORD_PATTERN, l:UPCASE_REPLACEMENT, 'g')
+  let l:titlecased = s:capitalizeFirstWord(l:titlecased)
+  call setreg('"', l:titlecased)
+  let l:subcommands = #{line: "'[V']p", char: "`[v`]p", block: "`[\&lt;c-v&gt;`]p"}
+  silent execute "noautocmd keepjumps normal! " .. get(l:subcommands, a:type, "")
+  exe "keepj " . l:startLine
+  exe "sil! keepj norm! " . l:startCol . "\&lt;bar&gt;"
+endif</code></pre>
+<p>Let’s go through them linewise. The secret sauce of this plugin is actually on this line:</p>
+<pre><code>let l:titlecased = substitute(@@, l:WORD_PATTERN, l:UPCASE_REPLACEMENT, 'g')</code></pre>
+<p><code>@@</code> contains the text from the unnamed register to be titlecased. <code>l:WORD_PATTERN</code> is the individual keyword match. <code>l:UPCASE_REPLACEMENT</code> is the call to the <code>capitalize()</code> command (which you will see later). The <code>'g'</code> is the global flag that instructs the substitute command to substitute all given words, not just the first word.</p>
+<p>The next line:</p>
+<pre><code>let l:titlecased = s:capitalizeFirstWord(l:titlecased)</code></pre>
+<p>This guarantees that the first word will always be capitalized. If you have a phrase like <q>an apple a day keeps the doctor away</q>, since the first word, <q>an</q>, is a special word, your substitute command won’t capitalize it. You need a a method that always capitalizes the first character no matter what. This function does just that (you will see this function detail later). The result of these capitalization methods is stored in the local variable <code>l:titlecased</code>.</p>
+<p>The next line:</p>
+<pre><code>call setreg('"', l:titlecased)</code></pre>
+<p>This puts the capitalized string into the unnamed register (<code>"</code>).</p>
+<p>Next, the following two lines:</p>
+<pre><code>let l:subcommands = #{line: "'[V']p", char: "`[v`]p", block: "`[\&lt;c-v&gt;`]p"}
+silent execute "noautocmd keepjumps normal! " .. get(l:subcommands, a:type, "")</code></pre>
+<p>Hey, that looks familiar! You have seen a similar pattern before with <code>l:commands</code>. Instead of yank, here you use paste (<code>p</code>). Check out the previous section where I went over the <code>l:commands</code> for a refresher.</p>
+<p>Finally, these two lines:</p>
+<pre><code>exe "keepj " . l:startLine
+exe "sil! keepj norm! " . l:startCol . "\&lt;bar&gt;"</code></pre>
+<p>You are moving your cursor back to the line and column where you started. That’s it!</p>
+<p>Let’s recap. The above substitute method is smart enough to capitalize the given texts and skip the special words (more on this later). After you have a titlecased string, you store them in the unnamed register. Then you visually highlight the exact same text you operated <code>g@</code> on before, then paste from the unnamed register (this effectively replaces the non-titlecased texts with the titlecased version. Finally, you move your cursor back to where you started.</p>
+</section>
+<section id="cleanups" class="level2" data-number="29.13">
+<h2 data-number="29.13" class="anchored" data-anchor-id="cleanups"><span class="header-section-number">29.13</span> Cleanups</h2>
+<p>You are technically done. The texts are now titlecased. All that is left to do is to restore the registers and settings.</p>
+<pre><code>call setreg('"', l:reg_save)
+call setpos("'&lt;", l:visual_marks_save[0])
+call setpos("'&gt;", l:visual_marks_save[1])
+let &amp;clipboard = l:cb_save
+let &amp;selection = l:sel_save</code></pre>
+<p>These restore: - the unnamed register. - the <code>&lt;</code> and <code>&gt;</code> marks. - the <code>'clipboard'</code> and <code>'selection'</code> options.</p>
+<p>Phew, you are done. That was a long function. I could have made the function shorter by breaking it apart into smaller ones, but for now, that will have to suffice. Now let’s briefly go over the capitalize functions.</p>
+</section>
+<section id="the-capitalize-function" class="level2" data-number="29.14">
+<h2 data-number="29.14" class="anchored" data-anchor-id="the-capitalize-function"><span class="header-section-number">29.14</span> The Capitalize Function</h2>
+<p>In this section, let’s go over the <code>s:capitalize()</code> function. This is what the function looks like:</p>
+<pre><code>function! s:capitalize(string)
+    if(toupper(a:string) ==# a:string &amp;&amp; a:string != 'A')
+        return a:string
+    endif
+
+    let l:str = tolower(a:string)
+    let l:exclusions = '^\(a\|an\|and\|at\|but\|by\|en\|for\|in\|nor\|of\|off\|on\|or\|out\|per\|so\|the\|to\|up\|yet\|v\.?\|vs\.?\|via\)$'
+    if (match(l:str, l:exclusions) &gt;= 0) || (index(s:local_exclusion_list, l:str) &gt;= 0)
+      return l:str
+    endif
+
+    return toupper(l:str[0]) . l:str[1:]
+endfunction</code></pre>
+<p>Recall that the argument for the <code>capitalize()</code> function, <code>a:string</code>, is the individual word passed by the <code>g@</code> operator. So if I am running <code>gt</code> on the text <q>pancake for breakfast</q>, <code>ToTitle</code> will call <code>capitalize(string)</code> <em>three</em> times, once for <q>pancake</q>, once for <q>for</q>, and once for <q>breakfast</q>.</p>
+<p>The first part of the function is:</p>
+<pre><code>if(toupper(a:string) ==# a:string &amp;&amp; a:string != 'A')
+  return a:string
+endif</code></pre>
+<p>The first condition (<code>toupper(a:string) ==# a:string</code>) checks whether the uppercased version of the argument is the same as the string and whether the string itself is <q>A</q>. If these are true, then return that string. This is based on the assumption that if a given word is already totally uppercased, then it is an abbreviation. For example, the word <q>CEO</q> would otherwise be converted into <q>Ceo</q>. Hmm, your CEO won’t be happy. So it’s best to leave any fully uppercased word alone. The second condition, <code>a:string != 'A'</code>, addresses an edge case for a capitalized <q>A</q> character. If <code>a:string</code> is already a capitalized <q>A</q>, it would have accidentally passed the <code>toupper(a:string) ==# a:string</code> test. Because <q>a</q> is an indefinite article in English, it needs to be lowercased.</p>
+<p>The next part forces the string to be lowercased:</p>
+<pre><code>let l:str = tolower(a:string)</code></pre>
+<p>The next part is a regex of a list of all word exclusions. I got them from https://titlecaseconverter.com/rules/ :</p>
+<pre><code>let l:exclusions = '^\(a\|an\|and\|at\|but\|by\|en\|for\|in\|nor\|of\|off\|on\|or\|out\|per\|so\|the\|to\|up\|yet\|v\.?\|vs\.?\|via\)$'</code></pre>
+<p>The next part:</p>
+<pre><code>if (match(l:str, l:exclusions) &gt;= 0) || (index(s:local_exclusion_list, l:str) &gt;= 0)
+  return l:str
+endif</code></pre>
+<p>First, check if your string is a part of the excluded word list (<code>l:exclusions</code>). If it is, don’t capitalize it. Then check if your string is a part of the local exclusion list (<code>s:local_exclusion_list</code>). This exclusion list is a custom list that the user can add in vimrc (in case the user has additional requirements for special words).</p>
+<p>The last part returns the capitalized version of the word. The first character is uppercased while the rest remains as is.</p>
+<pre><code>return toupper(l:str[0]) . l:str[1:]</code></pre>
+<p>Let’s go over the second capitalize function. The function looks like this:</p>
+<pre><code>function! s:capitalizeFirstWord(string)
+  if (a:string =~ "\n")
+    let l:lineArr = trim(a:string)-&gt;split('\n')
+    let l:lineArr = map(l:lineArr, 'toupper(v:val[0]) . v:val[1:]')
+    return l:lineArr-&gt;join("\n")
+  endif
+  return toupper(a:string[0]) . a:string[1:]
+endfunction</code></pre>
+<p>This function was created to handle an edge case if you have a sentence that starts with an excluded word, like <q>an apple a day keeps the doctor away</q>. Based on English language’s capitalization rules, all first words in a sentence, regardless if it is a special word or not, must be capitalized. With your <code>substitute()</code> command alone, the <q>an</q> in your sentence would be lowercased. You need to force the first character to be uppercased.</p>
+<p>In this <code>capitalizeFirstWord</code> function, the <code>a:string</code> argument is not an individual word like <code>a:string</code> inside the <code>capitalize</code> function, but instead the whole text. So if you have <q>pancake for breakfast</q>, <code>a:string</code>’s value is <q>pancake for breakfast</q>.it only runs <code>capitalizeFirstWord</code> once for the whole text.</p>
+<p>One scenario you need to watch out for is if you have a multi-line string like <code>"an apple a day\nkeeps the doctor away"</code>. You want to uppercase the first character of all lines. If you don’t have newlines, then simply uppercase the first character.</p>
+<pre><code>return toupper(a:string[0]) . a:string[1:]</code></pre>
+<p>If you have newlines, you need to capitalize all the first characters in each line, so you split them into an array separated by newlines:</p>
+<pre><code>let l:lineArr = trim(a:string)-&gt;split('\n')</code></pre>
+<p>Then you map each element in the array and capitalize the first word of each element:</p>
+<pre><code>let l:lineArr = map(l:lineArr, 'toupper(v:val[0]) . v:val[1:]')</code></pre>
+<p>Finally, you put the array elements together:</p>
+<pre><code>return l:lineArr-&gt;join("\n")</code></pre>
+<p>And you are done!</p>
+</section>
+<section id="docs" class="level2" data-number="29.15">
+<h2 data-number="29.15" class="anchored" data-anchor-id="docs"><span class="header-section-number">29.15</span> Docs</h2>
+<p>The second directory in the repository is the <code>docs/</code> directory. It is good to provide the plugin with a thorough documentation. In this section, I’ll briefly go over how to make your own plugin docs.</p>
+<p>The <code>docs/</code> directory is one of Vim’s special runtime paths. Vim reads all the files inside the <code>docs/</code> so when you search for a special keyword and that keyword is found in one of the files in the <code>docs/</code> directory, it will display it in the help page. Here you have a <code>totitle.txt</code>. I name it that way because that’s the plugin name, but you can name it anything you want.</p>
+<p>A Vim docs file is a txt file at heart. The difference between a regular txt file and a Vim help file is that the latter uses special <q>help</q> syntaxes. But first, you need to tell Vim to treat it not as a text file type, but as a <code>help</code> file type. To tell Vim to interpret this <code>totitle.txt</code> as a <em>help</em> file, run <code>:set ft=help</code> (<code>:h 'filetype'</code> for more). By the way, if you want to tell Vim to interpret this <code>totitle.txt</code> as a <em>regular</em> txt file, run <code>:set ft=txt</code>.</p>
+<section id="the-help-file-special-syntax" class="level3" data-number="29.15.1">
+<h3 data-number="29.15.1" class="anchored" data-anchor-id="the-help-file-special-syntax"><span class="header-section-number">29.15.1</span> The Help File Special Syntax</h3>
+<p>To make a keyword discoverable, surround that keyword with asterisks. To make the keyword <code>totitle</code> discoverable when user searches for <code>:h totitle</code>, write it as <code>*totitle*</code> in the help file.</p>
+<p>For example, I have these lines on top of my table of contents:</p>
+<pre><code>TABLE OF CONTENTS                                     *totitle*  *totitle-toc*
+
+// more TOC stuff</code></pre>
+<p>Note that I used two keywords: <code>*totitle*</code> and <code>*totitle-toc*</code> to mark the table of contents section. You can use as many keywords as you want. This means that whenever you search for either <code>:h totitle</code> or <code>:h totitle-toc</code>, Vim takes you to this location.</p>
+<p>Here is another example, somewhere down the file:</p>
+<pre><code>2. Usage                                                       *totitle-usage*
+
+// usage</code></pre>
+<p>If you search for <code>:h totitle-usage</code>, Vim takes you to this section.</p>
+<p>You can also use internal links to refer to another section in the help file by surrounding a keyword with the bar syntax <code>|</code>. In the TOC section, you see keywords surrounded by the bars, like <code>|totitle-intro|</code>, <code>|totitle-usage|</code>, etc.</p>
+<pre><code>TABLE OF CONTENTS                                     *totitle*  *totitle-toc*
+
+    1. Intro ........................... |totitle-intro|
+    2. Usage ........................... |totitle-usage|
+    3. Words to capitalize ............. |totitle-words|
+    4. Operator ........................ |totitle-operator|
+    5. Key-binding ..................... |totitle-keybinding|
+    6. Bugs ............................ |totitle-bug-report|
+    7. Contributing .................... |totitle-contributing|
+    8. Credits ......................... |totitle-credits|
+</code></pre>
+<p>This lets you jump to the definition. If you put your cursor somewhere on <code>|totitle-intro|</code> and press <code>Ctrl-]</code>, Vim will jump to the definition of that word. In this case, it will jump to the <code>*totitle-intro*</code> location. This is how you can link to different keywords in a help doc.</p>
+<p>There is not a right or wrong way to write a doc file in Vim. If you look at different plugins by different authors, many of them use different formats. The point is to make an easy-to-understand help doc for your users.</p>
+<p>Finally, if you are writing your own plugin locally at first and you want to test the documentation page, simply adding a txt file inside the <code>~/.vim/docs/</code> won’t automatically make your keywords searchable. You need to instruct Vim to add your doc page. Run the helptags command: <code>:helptags ~/.vim/doc</code> to create new tag files. Now you can start searching for your keywords.</p>
+</section>
+</section>
+<section id="conclusion" class="level2" data-number="29.16">
+<h2 data-number="29.16" class="anchored" data-anchor-id="conclusion"><span class="header-section-number">29.16</span> Conclusion</h2>
+<p>You made it to the end! This chapter is the amalgamation of all the Vimscript chapters. Here you are finally putting to practice what you’ve learned so far. Hopefully having read this, you understood not only how to create Vim plugins, but also encouraged you to write your own plugin.</p>
+<p>Whenever you find yourself repeating the same sequence of actions multiple times, you should try to create your own! It was said that you shouldn’t reinvent the wheel. However, I think it can be beneficial to reinvent the wheel for the sake of learning. Read other people’s plugins. Recreate them. Learn from them. Write your own! Who knows, maybe you will write the next awesome, super-popular plugin after reading this. Maybe you will be the next legendary Tim Pope. When that happens, let me know!</p>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const disableStylesheet = (stylesheets) => {
+    for (let i=0; i < stylesheets.length; i++) {
+      const stylesheet = stylesheets[i];
+      stylesheet.rel = 'prefetch';
+    }
+  }
+  const enableStylesheet = (stylesheets) => {
+    for (let i=0; i < stylesheets.length; i++) {
+      const stylesheet = stylesheets[i];
+      stylesheet.rel = 'stylesheet';
+    }
+  }
+  const manageTransitions = (selector, allowTransitions) => {
+    const els = window.document.querySelectorAll(selector);
+    for (let i=0; i < els.length; i++) {
+      const el = els[i];
+      if (allowTransitions) {
+        el.classList.remove('notransition');
+      } else {
+        el.classList.add('notransition');
+      }
+    }
+  }
+  const toggleColorMode = (alternate) => {
+    // Switch the stylesheets
+    const alternateStylesheets = window.document.querySelectorAll('link.quarto-color-scheme.quarto-color-alternate');
+    manageTransitions('#quarto-margin-sidebar .nav-link', false);
+    if (alternate) {
+      enableStylesheet(alternateStylesheets);
+      for (const sheetNode of alternateStylesheets) {
+        if (sheetNode.id === "quarto-bootstrap") {
+          toggleBodyColorMode(sheetNode);
+        }
+      }
+    } else {
+      disableStylesheet(alternateStylesheets);
+      toggleBodyColorPrimary();
+    }
+    manageTransitions('#quarto-margin-sidebar .nav-link', true);
+    // Switch the toggles
+    const toggles = window.document.querySelectorAll('.quarto-color-scheme-toggle');
+    for (let i=0; i < toggles.length; i++) {
+      const toggle = toggles[i];
+      if (toggle) {
+        if (alternate) {
+          toggle.classList.add("alternate");     
+        } else {
+          toggle.classList.remove("alternate");
+        }
+      }
+    }
+    // Hack to workaround the fact that safari doesn't
+    // properly recolor the scrollbar when toggling (#1455)
+    if (navigator.userAgent.indexOf('Safari') > 0 && navigator.userAgent.indexOf('Chrome') == -1) {
+      manageTransitions("body", false);
+      window.scrollTo(0, 1);
+      setTimeout(() => {
+        window.scrollTo(0, 0);
+        manageTransitions("body", true);
+      }, 40);  
+    }
+  }
+  const isFileUrl = () => { 
+    return window.location.protocol === 'file:';
+  }
+  const hasAlternateSentinel = () => {  
+    let styleSentinel = getColorSchemeSentinel();
+    if (styleSentinel !== null) {
+      return styleSentinel === "alternate";
+    } else {
+      return false;
+    }
+  }
+  const setStyleSentinel = (alternate) => {
+    const value = alternate ? "alternate" : "default";
+    if (!isFileUrl()) {
+      window.localStorage.setItem("quarto-color-scheme", value);
+    } else {
+      localAlternateSentinel = value;
+    }
+  }
+  const getColorSchemeSentinel = () => {
+    if (!isFileUrl()) {
+      const storageValue = window.localStorage.getItem("quarto-color-scheme");
+      return storageValue != null ? storageValue : localAlternateSentinel;
+    } else {
+      return localAlternateSentinel;
+    }
+  }
+  let localAlternateSentinel = 'alternate';
+  // Dark / light mode switch
+  window.quartoToggleColorScheme = () => {
+    // Read the current dark / light value 
+    let toAlternate = !hasAlternateSentinel();
+    toggleColorMode(toAlternate);
+    setStyleSentinel(toAlternate);
+  };
+  // Ensure there is a toggle, if there isn't float one in the top right
+  if (window.document.querySelector('.quarto-color-scheme-toggle') === null) {
+    const a = window.document.createElement('a');
+    a.classList.add('top-right');
+    a.classList.add('quarto-color-scheme-toggle');
+    a.href = "";
+    a.onclick = function() { try { window.quartoToggleColorScheme(); } catch {} return false; };
+    const i = window.document.createElement("i");
+    i.classList.add('bi');
+    a.appendChild(i);
+    window.document.body.appendChild(a);
+  }
+  // Switch to dark mode if need be
+  if (hasAlternateSentinel()) {
+    toggleColorMode(true);
+  } else {
+    toggleColorMode(false);
+  }
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    target: function(trigger) {
+      return trigger.previousElementSibling;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="../chapters/ch28_vimscript_functions.md.html" class="pagination-link">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">28</span>&nbsp; <span class="chapter-title">Ch28. Vimscript Functions</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+  </div>
+</nav>
+</div> <!-- /content -->
+
+
+
+</body></html>

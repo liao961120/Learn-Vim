@@ -1,0 +1,916 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.2.313">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Learn Vim (the Smart Way) - 28&nbsp; Ch28. Vimscript Functions</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1.6em;
+  vertical-align: middle;
+}
+q { quotes: "“" "”" "‘" "’"; }
+</style>
+
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<link href="../chapters/ch29_plugin_example_writing-a-titlecase-plugin.md.html" rel="next">
+<link href="../chapters/ch27_vimscript_variable_scopes.md.html" rel="prev">
+<script src="../site_libs/quarto-html/quarto.js"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-dark.min.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit"
+  }
+}</script>
+
+
+</head>
+
+<body class="nav-sidebar floating">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+    <div class="container-fluid d-flex justify-content-between">
+      <h1 class="quarto-secondary-nav-title"><span class="chapter-number">28</span>&nbsp; <span class="chapter-title">Ch28. Vimscript Functions</span></h1>
+      <button type="button" class="quarto-btn-toggle btn" aria-label="Show secondary navigation">
+        <i class="bi bi-chevron-right"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="../">Learn Vim (the Smart Way)</a> 
+        <div class="sidebar-tools-main">
+    <a href="https://github.com/iggredible/Learn-Vim" title="" class="sidebar-tool px-1"><i class="bi bi-github"></i></a>
+  <a href="" class="quarto-color-scheme-toggle sidebar-tool" onclick="window.quartoToggleColorScheme(); return false;" title="Toggle dark mode"><i class="bi"></i></a>
+</div>
+    </div>
+      </div>
+      <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+      </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../index.html" class="sidebar-item-text sidebar-link">Preface</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch01_starting_vim.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Ch01. Starting Vim</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch02_buffers_windows_tabs.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Ch02. Buffers, Windows, and Tabs</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch03_searching_files.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Ch03. Searching Files</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch04_vim_grammar.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Ch04. Vim Grammar</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch05_moving_in_file.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Ch05. Moving in a File</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch06_insert_mode.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Ch06. Insert Mode</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch07_the_dot_command.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Ch07. the Dot Command</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch08_registers.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Ch08. Registers</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch09_macros.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Ch09. Macros</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch10_undo.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Ch10. Undo</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch11_visual_mode.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Ch11. Visual Mode</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch12_search_and_substitute.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Ch12. Search and Substitute</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch13_the_global_command.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Ch13. the Global Command</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch14_external_commands.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Ch14. External Commands</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch15_command-line_mode.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">Ch15. Command-line Mode</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch16_tags.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Ch16. Tags</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch17_fold.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">Ch17. Fold</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch18_git.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">18</span>&nbsp; <span class="chapter-title">Ch18. Git</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch19_compile.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">19</span>&nbsp; <span class="chapter-title">Ch19. Compile</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch20_views_sessions_viminfo.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">20</span>&nbsp; <span class="chapter-title">Ch20. Views, Sessions, and Viminfo</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch21_multiple_file_operations.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">21</span>&nbsp; <span class="chapter-title">Multiple File Operations</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch22_vimrc.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">22</span>&nbsp; <span class="chapter-title">Ch22. Vimrc</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch23_vim_packages.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">23</span>&nbsp; <span class="chapter-title">Ch23. Vim Packages</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch24_vim_runtime.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">24</span>&nbsp; <span class="chapter-title">Ch24. Vim Runtime</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch25_vimscript_basic_data_types.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">25</span>&nbsp; <span class="chapter-title">Ch25. Vimscript Basic Data Types</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch26_vimscript_conditionals_and_loops.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">26</span>&nbsp; <span class="chapter-title">Ch26. Vimscript Conditionals and Loops</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch27_vimscript_variable_scopes.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">27</span>&nbsp; <span class="chapter-title">Ch27. Vimscript Variable Scopes</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch28_vimscript_functions.md.html" class="sidebar-item-text sidebar-link active"><span class="chapter-number">28</span>&nbsp; <span class="chapter-title">Ch28. Vimscript Functions</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch29_plugin_example_writing-a-titlecase-plugin.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">29</span>&nbsp; <span class="chapter-title">Ch29. Write a Plugin: Creating a Titlecase Operator</span></a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#function-syntax-rules" id="toc-function-syntax-rules" class="nav-link active" data-scroll-target="#function-syntax-rules"><span class="toc-section-number">28.1</span>  Function Syntax Rules</a></li>
+  <li><a href="#listing-available-functions" id="toc-listing-available-functions" class="nav-link" data-scroll-target="#listing-available-functions"><span class="toc-section-number">28.2</span>  Listing Available Functions</a></li>
+  <li><a href="#removing-a-function" id="toc-removing-a-function" class="nav-link" data-scroll-target="#removing-a-function"><span class="toc-section-number">28.3</span>  Removing a Function</a></li>
+  <li><a href="#function-return-value" id="toc-function-return-value" class="nav-link" data-scroll-target="#function-return-value"><span class="toc-section-number">28.4</span>  Function Return Value</a></li>
+  <li><a href="#formal-arguments" id="toc-formal-arguments" class="nav-link" data-scroll-target="#formal-arguments"><span class="toc-section-number">28.5</span>  Formal Arguments</a></li>
+  <li><a href="#function-local-variable" id="toc-function-local-variable" class="nav-link" data-scroll-target="#function-local-variable"><span class="toc-section-number">28.6</span>  Function Local Variable</a></li>
+  <li><a href="#calling-a-function" id="toc-calling-a-function" class="nav-link" data-scroll-target="#calling-a-function"><span class="toc-section-number">28.7</span>  Calling a Function</a></li>
+  <li><a href="#default-argument" id="toc-default-argument" class="nav-link" data-scroll-target="#default-argument"><span class="toc-section-number">28.8</span>  Default Argument</a></li>
+  <li><a href="#variable-arguments" id="toc-variable-arguments" class="nav-link" data-scroll-target="#variable-arguments"><span class="toc-section-number">28.9</span>  Variable Arguments</a></li>
+  <li><a href="#range" id="toc-range" class="nav-link" data-scroll-target="#range"><span class="toc-section-number">28.10</span>  Range</a></li>
+  <li><a href="#dictionary" id="toc-dictionary" class="nav-link" data-scroll-target="#dictionary"><span class="toc-section-number">28.11</span>  Dictionary</a></li>
+  <li><a href="#funcref" id="toc-funcref" class="nav-link" data-scroll-target="#funcref"><span class="toc-section-number">28.12</span>  Funcref</a></li>
+  <li><a href="#lambda" id="toc-lambda" class="nav-link" data-scroll-target="#lambda"><span class="toc-section-number">28.13</span>  Lambda</a></li>
+  <li><a href="#method-chaining" id="toc-method-chaining" class="nav-link" data-scroll-target="#method-chaining"><span class="toc-section-number">28.14</span>  Method Chaining</a></li>
+  <li><a href="#closure" id="toc-closure" class="nav-link" data-scroll-target="#closure"><span class="toc-section-number">28.15</span>  Closure</a></li>
+  <li><a href="#learn-vimscript-functions-the-smart-way" id="toc-learn-vimscript-functions-the-smart-way" class="nav-link" data-scroll-target="#learn-vimscript-functions-the-smart-way"><span class="toc-section-number">28.16</span>  Learn Vimscript Functions the Smart Way</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title d-none d-lg-block"><span class="chapter-number">28</span>&nbsp; <span class="chapter-title">Ch28. Vimscript Functions</span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+</header>
+
+<p>Functions are means of abstraction, the third element in learning a new language.</p>
+<p>In the previous chapters, you have seen Vimscript native functions (<code>len()</code>, <code>filter()</code>, <code>map()</code>, etc.) and custom functions in action. In this chapter, you will go deeper to learn how functions work.</p>
+<section id="function-syntax-rules" class="level2" data-number="28.1">
+<h2 data-number="28.1" class="anchored" data-anchor-id="function-syntax-rules"><span class="header-section-number">28.1</span> Function Syntax Rules</h2>
+<p>At the core, a Vimscript function has the following syntax:</p>
+<pre><code>function {FunctionName}()
+  {do-something}
+endfunction</code></pre>
+<p>A function definition must start with a capital letter. It starts with the <code>function</code> keyword and ends with <code>endfunction</code>. Below is a valid function:</p>
+<pre><code>function! Tasty()
+  echo "Tasty"
+endfunction</code></pre>
+<p>The following is not a valid function because it does not start with a capital letter.</p>
+<pre><code>function tasty()
+  echo "Tasty"
+endfunction</code></pre>
+<p>If you prepend a function with the script variable (<code>s:</code>), you can use it with a lower case. <code>function s:tasty()</code> is a valid name. The reason why Vim requires you to use an uppercase name is to prevent confusion with Vim’s built-in functions (all lowercase).</p>
+<p>A function name cannot start with a number. <code>1Tasty()</code> is not a valid function name, but <code>Tasty1()</code> is. A function also cannot contain non-alphanumeric characters besides <code>_</code>. <code>Tasty-food()</code>, <code>Tasty&amp;food()</code>, and <code>Tasty.food()</code> are not valid function names. <code>Tasty_food()</code> <em>is</em>.</p>
+<p>If you define two functions with the same name, Vim will throw an error complaining that the function <code>Tasty</code> already exists. To overwrite the previous function with the same name, add a <code>!</code> after the <code>function</code> keyword.</p>
+<pre><code>function! Tasty()
+  echo "Tasty"
+endfunction</code></pre>
+</section>
+<section id="listing-available-functions" class="level2" data-number="28.2">
+<h2 data-number="28.2" class="anchored" data-anchor-id="listing-available-functions"><span class="header-section-number">28.2</span> Listing Available Functions</h2>
+<p>To see all the built-in and custom functions in Vim, you can run <code>:function</code> command. To look at the content of the <code>Tasty</code> function, you can run <code>:function Tasty</code>.</p>
+<p>You can also search for functions with pattern with <code>:function /pattern</code>, similar to Vim’s search navigation (<code>/pattern</code>). To search for all function containing the phrase <q>map</q>, run <code>:function /map</code>. If you use external plugins, Vim will display the functions defined in those plugins.</p>
+<p>If you want to look at where a function originates, you can use the <code>:verbose</code> command with the <code>:function</code> command. To look at where all the functions containing the word <q>map</q> are originated, run:</p>
+<pre><code>:verbose function /map</code></pre>
+<p>When I ran it, I got a number of results. This one tells me that the function <code>fzf#vim#maps</code> autoload function (to recap, refer to Ch. 23) is written inside <code>~/.vim/plugged/fzf.vim/autoload/fzf/vim.vim</code> file, on line 1263. This is useful for debugging.</p>
+<pre><code>function fzf#vim#maps(mode, ...)
+        Last set from ~/.vim/plugged/fzf.vim/autoload/fzf/vim.vim line 1263</code></pre>
+</section>
+<section id="removing-a-function" class="level2" data-number="28.3">
+<h2 data-number="28.3" class="anchored" data-anchor-id="removing-a-function"><span class="header-section-number">28.3</span> Removing a Function</h2>
+<p>To remove an existing function, use <code>:delfunction {Function_name}</code>. To delete <code>Tasty</code>, run <code>:delfunction Tasty</code>.</p>
+</section>
+<section id="function-return-value" class="level2" data-number="28.4">
+<h2 data-number="28.4" class="anchored" data-anchor-id="function-return-value"><span class="header-section-number">28.4</span> Function Return Value</h2>
+<p>For a function to return a value, you need to pass it an explicit <code>return</code> value. Otherwise, Vim automatically returns an implicit value of 0.</p>
+<pre><code>function! Tasty()
+  echo "Tasty"
+endfunction</code></pre>
+<p>An empty <code>return</code> is also equivalent to a 0 value.</p>
+<pre><code>function! Tasty()
+  echo "Tasty"
+  return
+endfunction</code></pre>
+<p>If you run <code>:echo Tasty()</code> using the function above, after Vim displays <q>Tasty</q>, it returns 0, the implicit return value. To make <code>Tasty()</code> to return <q>Tasty</q> value, you can do this:</p>
+<pre><code>function! Tasty()
+  return "Tasty"
+endfunction</code></pre>
+<p>Now when you run <code>:echo Tasty()</code>, it returns <q>Tasty</q> string.</p>
+<p>You can use a function inside an expression. Vim will use the return value of that function. The expression <code>:echo Tasty() . " Food!"</code> outputs <q>Tasty Food!</q></p>
+</section>
+<section id="formal-arguments" class="level2" data-number="28.5">
+<h2 data-number="28.5" class="anchored" data-anchor-id="formal-arguments"><span class="header-section-number">28.5</span> Formal Arguments</h2>
+<p>To pass a formal argument <code>food</code> to your <code>Tasty</code> function, you can do this:</p>
+<pre><code>function! Tasty(food)
+  return "Tasty " . a:food
+endfunction
+
+echo Tasty("pastry")
+" returns "Tasty pastry"</code></pre>
+<p><code>a:</code> is one of the variable scopes mentioned in the last chapter. It is the formal parameter variable. It is Vim’s way to get a formal parameter value in a function. Without it, Vim will throw an error:</p>
+<pre><code>function! Tasty(food)
+  return "Tasty " . food
+endfunction
+
+echo Tasty("pasta")
+" returns "undefined variable name" error</code></pre>
+</section>
+<section id="function-local-variable" class="level2" data-number="28.6">
+<h2 data-number="28.6" class="anchored" data-anchor-id="function-local-variable"><span class="header-section-number">28.6</span> Function Local Variable</h2>
+<p>Let’s address the other variable you didn’t learn on the previous chapter: the function local variable (<code>l:</code>).</p>
+<p>When writing a function, you can define a variable inside:</p>
+<pre><code>function! Yummy()
+  let location = "tummy"
+  return "Yummy in my " . location
+endfunction
+
+echo Yummy()
+" returns "Yummy in my tummy"</code></pre>
+<p>In this context, the variable <code>location</code> is the same as <code>l:location</code>. When you define a variable in a function, that variable is <em>local</em> to that function. When a user sees <code>location</code>, it could easily be mistaken as a global variable. I prefer to be more verbose than not, so I prefer to put <code>l:</code> to indicate that this is a function variable.</p>
+<p>Another reason to use <code>l:count</code> is that Vim has special variables with aliases that look like regular variables. <code>v:count</code> is one example. It has an alias of <code>count</code>. In Vim, calling <code>count</code> is the same as calling <code>v:count</code>. It is easy to accidentally call one of those special variables.</p>
+<pre><code>function! Calories()
+  let count = "count"
+  return "I do not " . count . " my calories"
+endfunction
+
+echo Calories()
+" throws an error</code></pre>
+<p>The execution above throws an error because <code>let count = "Count"</code> implicitly attempts to redefine Vim’s special variable <code>v:count</code>. Recall that special variables (<code>v:</code>) are read-only. You cannot mutate it. To fix it, use <code>l:count</code>:</p>
+<pre><code>function! Calories()
+  let l:count = "count"
+  return "I do not " . l:count . " my calories"
+endfunction
+
+echo Calories()
+" returns "I do not count my calories"</code></pre>
+</section>
+<section id="calling-a-function" class="level2" data-number="28.7">
+<h2 data-number="28.7" class="anchored" data-anchor-id="calling-a-function"><span class="header-section-number">28.7</span> Calling a Function</h2>
+<p>Vim has a <code>:call</code> command to call a function.</p>
+<pre><code>function! Tasty(food)
+  return "Tasty " . a:food
+endfunction
+
+call Tasty("gravy")</code></pre>
+<p>The <code>call</code> command does not output the return value. Let’s call it with <code>echo</code>.</p>
+<pre><code>echo call Tasty("gravy")</code></pre>
+<p>Woops, you get an error. The <code>call</code> command above is a command-line command (<code>:call</code>). The <code>echo</code> command above is also a command-line command (<code>:echo</code>). You cannot call a command-line command with another command-line command. Let’s try a different flavor of the <code>call</code> command:</p>
+<pre><code>echo call("Tasty", ["gravy"])
+" returns "Tasty gravy"</code></pre>
+<p>To clear any confusion, you have just used two different <code>call</code> commands: the <code>:call</code> command-line command and the <code>call()</code> function. The <code>call()</code> function accepts as its first argument the function name (string) and its second argument the formal parameters (list).</p>
+<p>To learn more about <code>:call</code> and <code>call()</code>, check out <code>:h call()</code> and <code>:h :call</code>.</p>
+</section>
+<section id="default-argument" class="level2" data-number="28.8">
+<h2 data-number="28.8" class="anchored" data-anchor-id="default-argument"><span class="header-section-number">28.8</span> Default Argument</h2>
+<p>You can provide a function parameter with a default value with <code>=</code>. If you call <code>Breakfast</code> with only one argument, the <code>beverage</code> argument will use the <q>milk</q> default value.</p>
+<pre><code>function! Breakfast(meal, beverage = "Milk")
+  return "I had " . a:meal . " and " . a:beverage . " for breakfast"
+endfunction
+
+echo Breakfast("Hash Browns")
+" returns I had hash browns and milk for breakfast
+
+echo Breakfast("Cereal", "Orange Juice")
+" returns I had Cereal and Orange Juice for breakfast</code></pre>
+</section>
+<section id="variable-arguments" class="level2" data-number="28.9">
+<h2 data-number="28.9" class="anchored" data-anchor-id="variable-arguments"><span class="header-section-number">28.9</span> Variable Arguments</h2>
+<p>You can pass a variable argument with three-dots (<code>...</code>). Variable argument is useful when you don’t know how many variables a user will give.</p>
+<p>Suppose you are creating an all-you-can-eat buffet (you’ll never know how much food your customer will eat):</p>
+<pre><code>function! Buffet(...)
+  return a:1
+endfunction</code></pre>
+<p>If you run <code>echo Buffet("Noodles")</code>, it will output <q>Noodles</q>. Vim uses <code>a:1</code> to print the <em>first</em> argument passed to <code>...</code>, up to 20 (<code>a:1</code> is the first argument, <code>a:2</code> is the second argument, etc). If you run <code>echo Buffet("Noodles", "Sushi")</code>, it will still display just <q>Noodles</q>, let’s update it:</p>
+<pre><code>function! Buffet(...)
+  return a:1 . " " . a:2
+endfunction
+
+echo Buffet("Noodles", "Sushi")
+" returns "Noodles Sushi"</code></pre>
+<p>The problem with this approach is if you now run <code>echo Buffet("Noodles")</code> (with only one variable), Vim complains that it has an undefined variable <code>a:2</code>. How can you make it flexible enough to display exactly what the user gives?</p>
+<p>Luckily, Vim has a special variable <code>a:0</code> to display the <em>number</em> of the arguments passed into <code>...</code>.</p>
+<pre><code>function! Buffet(...)
+  return a:0
+endfunction
+
+echo Buffet("Noodles")
+" returns 1
+
+echo Buffet("Noodles", "Sushi")
+" returns 2
+
+echo Buffet("Noodles", "Sushi", "Ice cream", "Tofu", "Mochi")
+" returns 5</code></pre>
+<p>With this, you can iterate using the length of the argument.</p>
+<pre><code>function! Buffet(...)
+  let l:food_counter = 1
+  let l:foods = ""
+  while l:food_counter &lt;= a:0
+    let l:foods .= a:{l:food_counter} . " "
+    let l:food_counter += 1
+  endwhile
+  return l:foods
+endfunction</code></pre>
+<p>The curly braces <code>a:{l:food_counter}</code> is a string interpolation, it uses the value of <code>food_counter</code> counter to call the formal parameter arguments <code>a:1</code>, <code>a:2</code>, <code>a:3</code>, etc.</p>
+<pre><code>echo Buffet("Noodles")
+" returns "Noodles"
+
+echo Buffet("Noodles", "Sushi", "Ice cream", "Tofu", "Mochi")
+" returns everything you passed: "Noodles Sushi Ice cream Tofu Mochi"</code></pre>
+<p>The variable argument has one more special variable: <code>a:000</code>. It has the value of all variable arguments in a list format.</p>
+<pre><code>function! Buffet(...)
+  return a:000
+endfunction
+
+echo Buffet("Noodles")
+" returns ["Noodles"]
+
+echo Buffet("Noodles", "Sushi", "Ice cream", "Tofu", "Mochi")
+" returns ["Noodles", "Sushi", "Ice cream", "Tofu", "Mochi"]</code></pre>
+<p>Let’s refactor the function to use a <code>for</code> loop:</p>
+<pre><code>function! Buffet(...)
+  let l:foods = ""
+  for food_item in a:000
+    let l:foods .= food_item . " "
+  endfor
+  return l:foods
+endfunction
+
+echo Buffet("Noodles", "Sushi", "Ice cream", "Tofu", "Mochi")
+" returns Noodles Sushi Ice cream Tofu Mochi</code></pre>
+</section>
+<section id="range" class="level2" data-number="28.10">
+<h2 data-number="28.10" class="anchored" data-anchor-id="range"><span class="header-section-number">28.10</span> Range</h2>
+<p>You can define a <em>ranged</em> Vimscript function by adding a <code>range</code> keyword at the end of the function definition. A ranged function has two special variables available: <code>a:firstline</code> and <code>a:lastline</code>.</p>
+<pre><code>function! Breakfast() range
+  echo a:firstline
+  echo a:lastline
+endfunction</code></pre>
+<p>If you are on line 100 and you run <code>call Breakfast()</code>, it will display 100 for both <code>firstline</code> and <code>lastline</code>. If you visually highlight (<code>v</code>, <code>V</code>, or <code>Ctrl-V</code>) lines 101 to 105 and run <code>call Breakfast()</code>, <code>firstline</code> displays 101 and <code>lastline</code> displays 105. <code>firstline</code> and <code>lastline</code> displays the minimum and maximum range where the function is called.</p>
+<p>You can also use <code>:call</code> and passing it a range. If you run <code>:11,20call Breakfast()</code>, it will display 11 for <code>firstline</code> and 20 for <code>lastline</code>.</p>
+<p>You might ask, <q>That’s nice that Vimscript function accepts range, but can’t I get the line number with <code>line(".")</code>? Won’t it do the same thing?</q></p>
+<p>Good question. If this is what you mean:</p>
+<pre><code>function! Breakfast()
+  echo line(".")
+endfunction</code></pre>
+<p>Calling <code>:11,20call Breakfast()</code> executes the <code>Breakfast</code> function 10 times (one for each line in the range). Compare that if you had passed the <code>range</code> argument:</p>
+<pre><code>function! Breakfast() range
+  echo line(".")
+endfunction</code></pre>
+<p>Calling <code>11,20call Breakfast()</code> executes the <code>Breakfast</code> function <em>once</em>.</p>
+<p>If you pass a <code>range</code> keyword and you pass a numerical range (like <code>11,20</code>) on <code>call</code>, Vim only executes that function once. If you don’t pass a <code>range</code> keyword and you pass a numerical range (like <code>11,20</code>) on <code>call</code>, Vim executes that function N times depending on the range (in this case, N = 10).</p>
+</section>
+<section id="dictionary" class="level2" data-number="28.11">
+<h2 data-number="28.11" class="anchored" data-anchor-id="dictionary"><span class="header-section-number">28.11</span> Dictionary</h2>
+<p>You can add a function as a dictionary item by adding a <code>dict</code> keyword when defining a function.</p>
+<p>If you have a function <code>SecondBreakfast</code> that returns whatever <code>breakfast</code> item you have:</p>
+<pre><code>function! SecondBreakfast() dict
+  return self.breakfast
+endfunction</code></pre>
+<p>Let’s add this function to the <code>meals</code> dictionary:</p>
+<pre><code>let meals = {"breakfast": "pancakes", "second_breakfast": function("SecondBreakfast"), "lunch": "pasta"}
+
+echo meals.second_breakfast()
+" returns "pancakes"</code></pre>
+<p>With <code>dict</code> keyword, the key variable <code>self</code> refers to the dictionary where the function is stored (in this case, the <code>meals</code> dictionary). The expression <code>self.breakfast</code> is equal to <code>meals.breakfast</code>.</p>
+<p>An alternative way to add a function into a dictionary object to use a namespace.</p>
+<pre><code>function! meals.second_lunch()
+  return self.lunch
+endfunction
+
+echo meals.second_lunch()
+" returns "pasta"</code></pre>
+<p>With namespace, you do not have to use the <code>dict</code> keyword.</p>
+</section>
+<section id="funcref" class="level2" data-number="28.12">
+<h2 data-number="28.12" class="anchored" data-anchor-id="funcref"><span class="header-section-number">28.12</span> Funcref</h2>
+<p>A funcref is a reference to a function. It is one of Vimscript’s basic data types mentioned in Ch. 24.</p>
+<p>The expression <code>function("SecondBreakfast")</code> above is an example of funcref. Vim has a built-in function <code>function()</code> that returns a funcref when you pass it a function name (string).</p>
+<pre><code>function! Breakfast(item)
+  return "I am having " . a:item . " for breakfast"
+endfunction
+
+let Breakfastify = Breakfast
+" returns error
+
+let Breakfastify = function("Breakfast")
+
+echo Breakfastify("oatmeal")
+" returns "I am having oatmeal for breakfast"
+
+echo Breakfastify("pancake")
+" returns "I am having pancake for breakfast"</code></pre>
+<p>In Vim, if you want to assign a function to a variable, you can’t just run assign it directly like <code>let MyVar = MyFunc</code>. You need to use the <code>function()</code> function, like <code>let MyVar = function("MyFunc")</code>.</p>
+<p>You can use funcref with maps and filters. Note that maps and filters will pass an index as the first argument and the iterated value as the second argument.</p>
+<pre><code>function! Breakfast(index, item)
+  return "I am having " . a:item . " for breakfast"
+endfunction
+
+let breakfast_items = ["pancakes", "hash browns", "waffles"]
+let first_meals = map(breakfast_items, function("Breakfast"))
+
+for meal in first_meals
+  echo meal
+endfor</code></pre>
+</section>
+<section id="lambda" class="level2" data-number="28.13">
+<h2 data-number="28.13" class="anchored" data-anchor-id="lambda"><span class="header-section-number">28.13</span> Lambda</h2>
+<p>A better way to use functions in maps and filters is to use lambda expression (sometimes known as unnamed function). For example:</p>
+<pre><code>let Plus = {x,y -&gt; x + y}
+echo Plus(1,2)
+" returns 3
+
+let Tasty = { -&gt; 'tasty'}
+echo Tasty()
+" returns "tasty"</code></pre>
+<p>You can call a function from insisde a lambda expression:</p>
+<pre><code>function! Lunch(item)
+  return "I am having " . a:item . " for lunch"
+endfunction
+
+let lunch_items = ["sushi", "ramen", "sashimi"]
+
+let day_meals = map(lunch_items, {index, item -&gt; Lunch(item)})
+
+for meal in day_meals
+  echo meal
+endfor</code></pre>
+<p>If you don’t want to call the function from inside lambda, you can refactor it:</p>
+<pre><code>let day_meals = map(lunch_items, {index, item -&gt; "I am having " . item . " for lunch"})</code></pre>
+</section>
+<section id="method-chaining" class="level2" data-number="28.14">
+<h2 data-number="28.14" class="anchored" data-anchor-id="method-chaining"><span class="header-section-number">28.14</span> Method Chaining</h2>
+<p>You can chain several Vimscript functions and lambda expressions sequentially with <code>-&gt;</code>. Keep in mind that <code>-&gt;</code> must be followed by a method name <em>without space.</em></p>
+<pre><code>Source-&gt;Method1()-&gt;Method2()-&gt;...-&gt;MethodN()</code></pre>
+<p>To convert a float to a number using method chaining:</p>
+<pre><code>echo 3.14-&gt;float2nr()
+" returns 3</code></pre>
+<p>Let’s do a more complicated example. Suppose that you need to capitalize the first letter of each item on a list, then sort the list, then join the list to form a string.</p>
+<pre><code>function! Capitalizer(word)
+  return substitute(a:word, "\^\.", "\\u&amp;", "g")
+endfunction
+
+function! CapitalizeList(word_list)
+  return map(a:word_list, {index, word -&gt; Capitalizer(word)})
+endfunction
+
+let dinner_items = ["bruschetta", "antipasto", "calzone"]
+
+echo dinner_items-&gt;CapitalizeList()-&gt;sort()-&gt;join(", ")
+" returns "Antipasto, Bruschetta, Calzone"</code></pre>
+<p>With method chaining, the sequence is more easily read and understood. I can just glance at <code>dinner_items-&gt;CapitalizeList()-&gt;sort()-&gt;join(", ")</code> and know exactly what is going on.</p>
+</section>
+<section id="closure" class="level2" data-number="28.15">
+<h2 data-number="28.15" class="anchored" data-anchor-id="closure"><span class="header-section-number">28.15</span> Closure</h2>
+<p>When you define a variable inside a function, that variable exists within that function boundaries. This is called a lexical scope.</p>
+<pre><code>function! Lunch()
+  let appetizer = "shrimp"
+
+  function! SecondLunch()
+    return appetizer
+  endfunction
+
+  return funcref("SecondLunch")
+endfunction</code></pre>
+<p><code>appetizer</code> is defined inside the <code>Lunch</code> function, which returns <code>SecondLunch</code> funcref. Notice that <code>SecondLunch</code> uses the <code>appetizer</code>, but in Vimscript, it doesn’t have access to that variable. If you try to run <code>echo Lunch()()</code>, Vim will throw an undefined variable error.</p>
+<p>To fix this issue, use the <code>closure</code> keyword. Let’s refactor:</p>
+<pre><code>function! Lunch()
+  let appetizer = "shrimp"
+
+  function! SecondLunch() closure
+    return appetizer
+  endfunction
+
+  return funcref("SecondLunch")
+endfunction</code></pre>
+<p>Now if you run <code>echo Lunch()()</code>, Vim will return <q>shrimp</q>.</p>
+</section>
+<section id="learn-vimscript-functions-the-smart-way" class="level2" data-number="28.16">
+<h2 data-number="28.16" class="anchored" data-anchor-id="learn-vimscript-functions-the-smart-way"><span class="header-section-number">28.16</span> Learn Vimscript Functions the Smart Way</h2>
+<p>In this chapter, you learned the anatomy of Vim function. You learned how to use different special keywords <code>range</code>, <code>dict</code>, and <code>closure</code> to modify function behavior. You also learned how to use lambda and to chain multiple functions together. Functions are important tools for creating complex abstractions.</p>
+<p>Next, let’s put everything that you have learned together to make your own plugin.</p>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const disableStylesheet = (stylesheets) => {
+    for (let i=0; i < stylesheets.length; i++) {
+      const stylesheet = stylesheets[i];
+      stylesheet.rel = 'prefetch';
+    }
+  }
+  const enableStylesheet = (stylesheets) => {
+    for (let i=0; i < stylesheets.length; i++) {
+      const stylesheet = stylesheets[i];
+      stylesheet.rel = 'stylesheet';
+    }
+  }
+  const manageTransitions = (selector, allowTransitions) => {
+    const els = window.document.querySelectorAll(selector);
+    for (let i=0; i < els.length; i++) {
+      const el = els[i];
+      if (allowTransitions) {
+        el.classList.remove('notransition');
+      } else {
+        el.classList.add('notransition');
+      }
+    }
+  }
+  const toggleColorMode = (alternate) => {
+    // Switch the stylesheets
+    const alternateStylesheets = window.document.querySelectorAll('link.quarto-color-scheme.quarto-color-alternate');
+    manageTransitions('#quarto-margin-sidebar .nav-link', false);
+    if (alternate) {
+      enableStylesheet(alternateStylesheets);
+      for (const sheetNode of alternateStylesheets) {
+        if (sheetNode.id === "quarto-bootstrap") {
+          toggleBodyColorMode(sheetNode);
+        }
+      }
+    } else {
+      disableStylesheet(alternateStylesheets);
+      toggleBodyColorPrimary();
+    }
+    manageTransitions('#quarto-margin-sidebar .nav-link', true);
+    // Switch the toggles
+    const toggles = window.document.querySelectorAll('.quarto-color-scheme-toggle');
+    for (let i=0; i < toggles.length; i++) {
+      const toggle = toggles[i];
+      if (toggle) {
+        if (alternate) {
+          toggle.classList.add("alternate");     
+        } else {
+          toggle.classList.remove("alternate");
+        }
+      }
+    }
+    // Hack to workaround the fact that safari doesn't
+    // properly recolor the scrollbar when toggling (#1455)
+    if (navigator.userAgent.indexOf('Safari') > 0 && navigator.userAgent.indexOf('Chrome') == -1) {
+      manageTransitions("body", false);
+      window.scrollTo(0, 1);
+      setTimeout(() => {
+        window.scrollTo(0, 0);
+        manageTransitions("body", true);
+      }, 40);  
+    }
+  }
+  const isFileUrl = () => { 
+    return window.location.protocol === 'file:';
+  }
+  const hasAlternateSentinel = () => {  
+    let styleSentinel = getColorSchemeSentinel();
+    if (styleSentinel !== null) {
+      return styleSentinel === "alternate";
+    } else {
+      return false;
+    }
+  }
+  const setStyleSentinel = (alternate) => {
+    const value = alternate ? "alternate" : "default";
+    if (!isFileUrl()) {
+      window.localStorage.setItem("quarto-color-scheme", value);
+    } else {
+      localAlternateSentinel = value;
+    }
+  }
+  const getColorSchemeSentinel = () => {
+    if (!isFileUrl()) {
+      const storageValue = window.localStorage.getItem("quarto-color-scheme");
+      return storageValue != null ? storageValue : localAlternateSentinel;
+    } else {
+      return localAlternateSentinel;
+    }
+  }
+  let localAlternateSentinel = 'alternate';
+  // Dark / light mode switch
+  window.quartoToggleColorScheme = () => {
+    // Read the current dark / light value 
+    let toAlternate = !hasAlternateSentinel();
+    toggleColorMode(toAlternate);
+    setStyleSentinel(toAlternate);
+  };
+  // Ensure there is a toggle, if there isn't float one in the top right
+  if (window.document.querySelector('.quarto-color-scheme-toggle') === null) {
+    const a = window.document.createElement('a');
+    a.classList.add('top-right');
+    a.classList.add('quarto-color-scheme-toggle');
+    a.href = "";
+    a.onclick = function() { try { window.quartoToggleColorScheme(); } catch {} return false; };
+    const i = window.document.createElement("i");
+    i.classList.add('bi');
+    a.appendChild(i);
+    window.document.body.appendChild(a);
+  }
+  // Switch to dark mode if need be
+  if (hasAlternateSentinel()) {
+    toggleColorMode(true);
+  } else {
+    toggleColorMode(false);
+  }
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    target: function(trigger) {
+      return trigger.previousElementSibling;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="../chapters/ch27_vimscript_variable_scopes.md.html" class="pagination-link">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">27</span>&nbsp; <span class="chapter-title">Ch27. Vimscript Variable Scopes</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="../chapters/ch29_plugin_example_writing-a-titlecase-plugin.md.html" class="pagination-link">
+        <span class="nav-page-text"><span class="chapter-number">29</span>&nbsp; <span class="chapter-title">Ch29. Write a Plugin: Creating a Titlecase Operator</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+
+
+
+</body></html>

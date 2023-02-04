@@ -1,0 +1,937 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.2.313">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Learn Vim (the Smart Way) - 12&nbsp; Ch12. Search and Substitute</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1.6em;
+  vertical-align: middle;
+}
+q { quotes: "“" "”" "‘" "’"; }
+</style>
+
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<link href="../chapters/ch13_the_global_command.md.html" rel="next">
+<link href="../chapters/ch11_visual_mode.md.html" rel="prev">
+<script src="../site_libs/quarto-html/quarto.js"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-dark.min.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit"
+  }
+}</script>
+
+
+</head>
+
+<body class="nav-sidebar floating">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+    <div class="container-fluid d-flex justify-content-between">
+      <h1 class="quarto-secondary-nav-title"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Ch12. Search and Substitute</span></h1>
+      <button type="button" class="quarto-btn-toggle btn" aria-label="Show secondary navigation">
+        <i class="bi bi-chevron-right"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="../">Learn Vim (the Smart Way)</a> 
+        <div class="sidebar-tools-main">
+    <a href="https://github.com/iggredible/Learn-Vim" title="" class="sidebar-tool px-1"><i class="bi bi-github"></i></a>
+  <a href="" class="quarto-color-scheme-toggle sidebar-tool" onclick="window.quartoToggleColorScheme(); return false;" title="Toggle dark mode"><i class="bi"></i></a>
+</div>
+    </div>
+      </div>
+      <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+      </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../index.html" class="sidebar-item-text sidebar-link">Preface</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch01_starting_vim.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Ch01. Starting Vim</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch02_buffers_windows_tabs.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Ch02. Buffers, Windows, and Tabs</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch03_searching_files.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Ch03. Searching Files</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch04_vim_grammar.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Ch04. Vim Grammar</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch05_moving_in_file.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Ch05. Moving in a File</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch06_insert_mode.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Ch06. Insert Mode</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch07_the_dot_command.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Ch07. the Dot Command</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch08_registers.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Ch08. Registers</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch09_macros.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Ch09. Macros</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch10_undo.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Ch10. Undo</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch11_visual_mode.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Ch11. Visual Mode</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch12_search_and_substitute.md.html" class="sidebar-item-text sidebar-link active"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Ch12. Search and Substitute</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch13_the_global_command.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Ch13. the Global Command</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch14_external_commands.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Ch14. External Commands</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch15_command-line_mode.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">Ch15. Command-line Mode</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch16_tags.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Ch16. Tags</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch17_fold.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">Ch17. Fold</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch18_git.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">18</span>&nbsp; <span class="chapter-title">Ch18. Git</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch19_compile.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">19</span>&nbsp; <span class="chapter-title">Ch19. Compile</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch20_views_sessions_viminfo.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">20</span>&nbsp; <span class="chapter-title">Ch20. Views, Sessions, and Viminfo</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch21_multiple_file_operations.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">21</span>&nbsp; <span class="chapter-title">Multiple File Operations</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch22_vimrc.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">22</span>&nbsp; <span class="chapter-title">Ch22. Vimrc</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch23_vim_packages.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">23</span>&nbsp; <span class="chapter-title">Ch23. Vim Packages</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch24_vim_runtime.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">24</span>&nbsp; <span class="chapter-title">Ch24. Vim Runtime</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch25_vimscript_basic_data_types.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">25</span>&nbsp; <span class="chapter-title">Ch25. Vimscript Basic Data Types</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch26_vimscript_conditionals_and_loops.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">26</span>&nbsp; <span class="chapter-title">Ch26. Vimscript Conditionals and Loops</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch27_vimscript_variable_scopes.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">27</span>&nbsp; <span class="chapter-title">Ch27. Vimscript Variable Scopes</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch28_vimscript_functions.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">28</span>&nbsp; <span class="chapter-title">Ch28. Vimscript Functions</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch29_plugin_example_writing-a-titlecase-plugin.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">29</span>&nbsp; <span class="chapter-title">Ch29. Write a Plugin: Creating a Titlecase Operator</span></a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#smart-case-sensitivity" id="toc-smart-case-sensitivity" class="nav-link active" data-scroll-target="#smart-case-sensitivity"><span class="toc-section-number">12.1</span>  Smart Case Sensitivity</a></li>
+  <li><a href="#first-and-last-character-in-a-line" id="toc-first-and-last-character-in-a-line" class="nav-link" data-scroll-target="#first-and-last-character-in-a-line"><span class="toc-section-number">12.2</span>  First and Last Character in a Line</a></li>
+  <li><a href="#repeating-search" id="toc-repeating-search" class="nav-link" data-scroll-target="#repeating-search"><span class="toc-section-number">12.3</span>  Repeating Search</a></li>
+  <li><a href="#searching-for-alternative-words" id="toc-searching-for-alternative-words" class="nav-link" data-scroll-target="#searching-for-alternative-words"><span class="toc-section-number">12.4</span>  Searching for Alternative Words</a></li>
+  <li><a href="#setting-the-start-and-end-of-a-match" id="toc-setting-the-start-and-end-of-a-match" class="nav-link" data-scroll-target="#setting-the-start-and-end-of-a-match"><span class="toc-section-number">12.5</span>  Setting the Start and End of a Match</a></li>
+  <li><a href="#searching-character-ranges" id="toc-searching-character-ranges" class="nav-link" data-scroll-target="#searching-character-ranges"><span class="toc-section-number">12.6</span>  Searching Character Ranges</a></li>
+  <li><a href="#searching-for-repeating-characters" id="toc-searching-for-repeating-characters" class="nav-link" data-scroll-target="#searching-for-repeating-characters"><span class="toc-section-number">12.7</span>  Searching for Repeating Characters</a></li>
+  <li><a href="#predefined-character-ranges" id="toc-predefined-character-ranges" class="nav-link" data-scroll-target="#predefined-character-ranges"><span class="toc-section-number">12.8</span>  Predefined Character Ranges</a></li>
+  <li><a href="#search-example-capturing-a-text-between-a-pair-of-similar-characters" id="toc-search-example-capturing-a-text-between-a-pair-of-similar-characters" class="nav-link" data-scroll-target="#search-example-capturing-a-text-between-a-pair-of-similar-characters"><span class="toc-section-number">12.9</span>  Search Example: Capturing a Text Between a Pair of Similar Characters</a></li>
+  <li><a href="#search-example-capturing-a-phone-number" id="toc-search-example-capturing-a-phone-number" class="nav-link" data-scroll-target="#search-example-capturing-a-phone-number"><span class="toc-section-number">12.10</span>  Search Example: Capturing a Phone Number</a></li>
+  <li><a href="#basic-substitution" id="toc-basic-substitution" class="nav-link" data-scroll-target="#basic-substitution"><span class="toc-section-number">12.11</span>  Basic Substitution</a></li>
+  <li><a href="#repeating-the-last-substitution" id="toc-repeating-the-last-substitution" class="nav-link" data-scroll-target="#repeating-the-last-substitution"><span class="toc-section-number">12.12</span>  Repeating the Last Substitution</a></li>
+  <li><a href="#substitution-range" id="toc-substitution-range" class="nav-link" data-scroll-target="#substitution-range"><span class="toc-section-number">12.13</span>  Substitution Range</a></li>
+  <li><a href="#pattern-matching" id="toc-pattern-matching" class="nav-link" data-scroll-target="#pattern-matching"><span class="toc-section-number">12.14</span>  Pattern Matching</a></li>
+  <li><a href="#substitution-flags" id="toc-substitution-flags" class="nav-link" data-scroll-target="#substitution-flags"><span class="toc-section-number">12.15</span>  Substitution Flags</a></li>
+  <li><a href="#changing-the-delimiter" id="toc-changing-the-delimiter" class="nav-link" data-scroll-target="#changing-the-delimiter"><span class="toc-section-number">12.16</span>  Changing the Delimiter</a></li>
+  <li><a href="#special-replace" id="toc-special-replace" class="nav-link" data-scroll-target="#special-replace"><span class="toc-section-number">12.17</span>  Special Replace</a></li>
+  <li><a href="#alternative-patterns" id="toc-alternative-patterns" class="nav-link" data-scroll-target="#alternative-patterns"><span class="toc-section-number">12.18</span>  Alternative Patterns</a></li>
+  <li><a href="#substituting-the-start-and-the-end-of-a-pattern" id="toc-substituting-the-start-and-the-end-of-a-pattern" class="nav-link" data-scroll-target="#substituting-the-start-and-the-end-of-a-pattern"><span class="toc-section-number">12.19</span>  Substituting the Start and the End of a Pattern</a></li>
+  <li><a href="#greedy-and-non-greedy" id="toc-greedy-and-non-greedy" class="nav-link" data-scroll-target="#greedy-and-non-greedy"><span class="toc-section-number">12.20</span>  Greedy and Non-greedy</a></li>
+  <li><a href="#substituting-across-multiple-files" id="toc-substituting-across-multiple-files" class="nav-link" data-scroll-target="#substituting-across-multiple-files"><span class="toc-section-number">12.21</span>  Substituting Across Multiple Files</a></li>
+  <li><a href="#substituting-across-multiple-files-with-macros" id="toc-substituting-across-multiple-files-with-macros" class="nav-link" data-scroll-target="#substituting-across-multiple-files-with-macros"><span class="toc-section-number">12.22</span>  Substituting Across Multiple Files With Macros</a></li>
+  <li><a href="#learning-search-and-substitution-the-smart-way" id="toc-learning-search-and-substitution-the-smart-way" class="nav-link" data-scroll-target="#learning-search-and-substitution-the-smart-way"><span class="toc-section-number">12.23</span>  Learning Search and Substitution the Smart Way</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title d-none d-lg-block"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Ch12. Search and Substitute</span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+</header>
+
+<p>This chapter covers two separate but related concepts: search and substitute. Often when editing, you need to search multiple texts based on their least common denominator patterns. By learning how to use regular expressions in search and substitute instead of literal strings, you will be able to target any text quickly.</p>
+<p>As a side note, in this chapter, I will use <code>/</code> when talking about search. Everything you can do with <code>/</code> can also be done with <code>?</code>.</p>
+<section id="smart-case-sensitivity" class="level2" data-number="12.1">
+<h2 data-number="12.1" class="anchored" data-anchor-id="smart-case-sensitivity"><span class="header-section-number">12.1</span> Smart Case Sensitivity</h2>
+<p>It can be tricky trying to match the case of the search term. If you are searching for the text <q>Learn Vim</q>, you can easily mistype the case of one letter and get a false search result. Wouldn’t it be easier and safer if you can match any case? This is where the option <code>ignorecase</code> shines. Just add <code>set ignorecase</code> in your vimrc and all your search terms become case insensitive. Now you don’t have to do <code>/Learn Vim</code> anymore, <code>/learn vim</code> will work.</p>
+<p>However, there are times when you need to search for a case specific phrase. One way to do that is to turn off <code>ignorecase</code> option by running <code>set noignorecase</code>, but that is a lot of work to turn on and off each time you need to search for a case sensitive phrase.</p>
+<p>To avoid toggling <code>ignorecase</code>, Vim has a <code>smartcase</code> option to search for case insensitive string if the search pattern <em>contains at least one uppercase character</em>. You can combine both <code>ignorecase</code> and <code>smartcase</code> to perform a case insensitive search when you enter all lowercase characters and a case sensitive search when you enter one or more uppercase characters.</p>
+<p>Inside your vimrc, add:</p>
+<pre><code>set ignorecase smartcase</code></pre>
+<p>If you have these texts:</p>
+<pre><code>hello
+HELLO
+Hello</code></pre>
+<ul>
+<li><code>/hello</code> matches <q>hello</q>, <q>HELLO</q>, and <q>Hello</q>.</li>
+<li><code>/HELLO</code> matches only <q>HELLO</q>.</li>
+<li><code>/Hello</code> matches only <q>Hello</q>.</li>
+</ul>
+<p>There is one downside. What if you need to search for only a lowercase string? When you do <code>/hello</code>, Vim now does case insensitive search. You can use <code>\C</code> pattern anywhere in your search term to tell Vim that the subsequent search term will be case sensitive. If you do <code>/\Chello</code>, it will strictly match <q>hello</q>, not <q>HELLO</q> or <q>Hello</q>.</p>
+</section>
+<section id="first-and-last-character-in-a-line" class="level2" data-number="12.2">
+<h2 data-number="12.2" class="anchored" data-anchor-id="first-and-last-character-in-a-line"><span class="header-section-number">12.2</span> First and Last Character in a Line</h2>
+<p>You can use <code>^</code> to match the first character in a line and <code>$</code> to match the last character in a line.</p>
+<p>If you have this text:</p>
+<pre><code>hello hello</code></pre>
+<p>You can target the first <q>hello</q> with <code>/^hello</code>. The character that follows <code>^</code> must be the first character in a line. To target the last <q>hello</q>, run <code>/hello$</code>. The character before <code>$</code> must be the last character in a line.</p>
+<p>If you have this text:</p>
+<pre><code>hello hello friend</code></pre>
+<p>Running <code>/hello$</code> will not match anything because <q>friend</q> is the last term in that line, not <q>hello</q>.</p>
+</section>
+<section id="repeating-search" class="level2" data-number="12.3">
+<h2 data-number="12.3" class="anchored" data-anchor-id="repeating-search"><span class="header-section-number">12.3</span> Repeating Search</h2>
+<p>You can repeat the previous search with <code>//</code>. If you have just searched for <code>/hello</code>, running <code>//</code> is equivalent to running <code>/hello</code>. This shortcut can save you some keystrokes especially if you just searched for a long string. Also recall that you can use <code>n</code> and <code>N</code> to repeat the last search with the same direction and opposite direction, respectively.</p>
+<p>What if you want to quickly recall <em>n</em> last search term? You can quickly traverse the search history by first pressing <code>/</code>, then press <code>up</code>/<code>down</code> arrow keys (or <code>Ctrl-N</code>/<code>Ctrl-P</code>) until you find the search term you need. To see all your search history, you can run <code>:history /</code>.</p>
+<p>When you reach the end of a file while searching, Vim throws an error: <code>"Search hit the BOTTOM without match for: {your-search}"</code>. Sometimes this can be a good safeguard from oversearching, but other times you want to cycle the search back to the top again. You can use the <code>set wrapscan</code> option to make Vim to search back at the top of the file when you reach the end of the file. To turn this feature off, do <code>set nowrapscan</code>.</p>
+</section>
+<section id="searching-for-alternative-words" class="level2" data-number="12.4">
+<h2 data-number="12.4" class="anchored" data-anchor-id="searching-for-alternative-words"><span class="header-section-number">12.4</span> Searching for Alternative Words</h2>
+<p>It is common to search for multiple words at once. If you need to search for <em>either</em> <q>hello vim</q> or <q>hola vim</q>, but not <q>salve vim</q> or <q>bonjour vim</q>, you can use the <code>|</code> pattern.</p>
+<p>Given this text:</p>
+<pre><code>hello vim
+hola vim
+salve vim
+bonjour vim</code></pre>
+<p>To match both <q>hello</q> and <q>hola</q>, you can do <code>/hello\|hola</code>. You have to escape (<code>\</code>) the or (<code>|</code>) operator, otherwise Vim will literally search for the string <q>|</q>.</p>
+<p>If you don’t want to type <code>\|</code> every time, you can use the <code>magic</code> syntax (<code>\v</code>) at the start of the search: <code>/\vhello|hola</code>. I will not cover <code>magic</code> in this guide, but with <code>\v</code>, you don’t have to escape special characters anymore. To learn more about <code>\v</code>, feel free to check out <code>:h \v</code>.</p>
+</section>
+<section id="setting-the-start-and-end-of-a-match" class="level2" data-number="12.5">
+<h2 data-number="12.5" class="anchored" data-anchor-id="setting-the-start-and-end-of-a-match"><span class="header-section-number">12.5</span> Setting the Start and End of a Match</h2>
+<p>Maybe you need to search for a text that is a part of a compound word. If you have these texts:</p>
+<pre><code>11vim22
+vim22
+11vim
+vim</code></pre>
+<p>If you need to select <q>vim</q> but only when it starts with <q>11</q> and ends with <q>22</q>, you can use <code>\zs</code> (starting match) and <code>\ze</code> (ending match) operators. Run:</p>
+<pre><code>/11\zsvim\ze22</code></pre>
+<p>Vim still has to match the entire pattern <q>11vim22</q>, but only highlights the pattern sandwiched between <code>\zs</code> and <code>\ze</code>. Another example:</p>
+<pre><code>foobar
+foobaz</code></pre>
+<p>If you need to match the <q>foo</q> in <q>foobaz</q> but not in <q>foobar</q>, run:</p>
+<pre><code>/foo\zebaz</code></pre>
+</section>
+<section id="searching-character-ranges" class="level2" data-number="12.6">
+<h2 data-number="12.6" class="anchored" data-anchor-id="searching-character-ranges"><span class="header-section-number">12.6</span> Searching Character Ranges</h2>
+<p>All your search terms up to this point have been a literal word search. In real life, you may have to use a general pattern to find your text. The most basic pattern is the character range, <code>[ ]</code>.</p>
+<p>If you need to search for any digit, you probably don’t want to type <code>/0\|1\|2\|3\|4\|5\|6\|7\|8\|9\|0</code> every single time. Instead, use <code>/[0-9]</code> to match for a single digit. The <code>0-9</code> expression represents a range of numbers 0-9 that Vim will try to match, so if you are looking for digits between 1 to 5 instead, use <code>/[1-5]</code>.</p>
+<p>Digits are not the only data types Vim can look up. You can also do <code>/[a-z]</code> to search for lowercase alphas and <code>/[A-Z]</code> to search for uppercase alphas.</p>
+<p>You can combine these ranges together. If you need to search for digits 0-9 and both lowercase and uppercase alphas from <q>a</q> to <q>f</q> (like a hex), you can do <code>/[0-9a-fA-F]</code>.</p>
+<p>To do a negative search, you can add <code>^</code> inside the character range brackets. To search for a non-digit, run <code>/[^0-9]</code>. Vim will match any character as long as it is not a digit. Beware that the caret (<code>^</code>) inside the range brackets is different from the beginning-of-a-line caret (ex: <code>/^hello</code>). If a caret is outside of a pair of brackets and is the first character in the search term, it means <q>the first character in a line</q>. If a caret is inside a pair of brackets and it is the first character inside the brackets, it means a negative search operator. <code>/^abc</code> matches the first <q>abc</q> in a line and <code>/[^abc]</code> matches any character except for an <q>a</q>, <q>b</q>, or <q>c</q>.</p>
+</section>
+<section id="searching-for-repeating-characters" class="level2" data-number="12.7">
+<h2 data-number="12.7" class="anchored" data-anchor-id="searching-for-repeating-characters"><span class="header-section-number">12.7</span> Searching for Repeating Characters</h2>
+<p>If you need to search for double digits in this text:</p>
+<pre><code>1aa
+11a
+111</code></pre>
+<p>You can use <code>/[0-9][0-9]</code> to match a two-digit character, but this method is unscalable. What if you need to match twenty digits? Typing <code>[0-9]</code> twenty times is not a fun experience. That’s why you need a <code>count</code> argument.</p>
+<p>You can pass <code>count</code> to your search. It has the following syntax:</p>
+<pre><code>{n,m}</code></pre>
+<p>By the way, these <code>count</code> braces need to be escaped when you use them in Vim. The <code>count</code> operator is placed after a single character you want to increment.</p>
+<p>Here are the four different variations of the <code>count</code> syntax: - <code>{n}</code> is an exact match. <code>/[0-9]\{2\}</code> matches the two digit numbers: <q>11</q> and the <q>11</q> in <q>111</q>. - <code>{n,m}</code> is a range match. <code>/[0-9]\{2,3\}</code> matches between 2 and 3 digit numbers: <q>11</q> and <q>111</q>. - <code>{,m}</code> is an up-to match. <code>/[0-9]\{,3\}</code> matches up to 3 digit numbers: <q>1</q>, <q>11</q>, and <q>111</q>. - <code>{n,}</code> is an at-least match. <code>/[0-9]\{2,\}</code> matches at least a 2 or more digit numbers: <q>11</q> and <q>111</q>.</p>
+<p>The count arguments <code>\{0,\}</code> (zero or more) and <code>\{1,\}</code> (one or more) are common search patterns and Vim has special operators for them: <code>*</code> and <code>+</code> (<code>+</code> needs to be escaped while <code>*</code> works fine without the escape). If you do <code>/[0-9]*</code>, it is the same as <code>/[0-9]\{0,\}</code>. It searches for zero or more digits. It will match “<q>,</q>1”, <q>123</q>. By the way, it will also match non-digits like <q>a</q>, because there is technically zero digit in the letter <q>a</q>. Think carefully before using <code>*</code>. If you do <code>/[0-9]\+</code>, it is the same as <code>/[0-9]\{1,\}</code>. It searches for one or more digits. It will match <q>1</q> and <q>12</q>.</p>
+</section>
+<section id="predefined-character-ranges" class="level2" data-number="12.8">
+<h2 data-number="12.8" class="anchored" data-anchor-id="predefined-character-ranges"><span class="header-section-number">12.8</span> Predefined Character Ranges</h2>
+<p>Vim has predefined ranges for common characters like digits and alphas. I will not go through every single one here, but you can find the full list inside <code>:h /character-classes</code>. Here are the useful ones:</p>
+<pre><code>\d    Digit [0-9]
+\D    Non-digit [^0-9]
+\s    Whitespace character (space and tab)
+\S    Non-whitespace character (everything except space and tab)
+\w    Word character [0-9A-Za-z_]
+\l    Lowercase alphas [a-z]
+\u    Uppercase character [A-Z]</code></pre>
+<p>You can use them like you would use character ranges. To search for any single digit, instead of using <code>/[0-9]</code>, you can use <code>/\d</code> for a more concise syntax.</p>
+</section>
+<section id="search-example-capturing-a-text-between-a-pair-of-similar-characters" class="level2" data-number="12.9">
+<h2 data-number="12.9" class="anchored" data-anchor-id="search-example-capturing-a-text-between-a-pair-of-similar-characters"><span class="header-section-number">12.9</span> Search Example: Capturing a Text Between a Pair of Similar Characters</h2>
+<p>If you want to search for a phrase surrounded by a pair of double quotes:</p>
+<pre><code>"Vim is awesome!"</code></pre>
+<p>Run this:</p>
+<pre><code>/"[^"]\+"</code></pre>
+<p>Let’s break it down: - <code>"</code> is a literal double quote. It matches the first double quote. - <code>[^"]</code> means any character except for a double quote. It matches any alphanumeric and whitespace character as long as it is not a double quote. - <code>\+</code> means one or more. Since it is preceded by <code>[^"]</code>, Vim looks for one or more character that is not a double quote. - <code>"</code> is a literal double quote. It matches the closing double quote.</p>
+<p>When Vim sees the first <code>"</code>, it begins the pattern capture. The moment it sees the second double quote in a line, it matches the second <code>"</code> pattern and stops the pattern capture. Meanwhile, all non-double-quote characters inbetween are captured by the <code>[^"]\+</code> pattern, in this case, the phrase <code>Vim is awesome!</code>. This is a common pattern to capture a phrase surrounded by a pair of similar delimiters.</p>
+<ul>
+<li>To capture a phrase surrounded by single quotes, you can use <code>/'[^']\+'</code>.</li>
+<li>To capture a phrase surrounded by zeroes, you can use <code>/0[^0]\+0</code>.</li>
+</ul>
+</section>
+<section id="search-example-capturing-a-phone-number" class="level2" data-number="12.10">
+<h2 data-number="12.10" class="anchored" data-anchor-id="search-example-capturing-a-phone-number"><span class="header-section-number">12.10</span> Search Example: Capturing a Phone Number</h2>
+<p>If you want to match a US phone number separated by a hyphen (<code>-</code>), like <code>123-456-7890</code>, you can use:</p>
+<pre><code>/\d\{3\}-\d\{3\}-\d\{4\}</code></pre>
+<p>US Phone number consists of a set of three digit number, followed by another three digits, and finally by four digits. Let’s break it down: - <code>\d\{3\}</code> matches a digit repeated exactly three times - <code>-</code> is a literal hyphen</p>
+<p>You can avoid typing escapes with <code>\v</code>:</p>
+<pre><code>/\v\d{3}-\d{3}-\d{4}</code></pre>
+<p>This pattern is also useful to capture any repeating digits, such as IP addresses and zip codes.</p>
+<p>That covers the search part of this chapter. Now let’s move to substitution.</p>
+</section>
+<section id="basic-substitution" class="level2" data-number="12.11">
+<h2 data-number="12.11" class="anchored" data-anchor-id="basic-substitution"><span class="header-section-number">12.11</span> Basic Substitution</h2>
+<p>Vim’s substitute command is a useful command to quickly find and replace any pattern. The substitution syntax is:</p>
+<pre><code>:s/{old-pattern}/{new-pattern}/</code></pre>
+<p>Let’s start with a basic usage. If you have this text:</p>
+<pre><code>vim is good</code></pre>
+<p>Let’s substitute <q>good</q> with <q>awesome</q> because Vim is awesome. Run <code>:s/good/awesome/</code>. You should see:</p>
+<pre><code>vim is awesome</code></pre>
+</section>
+<section id="repeating-the-last-substitution" class="level2" data-number="12.12">
+<h2 data-number="12.12" class="anchored" data-anchor-id="repeating-the-last-substitution"><span class="header-section-number">12.12</span> Repeating the Last Substitution</h2>
+<p>You can repeat the last substitute command with either the normal command <code>&amp;</code> or by running <code>:s</code>. If you have just run <code>:s/good/awesome/</code>, running either <code>&amp;</code> or <code>:s</code> will repeat it.</p>
+<p>Also, earlier in this chapter I mentioned that you can use <code>//</code> to repeat the previous search pattern. This trick works with the substitution command. If <code>/good</code> was done recently and you leave the first substitute pattern argument blank, like in <code>:s//awesome/</code>, it works the same as running <code>:s/good/awesome/</code>.</p>
+</section>
+<section id="substitution-range" class="level2" data-number="12.13">
+<h2 data-number="12.13" class="anchored" data-anchor-id="substitution-range"><span class="header-section-number">12.13</span> Substitution Range</h2>
+<p>Just like many Ex commands, you can pass a range argument into the substitute command. The syntax is:</p>
+<pre><code>:[range]s/old/new/</code></pre>
+<p>If you have these expressions:</p>
+<pre><code>let one = 1;
+let two = 2;
+let three = 3;
+let four = 4;
+let five = 5;</code></pre>
+<p>To substitute the <q>let</q> into <q>const</q> on lines three to five, you can do:</p>
+<pre><code>:3,5s/let/const/</code></pre>
+<p>Here are some range variations you can pass:</p>
+<ul>
+<li><code>:,3s/let/const/</code> - if nothing is given before the comma, it represents the current line. Substitute from current line to line 3.</li>
+<li><code>:1,s/let/const/</code> - if nothing is given after the comma, it also represents the current line. Substitute from line 1 to current line.</li>
+<li><code>:3s/let/const/</code> - if only one value is given as range (no comma), it does substitution on that line only.</li>
+</ul>
+<p>In Vim, <code>%</code> usually means the entire file. If you run <code>:%s/let/const/</code>, it will do substitution on all lines. Keep in mind of this range syntax. Many command-line commands that you will learn in the upcoming chapters will follow this form.</p>
+</section>
+<section id="pattern-matching" class="level2" data-number="12.14">
+<h2 data-number="12.14" class="anchored" data-anchor-id="pattern-matching"><span class="header-section-number">12.14</span> Pattern Matching</h2>
+<p>The next few sections will cover basic regular expressions. A strong pattern knowledge is essential to master the substitute command.</p>
+<p>If you have the following expressions:</p>
+<pre><code>let one = 1;
+let two = 2;
+let three = 3;
+let four = 4;
+let five = 5;</code></pre>
+<p>To add a pair of double quotes around the digits:</p>
+<pre><code>:%s/\d/"\0"/</code></pre>
+<p>The result:</p>
+<pre><code>let one = "1";
+let two = "2";
+let three = "3";
+let four = "4";
+let five = "5";</code></pre>
+<p>Let’s break down the command: - <code>:%s</code> targets the entire file to perform substitution. - <code>\d</code> is Vim’s predefined range for digits (similar to using <code>[0-9]</code>). - <code>"\0"</code> here the double quotes are literal double quotes. <code>\0</code> is a special character representing <q>the whole matched pattern</q>. The matched pattern here is a single digit number, <code>\d</code>.</p>
+<p>Alternatively, <code>&amp;</code> also represents the whole matched pattern like <code>\0</code>. <code>:s/\d/"&amp;"/</code> would have also worked.</p>
+<p>Let’s consider another example. Given these expressions and you need to swap all the <q>let</q> with the variable names.</p>
+<pre><code>one let = "1";
+two let = "2";
+three let = "3";
+four let = "4";
+five let = "5";</code></pre>
+<p>To do that, run:</p>
+<pre><code>:%s/\(\w\+\) \(\w\+\)/\2 \1/</code></pre>
+<p>The command above contains too many backslashes and is hard to read. In this case it is more convenient to use the <code>\v</code> operator:</p>
+<pre><code>:%s/\v(\w+) (\w+)/\2 \1/</code></pre>
+<p>The result:</p>
+<pre><code>let one = "1";
+let two = "2";
+let three = "3";
+let four = "4";
+let five = "5";</code></pre>
+<p>Great! Let’s break down that command: - <code>:%s</code> targets all the lines in the file to perform substitution. - <code>(\w+) (\w+)</code> is a group match. <code>\w</code> is one of Vim’s predefined ranges for a word character (<code>[0-9A-Za-z_]</code>). The <code>( )</code> surrounding it captures a word character match in a group. Notice the space between the two groupings. <code>(\w+) (\w+)</code> captures two groups. The first group captures <q>one</q> and the second group captures <q>two</q>. - <code>\2 \1</code> returns the captured group in a reversed order. <code>\2</code> contains the captured string <q>let</q> and <code>\1</code> the string <q>one</q>. Having <code>\2 \1</code> returns the string <q>let one</q>.</p>
+<p>Recall that <code>\0</code> represents the entire matched pattern. You can break the matched string into smaller groups with <code>( )</code>. Each group is represented by <code>\1</code>, <code>\2</code>, <code>\3</code>, etc.</p>
+<p>Let’s do one more example to solidify this group match concept. If you have these numbers:</p>
+<pre><code>123
+456
+789</code></pre>
+<p>To reverse the order, run:</p>
+<pre><code>:%s/\v(\d)(\d)(\d)/\3\2\1/</code></pre>
+<p>The result is:</p>
+<pre><code>321
+654
+987</code></pre>
+<p>Each <code>(\d)</code> matches each digit and creates a group. On the first line, the first <code>(\d)</code> has a value of 1, the second <code>(\d)</code> has a value of 2, and the third <code>(\d)</code> has a value of 3. They are stored in the variables <code>\1</code>, <code>\2</code>, and <code>\3</code>. In the second half of your substitution, the new pattern <code>\3\2\1</code> results in the <q>321</q> value on line one.</p>
+<p>If you had run this instead:</p>
+<pre><code>:%s/\v(\d\d)(\d)/\2\1/</code></pre>
+<p>You would have gotten a different result:</p>
+<pre><code>312
+645
+978</code></pre>
+<p>This is because you now only have two groups. The first group, captured by <code>(\d\d)</code>, is stored within <code>\1</code> and has the value of 12. The second group, captured by <code>(\d)</code>, is stored inside <code>\2</code> and has the value of 3. <code>\2\1</code> then, returns 312.</p>
+</section>
+<section id="substitution-flags" class="level2" data-number="12.15">
+<h2 data-number="12.15" class="anchored" data-anchor-id="substitution-flags"><span class="header-section-number">12.15</span> Substitution Flags</h2>
+<p>If you have the sentence:</p>
+<pre><code>chocolate pancake, strawberry pancake, blueberry pancake</code></pre>
+<p>To substitute all the pancakes into donuts, you cannot just run:</p>
+<pre><code>:s/pancake/donut</code></pre>
+<p>The command above will only substitute the first match, giving you:</p>
+<pre><code>chocolate donut, strawberry pancake, blueberry pancake</code></pre>
+<p>There are two ways to solve this. You can either run the substitute command twice more or you can pass it a global (<code>g</code>) flag to substitute all of the matches in a line.</p>
+<p>Let’s talk about the global flag. Run:</p>
+<pre><code>:s/pancake/donut/g</code></pre>
+<p>Vim substitutes all pancakes with donuts in one swift command. The global command is one of the several flags the substitute command accepts. You pass flags at the end of the substitute command. Here is a list of useful flags:</p>
+<pre><code>&amp;    Reuse the flags from the previous substitute command.
+g    Replace all matches in the line.
+c    Ask for substitution confirmation.
+e    Prevent error message from displaying when substitution fails.
+i    Perform case insensitive substitution.
+I    Perform case sensitive substitution.</code></pre>
+<p>There are more flags that I do not list above. To read about all the flags, check out <code>:h s_flags</code>.</p>
+<p>By the way, the repeat-substitution commands (<code>&amp;</code> and <code>:s</code>) do not retain the flags. Running <code>&amp;</code> will only repeat <code>:s/pancake/donut/</code> without <code>g</code>. To quickly repeat the last substitute command with all the flags, run <code>:&amp;&amp;</code>.</p>
+</section>
+<section id="changing-the-delimiter" class="level2" data-number="12.16">
+<h2 data-number="12.16" class="anchored" data-anchor-id="changing-the-delimiter"><span class="header-section-number">12.16</span> Changing the Delimiter</h2>
+<p>If you need to replace a URL with a long path:</p>
+<pre><code>https://mysite.com/a/b/c/d/e</code></pre>
+<p>To substitute it with the word <q>hello</q>, run:</p>
+<pre><code>:s/https:\/\/mysite.com\/a\/b\/c\/d\/e/hello/</code></pre>
+<p>However, it is hard to tell which forward slashes (<code>/</code>) are part of the substitution pattern and which ones are the delimiters. You can change the delimiter with any single-byte characters (except for alphabets, numbers, or <code>"</code>, <code>|</code>, and <code>\</code>). Let’s replace them with <code>+</code>. The substitution command above then can be rewritten as:</p>
+<pre><code>:s+https:\/\/mysite.com\/a\/b\/c\/d\/e+hello+</code></pre>
+<p>It is now easier to see where the delimiters are.</p>
+</section>
+<section id="special-replace" class="level2" data-number="12.17">
+<h2 data-number="12.17" class="anchored" data-anchor-id="special-replace"><span class="header-section-number">12.17</span> Special Replace</h2>
+<p>You can also modify the case of the text you are substituting. Given the following expressions and your task is to uppercase the variables <q>one</q>, <q>two</q>, <q>three</q>, etc.</p>
+<pre><code>let one = "1";
+let two = "2";
+let three = "3";
+let four = "4";
+let five = "5";</code></pre>
+<p>Run:</p>
+<pre><code>:%s/\v(\w+) (\w+)/\1 \U\2/</code></pre>
+<p>You will get:</p>
+<pre><code>let ONE = "1";
+let TWO = "2";
+let THREE = "3";
+let FOUR = "4";
+let FIVE = "5";</code></pre>
+<p>The breakdown: - <code>(\w+) (\w+)</code> captures the first two matched groups, such as <q>let</q> and <q>one</q>. - <code>\1</code> returns the value of the first group, <q>let</q>. - <code>\U\2</code> uppercases (<code>\U</code>) the second group (<code>\2</code>).</p>
+<p>The trick of this command is the expression <code>\U\2</code>. <code>\U</code> instructs the following character to be uppercased.</p>
+<p>Let’s do one more example. Suppose you are writing a Vim guide and you need to capitalize the first letter of each word in a line.</p>
+<pre><code>vim is the greatest text editor in the whole galaxy</code></pre>
+<p>You can run:</p>
+<pre><code>:s/\&lt;./\U&amp;/g</code></pre>
+<p>The result:</p>
+<pre><code>Vim Is The Greatest Text Editor In The Whole Galaxy</code></pre>
+<p>Here is the breakdowns: - <code>:s</code> substitutes the current line. - <code>\&lt;.</code> is comprised of two parts: <code>\&lt;</code> to match the start of a word and <code>.</code> to match any character. <code>\&lt;</code> operator makes the following character to be the first character of a word. Since <code>.</code> is the next character, it will match the first character of any word. - <code>\U&amp;</code> uppercases the subsequent symbol, <code>&amp;</code>. Recall that <code>&amp;</code> (or <code>\0</code>) represents the whole match. It matches the first character of any word. - <code>g</code> the global flag. Without it, this command only substitutes the first match. You need to substitute every match on this line.</p>
+<p>To learn more of substitution’s special replace symbols like <code>\U</code>, check out <code>:h sub-replace-special</code>.</p>
+</section>
+<section id="alternative-patterns" class="level2" data-number="12.18">
+<h2 data-number="12.18" class="anchored" data-anchor-id="alternative-patterns"><span class="header-section-number">12.18</span> Alternative Patterns</h2>
+<p>Sometimes you need to match multiple patterns simultaneously. If you have the following greetings:</p>
+<pre><code>hello vim
+hola vim
+salve vim
+bonjour vim</code></pre>
+<p>You need to substitute the word <q>vim</q> with <q>friend</q> but only on the lines containing the word <q>hello</q> or <q>hola</q>. Recall from earlier this chapter, you can use <code>|</code> for multiple alternative patterns.</p>
+<pre><code>:%s/\v(hello|hola) vim/\1 friend/g</code></pre>
+<p>The result:</p>
+<pre><code>hello friend
+hola friend
+salve vim
+bonjour vim</code></pre>
+<p>Here is the breakdown: - <code>%s</code> runs the substitute command on each line in a file. - <code>(hello|hola)</code> matches <em>either</em> <q>hello</q> or <q>hola</q> and consider it as a group. - <code>vim</code> is the literal word <q>vim</q>. - <code>\1</code> is the first group, which is either the text <q>hello</q> or <q>hola</q>. - <code>friend</code> is the literal word <q>friend</q>.</p>
+</section>
+<section id="substituting-the-start-and-the-end-of-a-pattern" class="level2" data-number="12.19">
+<h2 data-number="12.19" class="anchored" data-anchor-id="substituting-the-start-and-the-end-of-a-pattern"><span class="header-section-number">12.19</span> Substituting the Start and the End of a Pattern</h2>
+<p>Recall that you can use <code>\zs</code> and <code>\ze</code> to define the start and the end of a match. This technique works in substitution too. If you have:</p>
+<pre><code>chocolate pancake
+strawberry sweetcake
+blueberry hotcake</code></pre>
+<p>To substitute the <q>cake</q> in <q>hotcake</q> with <q>dog</q> to get a <q>hotdog</q>:</p>
+<pre><code>:%s/hot\zscake/dog/g</code></pre>
+<p>Result:</p>
+<pre><code>chocolate pancake
+strawberry sweetcake
+blueberry hotdog</code></pre>
+</section>
+<section id="greedy-and-non-greedy" class="level2" data-number="12.20">
+<h2 data-number="12.20" class="anchored" data-anchor-id="greedy-and-non-greedy"><span class="header-section-number">12.20</span> Greedy and Non-greedy</h2>
+<p>You can substitute the nth match in a line with this trick:</p>
+<pre><code>One Mississippi, two Mississippi, three Mississippi, four Mississippi, five Mississippi.</code></pre>
+<p>To substitute the third <q>Mississippi</q> with <q>Arkansas</q>, run:</p>
+<pre><code>:s/\v(.{-}\zsMississippi){3}/Arkansas/g</code></pre>
+<p>The breakdown: - <code>:s/</code> the substitute command. - <code>\v</code> is the magic keyword so you don’t have to escape special keywords. - <code>.</code> matches any single character. - <code>{-}</code> performs non-greedy match of 0 or more of the preceding atom. - <code>\zsMississippi</code> makes <q>Mississippi</q> the start of the match. - <code>(...){3}</code> looks for the third match.</p>
+<p>You have seen the <code>{3}</code> syntax earlier in this chapter. In this case, <code>{3}</code> will match exactly the third match. The new trick here is <code>{-}</code>. It is a non-greedy match. It finds the shortest match of the given pattern. In this case, <code>(.{-}Mississippi)</code> matches the least amount of <q>Mississippi</q> preceded by any character. Contrast this with <code>(.*Mississippi)</code> where it finds the longest match of the given pattern.</p>
+<p>If you use <code>(.{-}Mississippi)</code>, you get five matches: <q>One Mississippi</q>, <q>Two Mississippi</q>, etc. If you use <code>(.*Mississippi)</code>, you get one match: the last <q>Mississippi</q>. <code>*</code> is a greedy matcher and <code>{-}</code> is a non-greedy matcher. To learn more check out <code>:h /\{-</code> and <code>:h non-greedy</code>.</p>
+<p>Let’s do a simpler example. If you have the string:</p>
+<pre><code>abc1de1</code></pre>
+<p>You can match <q>abc1de1</q> (greedy) with:</p>
+<pre><code>/a.*1</code></pre>
+<p>You can match <q>abc1</q> (non-greedy) with:</p>
+<pre><code>/a.\{-}1</code></pre>
+<p>So if you need to uppercase the longest match (greedy), run:</p>
+<pre><code>:s/a.*1/\U&amp;/g</code></pre>
+<p>To get:</p>
+<pre><code>ABC1DEFG1</code></pre>
+<p>If you need to uppercase the shortest match (non-greedy), run:</p>
+<pre><code>:s/a.\{-}1/\U&amp;/g</code></pre>
+<p>To get:</p>
+<pre><code>ABC1defg1</code></pre>
+<p>If you’re new to greedy vs non-greedy concept, it can get hard to wrap your head around it. Experiment around with different combinations until you understand it.</p>
+</section>
+<section id="substituting-across-multiple-files" class="level2" data-number="12.21">
+<h2 data-number="12.21" class="anchored" data-anchor-id="substituting-across-multiple-files"><span class="header-section-number">12.21</span> Substituting Across Multiple Files</h2>
+<p>Finally, let’s learn how to substitute phrases across multiple files. For this section, assume that you have two files: <code>food.txt</code> and <code>animal.txt</code>.</p>
+<p>Inside <code>food.txt</code>:</p>
+<pre><code>corndog
+hotdog
+chilidog</code></pre>
+<p>Inside <code>animal.txt</code>:</p>
+<pre><code>large dog
+medium dog
+small dog</code></pre>
+<p>Assume your directory structure looks like this:</p>
+<pre><code>- food.txt
+- animal.txt</code></pre>
+<p>First, capture both <code>food.txt</code> and <code>animal.txt</code> inside <code>:args</code>. Recall from earlier chapters that <code>:args</code> can be used to create a list of file names. There are several ways to do this from inside Vim, one of them is by running this from inside Vim:</p>
+<pre><code>:args *.txt                  captures all txt files in current location</code></pre>
+<p>To test it, when you run <code>:args</code>, you should see:</p>
+<pre><code>[food.txt] animal.txt</code></pre>
+<p>Now that all the relevant files are stored inside the argument list, you can perform a multi-file substitution with the <code>:argdo</code> command. Run:</p>
+<pre><code>:argdo %s/dog/chicken/</code></pre>
+<p>This performs substitution against the all files inside the <code>:args</code> list. Finally, save the changed files with:</p>
+<pre><code>:argdo update</code></pre>
+<p><code>:args</code> and <code>:argdo</code> are useful tools to apply command line commands across multiple files. Try it with other commands!</p>
+</section>
+<section id="substituting-across-multiple-files-with-macros" class="level2" data-number="12.22">
+<h2 data-number="12.22" class="anchored" data-anchor-id="substituting-across-multiple-files-with-macros"><span class="header-section-number">12.22</span> Substituting Across Multiple Files With Macros</h2>
+<p>Alternatively, you can also run the substitute command across multiple files with macros. Run:</p>
+<pre><code>:args *.txt
+qq
+:%s/dog/chicken/g
+:wnext
+q
+99@q</code></pre>
+<p>The breakdown: - <code>:args *.txt</code> adds all text files into the <code>:args</code> list. - <code>qq</code> starts the macro in the <q>q</q> register. - <code>:%s/dog/chicken/g</code> substitutes <q>dog</q> with <q>chicken</q> on all lines in the current file. - <code>:wnext</code> saves the file then go to the next file on the <code>args</code> list. - <code>q</code> stops the macro recording. - <code>99@q</code> executes the macro ninety-nine times. Vim will stop the macro execution after it encounters the first error, so Vim won’t actually execute the macro ninety-nine times.</p>
+</section>
+<section id="learning-search-and-substitution-the-smart-way" class="level2" data-number="12.23">
+<h2 data-number="12.23" class="anchored" data-anchor-id="learning-search-and-substitution-the-smart-way"><span class="header-section-number">12.23</span> Learning Search and Substitution the Smart Way</h2>
+<p>The ability to do search well is a necessary skill in editing. Mastering the search lets you to utilize the flexibility of regular expressions to search for any pattern in a file. Take your time to learn these. To get better with regular expression you need to be actively using regular expressions. I once read a book about regular expression without actually doing it and I forgot almost everything I read afterwards. Active coding is the best way to master any skill.</p>
+<p>A good way to improve your pattern matching skill is whenever you need to search for a pattern (like <q>hello 123</q>), instead of querying for the literal search term (<code>/hello 123</code>), try to come up with a pattern for it (something like <code>/\v(\l+) (\d+)</code>). Many of these regular expression concepts are also applicable in general programming, not only when using Vim.</p>
+<p>Now that you learned about advanced search and substitution in Vim, let’s learn one of the most versatile commands, the global command.</p>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const disableStylesheet = (stylesheets) => {
+    for (let i=0; i < stylesheets.length; i++) {
+      const stylesheet = stylesheets[i];
+      stylesheet.rel = 'prefetch';
+    }
+  }
+  const enableStylesheet = (stylesheets) => {
+    for (let i=0; i < stylesheets.length; i++) {
+      const stylesheet = stylesheets[i];
+      stylesheet.rel = 'stylesheet';
+    }
+  }
+  const manageTransitions = (selector, allowTransitions) => {
+    const els = window.document.querySelectorAll(selector);
+    for (let i=0; i < els.length; i++) {
+      const el = els[i];
+      if (allowTransitions) {
+        el.classList.remove('notransition');
+      } else {
+        el.classList.add('notransition');
+      }
+    }
+  }
+  const toggleColorMode = (alternate) => {
+    // Switch the stylesheets
+    const alternateStylesheets = window.document.querySelectorAll('link.quarto-color-scheme.quarto-color-alternate');
+    manageTransitions('#quarto-margin-sidebar .nav-link', false);
+    if (alternate) {
+      enableStylesheet(alternateStylesheets);
+      for (const sheetNode of alternateStylesheets) {
+        if (sheetNode.id === "quarto-bootstrap") {
+          toggleBodyColorMode(sheetNode);
+        }
+      }
+    } else {
+      disableStylesheet(alternateStylesheets);
+      toggleBodyColorPrimary();
+    }
+    manageTransitions('#quarto-margin-sidebar .nav-link', true);
+    // Switch the toggles
+    const toggles = window.document.querySelectorAll('.quarto-color-scheme-toggle');
+    for (let i=0; i < toggles.length; i++) {
+      const toggle = toggles[i];
+      if (toggle) {
+        if (alternate) {
+          toggle.classList.add("alternate");     
+        } else {
+          toggle.classList.remove("alternate");
+        }
+      }
+    }
+    // Hack to workaround the fact that safari doesn't
+    // properly recolor the scrollbar when toggling (#1455)
+    if (navigator.userAgent.indexOf('Safari') > 0 && navigator.userAgent.indexOf('Chrome') == -1) {
+      manageTransitions("body", false);
+      window.scrollTo(0, 1);
+      setTimeout(() => {
+        window.scrollTo(0, 0);
+        manageTransitions("body", true);
+      }, 40);  
+    }
+  }
+  const isFileUrl = () => { 
+    return window.location.protocol === 'file:';
+  }
+  const hasAlternateSentinel = () => {  
+    let styleSentinel = getColorSchemeSentinel();
+    if (styleSentinel !== null) {
+      return styleSentinel === "alternate";
+    } else {
+      return false;
+    }
+  }
+  const setStyleSentinel = (alternate) => {
+    const value = alternate ? "alternate" : "default";
+    if (!isFileUrl()) {
+      window.localStorage.setItem("quarto-color-scheme", value);
+    } else {
+      localAlternateSentinel = value;
+    }
+  }
+  const getColorSchemeSentinel = () => {
+    if (!isFileUrl()) {
+      const storageValue = window.localStorage.getItem("quarto-color-scheme");
+      return storageValue != null ? storageValue : localAlternateSentinel;
+    } else {
+      return localAlternateSentinel;
+    }
+  }
+  let localAlternateSentinel = 'alternate';
+  // Dark / light mode switch
+  window.quartoToggleColorScheme = () => {
+    // Read the current dark / light value 
+    let toAlternate = !hasAlternateSentinel();
+    toggleColorMode(toAlternate);
+    setStyleSentinel(toAlternate);
+  };
+  // Ensure there is a toggle, if there isn't float one in the top right
+  if (window.document.querySelector('.quarto-color-scheme-toggle') === null) {
+    const a = window.document.createElement('a');
+    a.classList.add('top-right');
+    a.classList.add('quarto-color-scheme-toggle');
+    a.href = "";
+    a.onclick = function() { try { window.quartoToggleColorScheme(); } catch {} return false; };
+    const i = window.document.createElement("i");
+    i.classList.add('bi');
+    a.appendChild(i);
+    window.document.body.appendChild(a);
+  }
+  // Switch to dark mode if need be
+  if (hasAlternateSentinel()) {
+    toggleColorMode(true);
+  } else {
+    toggleColorMode(false);
+  }
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    target: function(trigger) {
+      return trigger.previousElementSibling;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="../chapters/ch11_visual_mode.md.html" class="pagination-link">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Ch11. Visual Mode</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="../chapters/ch13_the_global_command.md.html" class="pagination-link">
+        <span class="nav-page-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Ch13. the Global Command</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+
+
+
+</body></html>

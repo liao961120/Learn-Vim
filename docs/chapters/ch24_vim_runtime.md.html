@@ -1,0 +1,741 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.2.313">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Learn Vim (the Smart Way) - 24&nbsp; Ch24. Vim Runtime</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1.6em;
+  vertical-align: middle;
+}
+q { quotes: "“" "”" "‘" "’"; }
+</style>
+
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<link href="../chapters/ch25_vimscript_basic_data_types.md.html" rel="next">
+<link href="../chapters/ch23_vim_packages.md.html" rel="prev">
+<script src="../site_libs/quarto-html/quarto.js"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-dark.min.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit"
+  }
+}</script>
+
+
+</head>
+
+<body class="nav-sidebar floating">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+    <div class="container-fluid d-flex justify-content-between">
+      <h1 class="quarto-secondary-nav-title"><span class="chapter-number">24</span>&nbsp; <span class="chapter-title">Ch24. Vim Runtime</span></h1>
+      <button type="button" class="quarto-btn-toggle btn" aria-label="Show secondary navigation">
+        <i class="bi bi-chevron-right"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="../">Learn Vim (the Smart Way)</a> 
+        <div class="sidebar-tools-main">
+    <a href="https://github.com/iggredible/Learn-Vim" title="" class="sidebar-tool px-1"><i class="bi bi-github"></i></a>
+  <a href="" class="quarto-color-scheme-toggle sidebar-tool" onclick="window.quartoToggleColorScheme(); return false;" title="Toggle dark mode"><i class="bi"></i></a>
+</div>
+    </div>
+      </div>
+      <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+      </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../index.html" class="sidebar-item-text sidebar-link">Preface</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch01_starting_vim.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Ch01. Starting Vim</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch02_buffers_windows_tabs.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Ch02. Buffers, Windows, and Tabs</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch03_searching_files.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Ch03. Searching Files</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch04_vim_grammar.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Ch04. Vim Grammar</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch05_moving_in_file.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Ch05. Moving in a File</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch06_insert_mode.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Ch06. Insert Mode</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch07_the_dot_command.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Ch07. the Dot Command</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch08_registers.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Ch08. Registers</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch09_macros.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Ch09. Macros</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch10_undo.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Ch10. Undo</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch11_visual_mode.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Ch11. Visual Mode</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch12_search_and_substitute.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Ch12. Search and Substitute</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch13_the_global_command.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Ch13. the Global Command</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch14_external_commands.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Ch14. External Commands</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch15_command-line_mode.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">Ch15. Command-line Mode</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch16_tags.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Ch16. Tags</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch17_fold.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">Ch17. Fold</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch18_git.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">18</span>&nbsp; <span class="chapter-title">Ch18. Git</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch19_compile.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">19</span>&nbsp; <span class="chapter-title">Ch19. Compile</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch20_views_sessions_viminfo.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">20</span>&nbsp; <span class="chapter-title">Ch20. Views, Sessions, and Viminfo</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch21_multiple_file_operations.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">21</span>&nbsp; <span class="chapter-title">Multiple File Operations</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch22_vimrc.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">22</span>&nbsp; <span class="chapter-title">Ch22. Vimrc</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch23_vim_packages.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">23</span>&nbsp; <span class="chapter-title">Ch23. Vim Packages</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch24_vim_runtime.md.html" class="sidebar-item-text sidebar-link active"><span class="chapter-number">24</span>&nbsp; <span class="chapter-title">Ch24. Vim Runtime</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch25_vimscript_basic_data_types.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">25</span>&nbsp; <span class="chapter-title">Ch25. Vimscript Basic Data Types</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch26_vimscript_conditionals_and_loops.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">26</span>&nbsp; <span class="chapter-title">Ch26. Vimscript Conditionals and Loops</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch27_vimscript_variable_scopes.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">27</span>&nbsp; <span class="chapter-title">Ch27. Vimscript Variable Scopes</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch28_vimscript_functions.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">28</span>&nbsp; <span class="chapter-title">Ch28. Vimscript Functions</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch29_plugin_example_writing-a-titlecase-plugin.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">29</span>&nbsp; <span class="chapter-title">Ch29. Write a Plugin: Creating a Titlecase Operator</span></a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#runtime-path" id="toc-runtime-path" class="nav-link active" data-scroll-target="#runtime-path"><span class="toc-section-number">24.1</span>  Runtime Path</a></li>
+  <li><a href="#plugin-scripts" id="toc-plugin-scripts" class="nav-link" data-scroll-target="#plugin-scripts"><span class="toc-section-number">24.2</span>  Plugin Scripts</a></li>
+  <li><a href="#filetype-detection" id="toc-filetype-detection" class="nav-link" data-scroll-target="#filetype-detection"><span class="toc-section-number">24.3</span>  Filetype Detection</a>
+  <ul class="collapse">
+  <li><a href="#file-name-detection" id="toc-file-name-detection" class="nav-link" data-scroll-target="#file-name-detection"><span class="toc-section-number">24.3.1</span>  File Name Detection</a></li>
+  <li><a href="#file-type-script" id="toc-file-type-script" class="nav-link" data-scroll-target="#file-type-script"><span class="toc-section-number">24.3.2</span>  File Type Script</a></li>
+  </ul></li>
+  <li><a href="#file-type-plugin" id="toc-file-type-plugin" class="nav-link" data-scroll-target="#file-type-plugin"><span class="toc-section-number">24.4</span>  File Type Plugin</a></li>
+  <li><a href="#indent-files" id="toc-indent-files" class="nav-link" data-scroll-target="#indent-files"><span class="toc-section-number">24.5</span>  Indent Files</a></li>
+  <li><a href="#colors" id="toc-colors" class="nav-link" data-scroll-target="#colors"><span class="toc-section-number">24.6</span>  Colors</a></li>
+  <li><a href="#syntax-highlighting" id="toc-syntax-highlighting" class="nav-link" data-scroll-target="#syntax-highlighting"><span class="toc-section-number">24.7</span>  Syntax Highlighting</a></li>
+  <li><a href="#documentation" id="toc-documentation" class="nav-link" data-scroll-target="#documentation"><span class="toc-section-number">24.8</span>  Documentation</a></li>
+  <li><a href="#lazy-loading-scripts" id="toc-lazy-loading-scripts" class="nav-link" data-scroll-target="#lazy-loading-scripts"><span class="toc-section-number">24.9</span>  Lazy Loading Scripts</a></li>
+  <li><a href="#after-scripts" id="toc-after-scripts" class="nav-link" data-scroll-target="#after-scripts"><span class="toc-section-number">24.10</span>  After Scripts</a></li>
+  <li><a href="#vimruntime" id="toc-vimruntime" class="nav-link" data-scroll-target="#vimruntime"><span class="toc-section-number">24.11</span>  $VIMRUNTIME</a></li>
+  <li><a href="#runtimepath-option" id="toc-runtimepath-option" class="nav-link" data-scroll-target="#runtimepath-option"><span class="toc-section-number">24.12</span>  Runtimepath Option</a></li>
+  <li><a href="#learn-runtime-the-smart-way" id="toc-learn-runtime-the-smart-way" class="nav-link" data-scroll-target="#learn-runtime-the-smart-way"><span class="toc-section-number">24.13</span>  Learn Runtime the Smart Way</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title d-none d-lg-block"><span class="chapter-number">24</span>&nbsp; <span class="chapter-title">Ch24. Vim Runtime</span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+</header>
+
+<p>In the previous chapters, I mentioned that Vim automatically looks for special paths like <code>pack/</code> (Ch. 22) and <code>compiler/</code> (Ch. 19) inside the <code>~/.vim/</code> directory. These are examples of Vim runtime paths.</p>
+<p>Vim has more runtime paths than these two. In this chapter, you will learn a high-level overview of these runtime paths. The goal of this chapter is to show you when they are called. Knowing this will allow you to understand and customize Vim further.</p>
+<section id="runtime-path" class="level2" data-number="24.1">
+<h2 data-number="24.1" class="anchored" data-anchor-id="runtime-path"><span class="header-section-number">24.1</span> Runtime Path</h2>
+<p>In a Unix machine, one of your Vim runtime paths is <code>$HOME/.vim/</code> (if you have a different OS like Windows, your path might be different). To see what the runtime paths for different OS are, check out <code>:h 'runtimepath'</code>. In this chapter, I will use <code>~/.vim/</code> as the default runtime path.</p>
+</section>
+<section id="plugin-scripts" class="level2" data-number="24.2">
+<h2 data-number="24.2" class="anchored" data-anchor-id="plugin-scripts"><span class="header-section-number">24.2</span> Plugin Scripts</h2>
+<p>Vim has a plugin runtime path that executes any scripts in this directory once each time Vim starts. Do not confuse the name <q>plugin</q> with Vim external plugins (like NERDTree, fzf.vim, etc).</p>
+<p>Go to <code>~/.vim/</code> directory and create a <code>plugin/</code> directory. Create two files: <code>donut.vim</code> and <code>chocolate.vim</code>.</p>
+<p>Inside <code>~/.vim/plugin/donut.vim</code>:</p>
+<pre><code>echo "donut!"</code></pre>
+<p>Inside <code>~/.vim/plugin/chocolate.vim</code>:</p>
+<pre><code>echo "chocolate!"</code></pre>
+<p>Now close Vim. The next time you start Vim, you will see both <code>"donut!"</code> and <code>"chocolate!"</code> echoed. The plugin runtime path can be used for initializations scripts.</p>
+</section>
+<section id="filetype-detection" class="level2" data-number="24.3">
+<h2 data-number="24.3" class="anchored" data-anchor-id="filetype-detection"><span class="header-section-number">24.3</span> Filetype Detection</h2>
+<p>Before you start, to ensure that these detections work, make sure that your vimrc contains at least the following line:</p>
+<pre><code>filetype plugin indent on</code></pre>
+<p>Check out <code>:h filetype-overview</code> for more context. Essentially this turns on Vim’s filetype detection.</p>
+<p>When you open a new file, Vim usually knows what kind of file it is. If you have a file <code>hello.rb</code>, running <code>:set filetype?</code> returns the correct response <code>filetype=ruby</code>.</p>
+<p>Vim knows how to detect <q>common</q> file types (Ruby, Python, Javascript, etc). But what if you have a custom file? You need to teach Vim to detect it and assign it with the correct file type.</p>
+<p>There are two methods of detection: using file name and file content.</p>
+<section id="file-name-detection" class="level3" data-number="24.3.1">
+<h3 data-number="24.3.1" class="anchored" data-anchor-id="file-name-detection"><span class="header-section-number">24.3.1</span> File Name Detection</h3>
+<p>File name detection detects a file type using the name of that file. When you open the <code>hello.rb</code> file, Vim knows it is a Ruby file from the <code>.rb</code> extension.</p>
+<p>There are two ways you can do file name detection: using <code>ftdetect/</code> runtime directory and using <code>filetype.vim</code> runtime file. Let’s explore both.</p>
+<section id="ftdetect" class="level4" data-number="24.3.1.1">
+<h4 data-number="24.3.1.1" class="anchored" data-anchor-id="ftdetect"><span class="header-section-number">24.3.1.1</span> <code>ftdetect/</code></h4>
+<p>Let’s create an obscure (yet tasty) file, <code>hello.chocodonut</code>. When you open it and you run <code>:set filetype?</code>, since it is not a common file name extension Vim doesn’t know what to make of it. It returns <code>filetype=</code>.</p>
+<p>You need to instruct Vim to set all files ending with <code>.chocodonut</code> as a <q>chocodonut</q> file type. Create a directory named <code>ftdetect/</code> in the runtime root (<code>~/.vim/</code>). Inside, create a file and name it <code>chocodonut.vim</code> (<code>~/.vim/ftdetect/chocodonut.vim</code>). Inside this file, add:</p>
+<pre><code>autocmd BufNewFile,BufRead *.chocodonut set filetype=chocodonut</code></pre>
+<p><code>BufNewFile</code> and <code>BufRead</code> are triggered whenever you create a new buffer and open a new buffer. <code>*.chocodonut</code> means that this event will only be triggered if the opened buffer has a <code>.chocodonut</code> filename extension. Finally, <code>set filetype=chocodonut</code> command sets the file type to be a chocodonut type.</p>
+<p>Restart Vim. Now open <code>hello.chocodonut</code> file and run <code>:set filetype?</code>. It returns <code>filetype=chocodonut</code>.</p>
+<p>Scrumptious! You can put as many files as you want inside <code>ftdetect/</code>. In the future, you can maybe add <code>ftdetect/strawberrydonut.vim</code>, <code>ftdetect/plaindonut.vim</code>, etc., if you ever decide to expand your donut file types.</p>
+<p>There are actually two ways to set a file type in Vim. One is what you just used <code>set filetype=chocodonut</code>. The other way is to run <code>setfiletype chocodonut</code>. The former command <code>set filetype=chocodonut</code> will <em>always</em> set the file type to chocodonut type, while the latter command <code>setfiletype chocodonut</code> will only set the file type if no file type was set yet.</p>
+</section>
+<section id="filetype-file" class="level4" data-number="24.3.1.2">
+<h4 data-number="24.3.1.2" class="anchored" data-anchor-id="filetype-file"><span class="header-section-number">24.3.1.2</span> Filetype File</h4>
+<p>The second file detection method requires you to create a <code>filetype.vim</code> in the root directory (<code>~/.vim/filetype.vim</code>). Add this inside:</p>
+<pre><code>autocmd BufNewFile,BufRead *.plaindonut set filetype=plaindonut</code></pre>
+<p>Create a <code>hello.plaindonut</code> file. When you open it and run <code>:set filetype?</code>, Vim displays the correct custom file type <code>filetype=plaindonut</code>.</p>
+<p>Holy pastry, it works! By the way, if you play around with <code>filetype.vim</code>, you may notice that this file is being run multiple times when you open <code>hello.plaindonut</code>. To prevent this, you can add a guard so the main script is run only once. Update the <code>filetype.vim</code>:</p>
+<pre><code>if exists("did_load_filetypes")
+  finish
+endif
+
+augroup donutfiletypedetection
+  autocmd! BufRead,BufNewFile *.plaindonut setfiletype plaindonut
+augroup END</code></pre>
+<p><code>finish</code> is a Vim command to stop running the rest of the script. The <code>"did_load_filetypes"</code> expression is <em>not</em> a built-in Vim function. It is actually a global variable from inside <code>$VIMRUNTIME/filetype.vim</code>. If you’re curious, run <code>:e $VIMRUNTIME/filetype.vim</code>. You will find these lines inside:</p>
+<pre><code>if exists("did_load_filetypes")
+  finish
+endif
+
+let did_load_filetypes = 1</code></pre>
+<p>When Vim calls this file, it defines <code>did_load_filetypes</code> variable and sets is to 1. 1 is truthy in Vim. You should read the rest of the <code>filetype.vim</code> too. See if you can understand what it does when Vim calls it.</p>
+</section>
+</section>
+<section id="file-type-script" class="level3" data-number="24.3.2">
+<h3 data-number="24.3.2" class="anchored" data-anchor-id="file-type-script"><span class="header-section-number">24.3.2</span> File Type Script</h3>
+<p>Let’s learn how to detect and assign a file type based on the file content.</p>
+<p>Suppose you have a collection of files without an agreeable extension. The only thing these files have in common is that they all start with the word <q>donutify</q> on the first line. You want to assign these files to a <code>donut</code> file type. Create new files named <code>sugardonut</code>, <code>glazeddonut</code>, and <code>frieddonut</code> (without extension). Inside each file, add this line:</p>
+<pre><code>donutify</code></pre>
+<p>When you run the <code>:set filetype?</code> from inside <code>sugardonut</code>, Vim doesn’t know what file type to assign this file with. It returns <code>filetype=</code>.</p>
+<p>In the runtime root path, add a <code>scripts.vim</code> file (<code>~/.vim/scripts.vim</code>). Inside it, add these:</p>
+<pre><code>if did_filetype()
+  finish
+endif
+
+if getline(1) =~ '^\\&lt;donutify\\&gt;'
+  setfiletype donut
+endif</code></pre>
+<p>The function <code>getline(1)</code> returns the text on the first line. It checks if the first line starts with the word <q>donutify</q>. The function <code>did_filetype()</code> is a Vim built-in function. It will return true when a file type related event is triggered at least once. It is used as a guard to stop re-running file type event.</p>
+<p>Open the <code>sugardonut</code> file and run <code>:set filetype?</code>, Vim now returns <code>filetype=donut</code>. If you open another donut files (<code>glazeddonut</code> and <code>frieddonut</code>), Vim also identifies their file types as <code>donut</code> types.</p>
+<p>Note that <code>scripts.vim</code> is only run when Vim opens a file with an unknown file type. If Vim opens a file with a known file type, <code>scripts.vim</code> won’t run.</p>
+</section>
+</section>
+<section id="file-type-plugin" class="level2" data-number="24.4">
+<h2 data-number="24.4" class="anchored" data-anchor-id="file-type-plugin"><span class="header-section-number">24.4</span> File Type Plugin</h2>
+<p>What if you want Vim to run chocodonut-specific scripts when you open a chocodonut file and to not run those scripts when opening plaindonut file?</p>
+<p>You can do this with file type plugin runtime path (<code>~/.vim/ftplugin/</code>). Vim looks inside this directory for a file with the same name as the file type you just opened. Create a <code>chocodonut.vim</code> (<code>~/.vim/ftplugin/chocodonut.vim</code>):</p>
+<pre><code>echo "Calling from chocodonut ftplugin"</code></pre>
+<p>Create another ftplugin file, <code>plaindonut.vim</code> (<code>~/.vim/ftplugin/plaindonut.vim</code>):</p>
+<pre><code>echo "Calling from plaindonut ftplugin"</code></pre>
+<p>Now each time you open a chocodonut file type, Vim runs the scripts from <code>~/.vim/ftplugin/chocodonut.vim</code>. Each time you open a plaindonut file type, Vim runs the scripts from <code>~/.vim/ftplugin/plaindonut.vim</code>.</p>
+<p>One warning: these files are run each time a buffer file type is set (<code>set filetype=chocodonut</code> for example). If you open 3 different chocodonut files, the scripts will be run a <em>total</em> of three times.</p>
+</section>
+<section id="indent-files" class="level2" data-number="24.5">
+<h2 data-number="24.5" class="anchored" data-anchor-id="indent-files"><span class="header-section-number">24.5</span> Indent Files</h2>
+<p>Vim has an indent runtime path that works similar to ftplugin, where Vim looks for a file named the same as the opened file type. The purpose of these indent runtime paths is to store indent-related codes. If you have the file <code>~/.vim/indent/chocodonut.vim</code>, it will be executed only when you open a chocodonut file type. You can store indent-related codes for chocodonut files here.</p>
+</section>
+<section id="colors" class="level2" data-number="24.6">
+<h2 data-number="24.6" class="anchored" data-anchor-id="colors"><span class="header-section-number">24.6</span> Colors</h2>
+<p>Vim has a colors runtime path (<code>~/.vim/colors/</code>) to store color schemes. Any file that goes inside the directory will be displayed in the <code>:color</code> command-line command.</p>
+<p>If you have a <code>~/.vim/colors/beautifulprettycolors.vim</code> file, when you run <code>:color</code> and press Tab, you will see <code>beautifulprettycolors</code> as one of the color options. If you prefer to add your own color scheme, this is the place to go.</p>
+<p>If you want to check out the color schemes other people made, a good place to visit is <a href="https://vimcolors.com/">vimcolors</a>.</p>
+</section>
+<section id="syntax-highlighting" class="level2" data-number="24.7">
+<h2 data-number="24.7" class="anchored" data-anchor-id="syntax-highlighting"><span class="header-section-number">24.7</span> Syntax Highlighting</h2>
+<p>Vim has a syntax runtime path (<code>~/.vim/syntax/</code>) to define syntax highlighting.</p>
+<p>Suppose you have a <code>hello.chocodonut</code> file, inside it you have the following expressions:</p>
+<pre><code>(donut "tasty")
+(donut "savory")</code></pre>
+<p>Although Vim now knows the correct file type, all texts have the same color. Let’s add a syntax highlighting rule to highlight the <q>donut</q> keyword. Create a new chocodonut syntax file, <code>~/.vim/syntax/chocodonut.vim</code>. Inside it add:</p>
+<pre><code>syntax keyword donutKeyword donut
+
+highlight link donutKeyword Keyword</code></pre>
+<p>Now reopen <code>hello.chocodonut</code> file. The <code>donut</code> keywords are now highlighted.</p>
+<p>This chapter won’t go over syntax highlighting in depth. It is a vast topic. If you are curious, check out <code>:h syntax.txt</code>.</p>
+<p>The <a href="https://github.com/sheerun/vim-polyglot">vim-polyglot</a> plugin is a great plugin that provides highlights for many popular programming languages.</p>
+</section>
+<section id="documentation" class="level2" data-number="24.8">
+<h2 data-number="24.8" class="anchored" data-anchor-id="documentation"><span class="header-section-number">24.8</span> Documentation</h2>
+<p>If you create a plugin, you will have to create your own documentation. You use the doc runtime path for that.</p>
+<p>Let’s create a basic documentation for chocodonut and plaindonut keywords. Create a <code>donut.txt</code> (<code>~/.vim/doc/donut.txt</code>). Inside, add these texts:</p>
+<pre><code>*chocodonut* Delicious chocolate donut
+
+*plaindonut* No choco goodness but still delicious nonetheless</code></pre>
+<p>If you try to search for <code>chocodonut</code> and <code>plaindonut</code> (<code>:h chocodonut</code> and <code>:h plaindonut</code>), you won’t find anything.</p>
+<p>First, you need to run <code>:helptags</code> to generate new help entries. Run <code>:helptags ~/.vim/doc/</code></p>
+<p>Now if you run <code>:h chocodonut</code> and <code>:h plaindonut</code>, you will find these new help entries. Notice that the file is now read-only and has a <q>help</q> file type.</p>
+</section>
+<section id="lazy-loading-scripts" class="level2" data-number="24.9">
+<h2 data-number="24.9" class="anchored" data-anchor-id="lazy-loading-scripts"><span class="header-section-number">24.9</span> Lazy Loading Scripts</h2>
+<p>All of the runtime paths that you learned in this chapter were run automatically. If you want to manually load a script, use the autoload runtime path.</p>
+<p>Create an autoload directory (<code>~/.vim/autoload/</code>). Inside that directory, create a new file and name it <code>tasty.vim</code> (<code>~/.vim/autoload/tasty.vim</code>). Inside it:</p>
+<pre><code>echo "tasty.vim global"
+
+function tasty#donut()
+  echo "tasty#donut"
+endfunction</code></pre>
+<p>Note that the function name is <code>tasty#donut</code>, not <code>donut()</code>. The pound sign (<code>#</code>) is required when using the autoload feature. The function naming convention for the autoload feature is:</p>
+<pre><code>function fileName#functionName()
+  ...
+endfunction</code></pre>
+<p>In this case, the file name is <code>tasty.vim</code> and the function name is (technically) <code>donut</code>.</p>
+<p>To invoke a function, you need the <code>call</code> command. Let’s call that function with <code>:call tasty#donut()</code>.</p>
+<p>The first time you call the function, you should see <em>both</em> echo messages (<q>tasty.vim global</q> and <q>tasty#donut</q>). The subsequent calls to<code>tasty#donut</code> function will only display <q>testy#donut</q> echo.</p>
+<p>When you open a file in Vim, unlike the previous runtime paths, autoload scripts aren’t loaded automatically. Only when you explicitly call <code>tasty#donut()</code>, Vim looks for the <code>tasty.vim</code> file and loads everything inside it, including the <code>tasty#donut()</code> function. Autoload is the perfect mechanism for functions that use extensive resources but you don’t use often.</p>
+<p>You can add as many nested directories with autoload as you want. If you have the runtime path <code>~/.vim/autoload/one/two/three/tasty.vim</code>, you can call the function with <code>:call one#two#three#tasty#donut()</code>.</p>
+</section>
+<section id="after-scripts" class="level2" data-number="24.10">
+<h2 data-number="24.10" class="anchored" data-anchor-id="after-scripts"><span class="header-section-number">24.10</span> After Scripts</h2>
+<p>Vim has an after runtime path (<code>~/.vim/after/</code>) that mirrors the structure of <code>~/.vim/</code>. Anything in this path is executed last, so developers usually use these paths for script overrides.</p>
+<p>For example, if you want to overwrite the scripts from <code>plugin/chocolate.vim</code>, you can create <code>~/.vim/after/plugin/chocolate.vim</code> to put the override scripts. Vim will run the <code>~/.vim/after/plugin/chocolate.vim</code> <em>after</em> <code>~/.vim/plugin/chocolate.vim</code>.</p>
+</section>
+<section id="vimruntime" class="level2" data-number="24.11">
+<h2 data-number="24.11" class="anchored" data-anchor-id="vimruntime"><span class="header-section-number">24.11</span> $VIMRUNTIME</h2>
+<p>Vim has an environment variable <code>$VIMRUNTIME</code> for default scripts and support files. You can check it out by running <code>:e $VIMRUNTIME</code>.</p>
+<p>The structure should look familiar. It contains many runtime paths you learned in this chapter.</p>
+<p>Recall in Chapter 21, you learned that when you open Vim, it looks for a vimrc files in seven different locations. I said that the last location Vim checks is <code>$VIMRUNTIME/defaults.vim</code>. If Vim fails to find any user vimrc files, Vim uses a <code>defaults.vim</code> as vimrc.</p>
+<p>Have you ever tried running Vim without syntax plugin like vim-polyglot and yet your file is still syntatically highlighted? That is because when Vim fails to find a syntax file from the runtime path, Vim looks for a syntax file from <code>$VIMRUNTIME</code> syntax directory.</p>
+<p>To learn more, check out <code>:h $VIMRUNTIME</code>.</p>
+</section>
+<section id="runtimepath-option" class="level2" data-number="24.12">
+<h2 data-number="24.12" class="anchored" data-anchor-id="runtimepath-option"><span class="header-section-number">24.12</span> Runtimepath Option</h2>
+<p>To check your runtimepath, run <code>:set runtimepath?</code></p>
+<p>If you use Vim-Plug or popular external plugin managers, it should display a list of directories. For example, mine shows:</p>
+<pre><code>runtimepath=~/.vim,~/.vim/plugged/vim-signify,~/.vim/plugged/base16-vim,~/.vim/plugged/fzf.vim,~/.vim/plugged/fzf,~/.vim/plugged/vim-gutentags,~/.vim/plugged/tcomment_vim,~/.vim/plugged/emmet-vim,~/.vim/plugged/vim-fugitive,~/.vim/plugged/vim-sensible,~/.vim/plugged/lightline.vim, ...</code></pre>
+<p>One of the things plugin managers does is adding each plugin into the runtime path. Each runtime path can have its own directory structure similar to <code>~/.vim/</code>.</p>
+<p>If you have a directory <code>~/box/of/donuts/</code> and you want to add that directory to your runtime path, you can add this to your vimrc:</p>
+<pre><code>set rtp+=$HOME/box/of/donuts/</code></pre>
+<p>If inside <code>~/box/of/donuts/</code>, you have a plugin directory (<code>~/box/of/donuts/plugin/hello.vim</code>) and a ftplugin (<code>~/box/of/donuts/ftplugin/chocodonut.vim</code>), Vim will run all scripts from <code>plugin/hello.vim</code> when you open Vim. Vim will also run <code>ftplugin/chocodonut.vim</code> when you open a chocodonut file.</p>
+<p>Try this yourself: create an arbitrary path and add it to your runtimepath. Add some of the runtime paths you learned from this chapter. Make sure they work as expected.</p>
+</section>
+<section id="learn-runtime-the-smart-way" class="level2" data-number="24.13">
+<h2 data-number="24.13" class="anchored" data-anchor-id="learn-runtime-the-smart-way"><span class="header-section-number">24.13</span> Learn Runtime the Smart Way</h2>
+<p>Take your time reading it and play around with these runtime paths. To see how runtime paths are being used in the wild, go to the repository of one of your favorite Vim plugins and study its directory structure. You should be able to understand most of them now. Try to follow along and discern the big picture. Now that you understand Vim directory structure, you’re ready to learn Vimscript.</p>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const disableStylesheet = (stylesheets) => {
+    for (let i=0; i < stylesheets.length; i++) {
+      const stylesheet = stylesheets[i];
+      stylesheet.rel = 'prefetch';
+    }
+  }
+  const enableStylesheet = (stylesheets) => {
+    for (let i=0; i < stylesheets.length; i++) {
+      const stylesheet = stylesheets[i];
+      stylesheet.rel = 'stylesheet';
+    }
+  }
+  const manageTransitions = (selector, allowTransitions) => {
+    const els = window.document.querySelectorAll(selector);
+    for (let i=0; i < els.length; i++) {
+      const el = els[i];
+      if (allowTransitions) {
+        el.classList.remove('notransition');
+      } else {
+        el.classList.add('notransition');
+      }
+    }
+  }
+  const toggleColorMode = (alternate) => {
+    // Switch the stylesheets
+    const alternateStylesheets = window.document.querySelectorAll('link.quarto-color-scheme.quarto-color-alternate');
+    manageTransitions('#quarto-margin-sidebar .nav-link', false);
+    if (alternate) {
+      enableStylesheet(alternateStylesheets);
+      for (const sheetNode of alternateStylesheets) {
+        if (sheetNode.id === "quarto-bootstrap") {
+          toggleBodyColorMode(sheetNode);
+        }
+      }
+    } else {
+      disableStylesheet(alternateStylesheets);
+      toggleBodyColorPrimary();
+    }
+    manageTransitions('#quarto-margin-sidebar .nav-link', true);
+    // Switch the toggles
+    const toggles = window.document.querySelectorAll('.quarto-color-scheme-toggle');
+    for (let i=0; i < toggles.length; i++) {
+      const toggle = toggles[i];
+      if (toggle) {
+        if (alternate) {
+          toggle.classList.add("alternate");     
+        } else {
+          toggle.classList.remove("alternate");
+        }
+      }
+    }
+    // Hack to workaround the fact that safari doesn't
+    // properly recolor the scrollbar when toggling (#1455)
+    if (navigator.userAgent.indexOf('Safari') > 0 && navigator.userAgent.indexOf('Chrome') == -1) {
+      manageTransitions("body", false);
+      window.scrollTo(0, 1);
+      setTimeout(() => {
+        window.scrollTo(0, 0);
+        manageTransitions("body", true);
+      }, 40);  
+    }
+  }
+  const isFileUrl = () => { 
+    return window.location.protocol === 'file:';
+  }
+  const hasAlternateSentinel = () => {  
+    let styleSentinel = getColorSchemeSentinel();
+    if (styleSentinel !== null) {
+      return styleSentinel === "alternate";
+    } else {
+      return false;
+    }
+  }
+  const setStyleSentinel = (alternate) => {
+    const value = alternate ? "alternate" : "default";
+    if (!isFileUrl()) {
+      window.localStorage.setItem("quarto-color-scheme", value);
+    } else {
+      localAlternateSentinel = value;
+    }
+  }
+  const getColorSchemeSentinel = () => {
+    if (!isFileUrl()) {
+      const storageValue = window.localStorage.getItem("quarto-color-scheme");
+      return storageValue != null ? storageValue : localAlternateSentinel;
+    } else {
+      return localAlternateSentinel;
+    }
+  }
+  let localAlternateSentinel = 'alternate';
+  // Dark / light mode switch
+  window.quartoToggleColorScheme = () => {
+    // Read the current dark / light value 
+    let toAlternate = !hasAlternateSentinel();
+    toggleColorMode(toAlternate);
+    setStyleSentinel(toAlternate);
+  };
+  // Ensure there is a toggle, if there isn't float one in the top right
+  if (window.document.querySelector('.quarto-color-scheme-toggle') === null) {
+    const a = window.document.createElement('a');
+    a.classList.add('top-right');
+    a.classList.add('quarto-color-scheme-toggle');
+    a.href = "";
+    a.onclick = function() { try { window.quartoToggleColorScheme(); } catch {} return false; };
+    const i = window.document.createElement("i");
+    i.classList.add('bi');
+    a.appendChild(i);
+    window.document.body.appendChild(a);
+  }
+  // Switch to dark mode if need be
+  if (hasAlternateSentinel()) {
+    toggleColorMode(true);
+  } else {
+    toggleColorMode(false);
+  }
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    target: function(trigger) {
+      return trigger.previousElementSibling;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="../chapters/ch23_vim_packages.md.html" class="pagination-link">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">23</span>&nbsp; <span class="chapter-title">Ch23. Vim Packages</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="../chapters/ch25_vimscript_basic_data_types.md.html" class="pagination-link">
+        <span class="nav-page-text"><span class="chapter-number">25</span>&nbsp; <span class="chapter-title">Ch25. Vimscript Basic Data Types</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+
+
+
+</body></html>

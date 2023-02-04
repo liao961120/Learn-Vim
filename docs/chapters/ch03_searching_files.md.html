@@ -1,0 +1,777 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.2.313">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Learn Vim (the Smart Way) - 3&nbsp; Ch03. Searching Files</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1.6em;
+  vertical-align: middle;
+}
+q { quotes: "“" "”" "‘" "’"; }
+</style>
+
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<link href="../chapters/ch04_vim_grammar.md.html" rel="next">
+<link href="../chapters/ch02_buffers_windows_tabs.md.html" rel="prev">
+<script src="../site_libs/quarto-html/quarto.js"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-dark.min.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit"
+  }
+}</script>
+
+
+</head>
+
+<body class="nav-sidebar floating">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+    <div class="container-fluid d-flex justify-content-between">
+      <h1 class="quarto-secondary-nav-title"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Ch03. Searching Files</span></h1>
+      <button type="button" class="quarto-btn-toggle btn" aria-label="Show secondary navigation">
+        <i class="bi bi-chevron-right"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="../">Learn Vim (the Smart Way)</a> 
+        <div class="sidebar-tools-main">
+    <a href="https://github.com/iggredible/Learn-Vim" title="" class="sidebar-tool px-1"><i class="bi bi-github"></i></a>
+  <a href="" class="quarto-color-scheme-toggle sidebar-tool" onclick="window.quartoToggleColorScheme(); return false;" title="Toggle dark mode"><i class="bi"></i></a>
+</div>
+    </div>
+      </div>
+      <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+      </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../index.html" class="sidebar-item-text sidebar-link">Preface</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch01_starting_vim.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Ch01. Starting Vim</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch02_buffers_windows_tabs.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Ch02. Buffers, Windows, and Tabs</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch03_searching_files.md.html" class="sidebar-item-text sidebar-link active"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Ch03. Searching Files</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch04_vim_grammar.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Ch04. Vim Grammar</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch05_moving_in_file.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Ch05. Moving in a File</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch06_insert_mode.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Ch06. Insert Mode</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch07_the_dot_command.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Ch07. the Dot Command</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch08_registers.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Ch08. Registers</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch09_macros.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Ch09. Macros</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch10_undo.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Ch10. Undo</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch11_visual_mode.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Ch11. Visual Mode</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch12_search_and_substitute.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Ch12. Search and Substitute</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch13_the_global_command.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Ch13. the Global Command</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch14_external_commands.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Ch14. External Commands</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch15_command-line_mode.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">Ch15. Command-line Mode</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch16_tags.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Ch16. Tags</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch17_fold.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">Ch17. Fold</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch18_git.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">18</span>&nbsp; <span class="chapter-title">Ch18. Git</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch19_compile.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">19</span>&nbsp; <span class="chapter-title">Ch19. Compile</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch20_views_sessions_viminfo.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">20</span>&nbsp; <span class="chapter-title">Ch20. Views, Sessions, and Viminfo</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch21_multiple_file_operations.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">21</span>&nbsp; <span class="chapter-title">Multiple File Operations</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch22_vimrc.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">22</span>&nbsp; <span class="chapter-title">Ch22. Vimrc</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch23_vim_packages.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">23</span>&nbsp; <span class="chapter-title">Ch23. Vim Packages</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch24_vim_runtime.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">24</span>&nbsp; <span class="chapter-title">Ch24. Vim Runtime</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch25_vimscript_basic_data_types.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">25</span>&nbsp; <span class="chapter-title">Ch25. Vimscript Basic Data Types</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch26_vimscript_conditionals_and_loops.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">26</span>&nbsp; <span class="chapter-title">Ch26. Vimscript Conditionals and Loops</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch27_vimscript_variable_scopes.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">27</span>&nbsp; <span class="chapter-title">Ch27. Vimscript Variable Scopes</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch28_vimscript_functions.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">28</span>&nbsp; <span class="chapter-title">Ch28. Vimscript Functions</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch29_plugin_example_writing-a-titlecase-plugin.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">29</span>&nbsp; <span class="chapter-title">Ch29. Write a Plugin: Creating a Titlecase Operator</span></a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#opening-and-editing-files" id="toc-opening-and-editing-files" class="nav-link active" data-scroll-target="#opening-and-editing-files"><span class="toc-section-number">3.1</span>  Opening and Editing Files</a></li>
+  <li><a href="#searching-files-with-find" id="toc-searching-files-with-find" class="nav-link" data-scroll-target="#searching-files-with-find"><span class="toc-section-number">3.2</span>  Searching Files With Find</a></li>
+  <li><a href="#find-and-path" id="toc-find-and-path" class="nav-link" data-scroll-target="#find-and-path"><span class="toc-section-number">3.3</span>  Find and Path</a></li>
+  <li><a href="#searching-in-files-with-grep" id="toc-searching-in-files-with-grep" class="nav-link" data-scroll-target="#searching-in-files-with-grep"><span class="toc-section-number">3.4</span>  Searching in Files With Grep</a></li>
+  <li><a href="#browsing-files-with-netrw" id="toc-browsing-files-with-netrw" class="nav-link" data-scroll-target="#browsing-files-with-netrw"><span class="toc-section-number">3.5</span>  Browsing Files With Netrw</a></li>
+  <li><a href="#fzf" id="toc-fzf" class="nav-link" data-scroll-target="#fzf"><span class="toc-section-number">3.6</span>  Fzf</a></li>
+  <li><a href="#setup" id="toc-setup" class="nav-link" data-scroll-target="#setup"><span class="toc-section-number">3.7</span>  Setup</a></li>
+  <li><a href="#fzf-syntax" id="toc-fzf-syntax" class="nav-link" data-scroll-target="#fzf-syntax"><span class="toc-section-number">3.8</span>  Fzf Syntax</a></li>
+  <li><a href="#finding-files" id="toc-finding-files" class="nav-link" data-scroll-target="#finding-files"><span class="toc-section-number">3.9</span>  Finding Files</a></li>
+  <li><a href="#finding-in-files" id="toc-finding-in-files" class="nav-link" data-scroll-target="#finding-in-files"><span class="toc-section-number">3.10</span>  Finding in Files</a></li>
+  <li><a href="#other-searches" id="toc-other-searches" class="nav-link" data-scroll-target="#other-searches"><span class="toc-section-number">3.11</span>  Other Searches</a></li>
+  <li><a href="#replacing-grep-with-rg" id="toc-replacing-grep-with-rg" class="nav-link" data-scroll-target="#replacing-grep-with-rg"><span class="toc-section-number">3.12</span>  Replacing Grep With Rg</a></li>
+  <li><a href="#search-and-replace-in-multiple-files" id="toc-search-and-replace-in-multiple-files" class="nav-link" data-scroll-target="#search-and-replace-in-multiple-files"><span class="toc-section-number">3.13</span>  Search and Replace in Multiple Files</a></li>
+  <li><a href="#learn-search-the-smart-way" id="toc-learn-search-the-smart-way" class="nav-link" data-scroll-target="#learn-search-the-smart-way"><span class="toc-section-number">3.14</span>  Learn Search the Smart Way</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title d-none d-lg-block"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Ch03. Searching Files</span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+</header>
+
+<p>The goal of this chapter is to give you an introduction on how to search quickly in Vim. Being able to search quickly is a great way to jump-start your Vim productivity. When I figured out how to search files quickly, I made the switch to use Vim full-time.</p>
+<p>This chapter is divided into two parts: how to search without plugins and how to search with <a href="https://github.com/junegunn/fzf.vim">fzf.vim</a> plugin. Let’s get started!</p>
+<section id="opening-and-editing-files" class="level2" data-number="3.1">
+<h2 data-number="3.1" class="anchored" data-anchor-id="opening-and-editing-files"><span class="header-section-number">3.1</span> Opening and Editing Files</h2>
+<p>To open a file in Vim, you can use <code>:edit</code>.</p>
+<pre><code>:edit file.txt</code></pre>
+<p>If <code>file.txt</code> exists, it opens the <code>file.txt</code> buffer. If <code>file.txt</code> doesn’t exist, it creates a new buffer for <code>file.txt</code>.</p>
+<p>Autocomplete with <code>&lt;Tab&gt;</code> works with <code>:edit</code>. For example, if your file is inside a <a href="https://rubyonrails.org/">Rails</a> <em>a</em>pp <em>c</em>ontroller <em>u</em>sers controller directory <code>./app/controllers/users_controllers.rb</code>, you can use <code>&lt;Tab&gt;</code> to expand the terms quickly:</p>
+<pre><code>:edit a&lt;Tab&gt;c&lt;Tab&gt;u&lt;Tab&gt;</code></pre>
+<p><code>:edit</code> accepts wildcards arguments. <code>*</code> matches any file in the current directory. If you are only looking for files with <code>.yml</code> extension in the current directory:</p>
+<pre><code>:edit *.yml&lt;Tab&gt;</code></pre>
+<p>Vim will give you a list of all <code>.yml</code> files in the current directory to choose from.</p>
+<p>You can use <code>**</code> to search recursively. If you want to look for all <code>*.md</code> files in your project, but you are not sure in which directories, you can do this:</p>
+<pre><code>:edit **/*.md&lt;Tab&gt;</code></pre>
+<p><code>:edit</code> can be used to run <code>netrw</code>, Vim’s built-in file explorer. To do that, give <code>:edit</code> a directory argument instead of file:</p>
+<pre><code>:edit .
+:edit test/unit/</code></pre>
+</section>
+<section id="searching-files-with-find" class="level2" data-number="3.2">
+<h2 data-number="3.2" class="anchored" data-anchor-id="searching-files-with-find"><span class="header-section-number">3.2</span> Searching Files With Find</h2>
+<p>You can find files with <code>:find</code>. For example:</p>
+<pre><code>:find package.json
+:find app/controllers/users_controller.rb</code></pre>
+<p>Autocomplete also works with <code>:find</code>:</p>
+<pre><code>:find p&lt;Tab&gt;                " to find package.json
+:find a&lt;Tab&gt;c&lt;Tab&gt;u&lt;Tab&gt;    " to find app/controllers/users_controller.rb</code></pre>
+<p>You may notice that <code>:find</code> looks like <code>:edit</code>. What’s the difference?</p>
+</section>
+<section id="find-and-path" class="level2" data-number="3.3">
+<h2 data-number="3.3" class="anchored" data-anchor-id="find-and-path"><span class="header-section-number">3.3</span> Find and Path</h2>
+<p>The difference is that <code>:find</code> finds file in <code>path</code>, <code>:edit</code> doesn’t. Let’s learn a little bit about <code>path</code>. Once you learn how to modify your paths, <code>:find</code> can become a powerful searching tool. To check what your paths are, do:</p>
+<pre><code>:set path?</code></pre>
+<p>By default, yours probably look like this:</p>
+<pre><code>path=.,/usr/include,,</code></pre>
+<ul>
+<li><code>.</code> means to search in the directory of the currently opened file.</li>
+<li><code>,</code> means to search in the current directory.</li>
+<li><code>/usr/include</code> is the typical directory for C libraries header files.</li>
+</ul>
+<p>The first two are important in our context and the third one can be ignored for now. The takeaway here is that you can modify your own paths, where Vim will look for files. Let’s assume this is your project structure:</p>
+<pre><code>app/
+  assets/
+  controllers/
+    application_controller.rb
+    comments_controller.rb
+    users_controller.rb
+    ...</code></pre>
+<p>If you want to go to <code>users_controller.rb</code> from the root directory, you have to go through several directories (and pressing a considerable amount of tabs). Often when working with a framework, you spend 90% of your time in a particular directory. In this situation, you only care about going to the <code>controllers/</code> directory with the least amount of keystrokes. The <code>path</code> setting can shorten that journey.</p>
+<p>You need to add the <code>app/controllers/</code> to the current <code>path</code>. Here is how you can do it:</p>
+<pre><code>:set path+=app/controllers/</code></pre>
+<p>Now that your path is updated, when you type <code>:find u&lt;Tab&gt;</code>, Vim will now search inside <code>app/controllers/</code> directory for files starting with <q>u</q>.</p>
+<p>If you have a nested <code>controllers/</code> directory, like <code>app/controllers/account/users_controller.rb</code>, Vim won’t find <code>users_controllers</code>. Instead, you need to add <code>:set path+=app/controllers/**</code> in order for autocompletion will find <code>users_controller.rb</code>. This is great! Now you can find the users controller with 1 press of tab instead of 3.</p>
+<p>You might be thinking to add the entire project directories so when you press <code>tab</code>, Vim will search everywhere for that file, like this:</p>
+<pre><code>:set path+=$PWD/**</code></pre>
+<p><code>$PWD</code> is the current working directory. If you try to add your entire project to <code>path</code> hoping to make all files reachable upon a <code>tab</code> press, although this may work for a small project, doing this will slow down your search significantly if you have a large number of files in your project. I recommend adding only the <code>path</code> of your most visited files / directories.</p>
+<p>You can add the <code>set path+={your-path-here}</code> in your vimrc. Updating <code>path</code> takes only a few seconds and doing so can save you a lot of time.</p>
+</section>
+<section id="searching-in-files-with-grep" class="level2" data-number="3.4">
+<h2 data-number="3.4" class="anchored" data-anchor-id="searching-in-files-with-grep"><span class="header-section-number">3.4</span> Searching in Files With Grep</h2>
+<p>If you need to find in files (find phrases in files), you can use grep. Vim has two ways of doing that:</p>
+<ul>
+<li>Internal grep (<code>:vim</code>. Yes, it is spelled <code>:vim</code>. It is short for <code>:vimgrep</code>).</li>
+<li>External grep (<code>:grep</code>).</li>
+</ul>
+<p>Let’s go through internal grep first. <code>:vim</code> has the following syntax:</p>
+<pre><code>:vim /pattern/ file</code></pre>
+<ul>
+<li><code>/pattern/</code> is a regex pattern of your search term.</li>
+<li><code>file</code> is the file argument. You can pass multiple arguments. Vim will search for the pattern inside the file argument. Similar to <code>:find</code>, you can pass it <code>*</code> and <code>**</code> wildcards.</li>
+</ul>
+<p>For example, to look for all occurrences of <q>breakfast</q> string inside all ruby files (<code>.rb</code>) inside <code>app/controllers/</code> directory:</p>
+<pre><code>:vim /breakfast/ app/controllers/**/*.rb</code></pre>
+<p>After running that, you will be redirected to the first result. Vim’s <code>vim</code> search command uses <code>quickfix</code> operation. To see all search results, run <code>:copen</code>. This opens a <code>quickfix</code> window. Here are some useful quickfix commands to get you productive immediately:</p>
+<pre><code>:copen        Open the quickfix window
+:cclose       Close the quickfix window
+:cnext        Go to the next error
+:cprevious    Go to the previous error
+:colder       Go to the older error list
+:cnewer       Go to the newer error list</code></pre>
+<p>To learn more about quickfix, check out <code>:h quickfix</code>.</p>
+<p>You may notice that running internal grep (<code>:vim</code>) can get slow if you have a large number of matches. This is because Vim loads each matching file into memory, as if it were being edited. If Vim finds a large number of files matching your search, it will load them all and therefore consume a large amount of memory.</p>
+<p>Let’s talk about external grep. By default, it uses <code>grep</code> terminal command. To search for <q>lunch</q> inside a ruby file inside <code>app/controllers/</code> directory, you can do this:</p>
+<pre><code>:grep -R "lunch" app/controllers/</code></pre>
+<p>Note that instead of using <code>/pattern/</code>, it follows the terminal grep syntax <code>"pattern"</code>. It also displays all matches using <code>quickfix</code>.</p>
+<p>Vim defines the <code>grepprg</code> variable to determine which external program to run when running the <code>:grep</code> Vim command so that you don’t have to close Vim and invoke the terminal <code>grep</code> command. Later, I will show you how to change the default program invoked when using the <code>:grep</code> Vim command.</p>
+</section>
+<section id="browsing-files-with-netrw" class="level2" data-number="3.5">
+<h2 data-number="3.5" class="anchored" data-anchor-id="browsing-files-with-netrw"><span class="header-section-number">3.5</span> Browsing Files With Netrw</h2>
+<p><code>netrw</code> is Vim’s built-in file explorer. It is useful to see a project’s hierarchy. To run <code>netrw</code>, you need these two settings in your <code>.vimrc</code>:</p>
+<pre><code>set nocp
+filetype plugin on</code></pre>
+<p>Since <code>netrw</code> is a vast topic, I will only cover the basic usage, but it should be enough to get you started. You can start <code>netrw</code> when you launch Vim by passing it a directory as a parameter instead of a file. For example:</p>
+<pre><code>vim .
+vim src/client/
+vim app/controllers/</code></pre>
+<p>To launch <code>netrw</code> from inside Vim, you can use the <code>:edit</code> command and pass it a directory parameter instead of a filename:</p>
+<pre><code>:edit .
+:edit src/client/
+:edit app/controllers/</code></pre>
+<p>There are other ways to launch <code>netrw</code> window without passing a directory:</p>
+<pre><code>:Explore     Starts netrw on current file
+:Sexplore    No kidding. Starts netrw on split top half of the screen
+:Vexplore    Starts netrw on split left half of the screen</code></pre>
+<p>You can navigate <code>netrw</code> with Vim motions (motions will be covered in depth in a later chapter). If you need to create, delete, or rename a file or directory, here is a list of useful <code>netrw</code> commands:</p>
+<pre><code>%    Create a new file
+d    Create a new directory
+R    Rename a file or directory
+D    Delete a file or directory</code></pre>
+<p><code>:h netrw</code> is very comprehensive. Check it out if you have time.</p>
+<p>If you find <code>netrw</code> too bland and need more flavor, <a href="https://github.com/tpope/vim-vinegar">vim-vinegar</a> is a good plugin to improve <code>netrw</code>. If you’re looking for a different file explorer, <a href="https://github.com/preservim/nerdtree">NERDTree</a> is a good alternative. Check them out!</p>
+</section>
+<section id="fzf" class="level2" data-number="3.6">
+<h2 data-number="3.6" class="anchored" data-anchor-id="fzf"><span class="header-section-number">3.6</span> Fzf</h2>
+<p>Now that you’ve learned how to search files in Vim with built-in tools, let’s learn how to do it with plugins.</p>
+<p>One thing that modern text editors get right and that Vim didn’t is how easy it is to find files, especially via fuzzy search. In this second half of the chapter, I will show you how to use <a href="https://github.com/junegunn/fzf.vim">fzf.vim</a> to make searching in Vim easy and powerful.</p>
+</section>
+<section id="setup" class="level2" data-number="3.7">
+<h2 data-number="3.7" class="anchored" data-anchor-id="setup"><span class="header-section-number">3.7</span> Setup</h2>
+<p>First, make sure you have <a href="https://github.com/junegunn/fzf">fzf</a> and <a href="https://github.com/BurntSushi/ripgrep">ripgrep</a> downloaded. Follow the instruction on their github repo. The commands <code>fzf</code> and <code>rg</code> should now be available after successful installs.</p>
+<p>Ripgrep is a search tool much like grep (hence the name). It is generally faster than grep and has many useful features. Fzf is a general-purpose command-line fuzzy finder. You can use it with any commands, including ripgrep. Together, they make a powerful search tool combination.</p>
+<p>Fzf does not use ripgrep by default, so we need to tell fzf to use ripgrep by defining a <code>FZF_DEFAULT_COMMAND</code> variable. In my <code>.zshrc</code> (<code>.bashrc</code> if you use bash), I have these:</p>
+<pre><code>if type rg &amp;&gt; /dev/null; then
+  export FZF_DEFAULT_COMMAND='rg --files'
+  export FZF_DEFAULT_OPTS='-m'
+fi</code></pre>
+<p>Pay attention to <code>-m</code> in <code>FZF_DEFAULT_OPTS</code>. This option allows us to make multiple selections with <code>&lt;Tab&gt;</code> or <code>&lt;Shift-Tab&gt;</code>. You don’t need this line to make fzf work with Vim, but I think it is a useful option to have. It will come in handy when you want to perform search and replace in multiple files which I’ll cover in just a little. The fzf command accepts many more options, but I won’t cover them here. To learn more, check out <a href="https://github.com/junegunn/fzf#usage">fzf’s repo</a> or <code>man fzf</code>. At minimum you should have <code>export FZF_DEFAULT_COMMAND='rg'</code>.</p>
+<p>After installing fzf and ripgrep, let’s set up the fzf plugin. I am using <a href="https://github.com/junegunn/vim-plug">vim-plug</a> plugin manager in this example, but you can use any plugin managers.</p>
+<p>Add these inside your <code>.vimrc</code> plugins. You need to use <a href="https://github.com/junegunn/fzf.vim">fzf.vim</a> plugin (created by the same fzf author).</p>
+<pre><code>call plug#begin()
+Plug 'junegunn/fzf.vim'
+Plug 'junegunn/fzf', { 'do': { -&gt; fzf#install() } }
+call plug#end()</code></pre>
+<p>After adding these lines, you will need to open <code>vim</code> and run <code>:PlugInstall</code>. It will install all plugins that are defined in your <code>vimrc</code> file and are not installed. In our case, it will install <code>fzf.vim</code> and <code>fzf</code>.</p>
+<p>For more info about this plugin, you can check out <a href="https://github.com/junegunn/fzf/blob/master/README-VIM.md">fzf.vim repo</a>.</p>
+</section>
+<section id="fzf-syntax" class="level2" data-number="3.8">
+<h2 data-number="3.8" class="anchored" data-anchor-id="fzf-syntax"><span class="header-section-number">3.8</span> Fzf Syntax</h2>
+<p>To use fzf efficiently, you should learn some basic fzf syntax. Fortunately, the list is short:</p>
+<ul>
+<li><code>^</code> is a prefix exact match. To search for a phrase starting with <q>welcome</q>: <code>^welcome</code>.</li>
+<li><code>$</code> is a suffix exact match. To search for a phrase ending with <q>my friends</q>: <code>friends$</code>.</li>
+<li><code>'</code> is an exact match. To search for the phrase <q>welcome my friends</q>: <code>'welcome my friends</code>.</li>
+<li><code>|</code> is an <q>or</q> match. To search for either <q>friends</q> or <q>foes</q>: <code>friends | foes</code>.</li>
+<li><code>!</code> is an inverse match. To search for phrase containing <q>welcome</q> and not <q>friends</q>: <code>welcome !friends</code></li>
+</ul>
+<p>You can mix and match these options. For example, <code>^hello | ^welcome friends$</code> will search for the phrase starting with either <q>welcome</q> or <q>hello</q> and ending with <q>friends</q>.</p>
+</section>
+<section id="finding-files" class="level2" data-number="3.9">
+<h2 data-number="3.9" class="anchored" data-anchor-id="finding-files"><span class="header-section-number">3.9</span> Finding Files</h2>
+<p>To search for files inside Vim using fzf.vim plugin, you can use the <code>:Files</code> method. Run <code>:Files</code> from Vim and you will be prompted with fzf search prompt.</p>
+<p>Since you will be using this command frequently, it is good to have this mapped to a keyboard shortcut. I map mine to <code>Ctrl-f</code>. In my vimrc, I have this:</p>
+<pre><code>nnoremap &lt;silent&gt; &lt;C-f&gt; :Files&lt;CR&gt;</code></pre>
+</section>
+<section id="finding-in-files" class="level2" data-number="3.10">
+<h2 data-number="3.10" class="anchored" data-anchor-id="finding-in-files"><span class="header-section-number">3.10</span> Finding in Files</h2>
+<p>To search inside files, you can use the <code>:Rg</code> command.</p>
+<p>Again, since you will probably use this frequently, let’s map it to a keyboard shortcut. I map mine to <code>&lt;Leader&gt;f</code>. The <code>&lt;Leader&gt;</code> key is mapped to <code>\</code> by default.</p>
+<pre><code>nnoremap &lt;silent&gt; &lt;Leader&gt;f :Rg&lt;CR&gt;</code></pre>
+</section>
+<section id="other-searches" class="level2" data-number="3.11">
+<h2 data-number="3.11" class="anchored" data-anchor-id="other-searches"><span class="header-section-number">3.11</span> Other Searches</h2>
+<p>Fzf.vim provides many other search commands. I won’t go through each one of them here, but you can check them out <a href="https://github.com/junegunn/fzf.vim#commands">here</a>.</p>
+<p>Here’s what my fzf maps look like:</p>
+<pre><code>nnoremap &lt;silent&gt; &lt;Leader&gt;b :Buffers&lt;CR&gt;
+nnoremap &lt;silent&gt; &lt;C-f&gt; :Files&lt;CR&gt;
+nnoremap &lt;silent&gt; &lt;Leader&gt;f :Rg&lt;CR&gt;
+nnoremap &lt;silent&gt; &lt;Leader&gt;/ :BLines&lt;CR&gt;
+nnoremap &lt;silent&gt; &lt;Leader&gt;' :Marks&lt;CR&gt;
+nnoremap &lt;silent&gt; &lt;Leader&gt;g :Commits&lt;CR&gt;
+nnoremap &lt;silent&gt; &lt;Leader&gt;H :Helptags&lt;CR&gt;
+nnoremap &lt;silent&gt; &lt;Leader&gt;hh :History&lt;CR&gt;
+nnoremap &lt;silent&gt; &lt;Leader&gt;h: :History:&lt;CR&gt;
+nnoremap &lt;silent&gt; &lt;Leader&gt;h/ :History/&lt;CR&gt;</code></pre>
+</section>
+<section id="replacing-grep-with-rg" class="level2" data-number="3.12">
+<h2 data-number="3.12" class="anchored" data-anchor-id="replacing-grep-with-rg"><span class="header-section-number">3.12</span> Replacing Grep With Rg</h2>
+<p>As mentioned earlier, Vim has two ways to search in files: <code>:vim</code> and <code>:grep</code>. <code>:grep</code> uses external search tool that you can reassign using the <code>grepprg</code> keyword. I will show you how to configure Vim to use ripgrep instead of terminal grep when running the <code>:grep</code> command.</p>
+<p>Now let’s setup <code>grepprg</code> so that the <code>:grep</code> Vim command uses ripgrep. Add this in your vimrc:</p>
+<pre><code>set grepprg=rg\ --vimgrep\ --smart-case\ --follow</code></pre>
+<p>Feel free to modify some of the options above! For more information on what the options above mean, check out <code>man rg</code>.</p>
+<p>After you updated <code>grepprg</code>, now when you run <code>:grep</code>, it runs <code>rg --vimgrep --smart-case --follow</code> instead of <code>grep</code>. If you want to search for <q>donut</q> using ripgrep, you can now run a more succinct command <code>:grep "donut"</code> instead of <code>:grep "donut" . -R</code></p>
+<p>Just like the old <code>:grep</code>, this new <code>:grep</code> also uses quickfix to display results.</p>
+<p>You might wonder, “Well, this is nice but I never used <code>:grep</code> in Vim, plus can’t I just use <code>:Rg</code> to find phrases in files? When will I ever need to use <code>:grep</code>?</p>
+<p>That is a very good question. You may need to use <code>:grep</code> in Vim to do search and replace in multiple files, which I will cover next.</p>
+</section>
+<section id="search-and-replace-in-multiple-files" class="level2" data-number="3.13">
+<h2 data-number="3.13" class="anchored" data-anchor-id="search-and-replace-in-multiple-files"><span class="header-section-number">3.13</span> Search and Replace in Multiple Files</h2>
+<p>Modern text editors like VSCode makes it very easy to search and replace a string across multiple files. In this section, I will show you two different methods to easily do that in Vim.</p>
+<p>The first method is to replace <em>all</em> matching phrases in your project. You will need to use <code>:grep</code>. If you want to replace all instances of <q>pizza</q> with <q>donut</q>, here’s what you do:</p>
+<pre><code>:grep "pizza"
+:cfdo %s/pizza/donut/g | update</code></pre>
+<p>Let’s break down the commands:</p>
+<ol type="1">
+<li><code>:grep pizza</code> uses ripgrep to search for all instances of <q>pizza</q> (by the way, this would still work even if you didn’t reassign <code>grepprg</code> to use ripgrep. You would have to do <code>:grep "pizza" . -R</code> instead of <code>:grep "pizza"</code>).</li>
+<li><code>:cfdo</code> executes any command you pass to all files in your quickfix list. In this case, your command is the substitution command <code>%s/pizza/donut/g</code>. The pipe (<code>|</code>) is a chain operator. The <code>update</code> command saves each file after substitution. I will cover the substitute command in more depth in a later chapter.</li>
+</ol>
+<p>The second method is to search and replace in selected files. With this method, you can manually choose which files you want to perform select-and-replace on. Here is what you do:</p>
+<ol type="1">
+<li>Clear your buffers first. It is imperative that your buffer list contains only the files you want to apply the replace on. You can either restart Vim or run <code>:%bd | e#</code> command (<code>%bd</code> deletes all the buffers and <code>e#</code> opens the file you were just on).</li>
+<li>Run <code>:Files</code>.</li>
+<li>Select all files you want to perform search-and-replace on. To select multiple files, use <code>&lt;Tab&gt;</code> / <code>&lt;Shift-Tab&gt;</code>. This is only possible if you have the multiple flag (<code>-m</code>) in <code>FZF_DEFAULT_OPTS</code>.</li>
+<li>Run <code>:bufdo %s/pizza/donut/g | update</code>. The command <code>:bufdo %s/pizza/donut/g | update</code> looks similar to the earlier <code>:cfdo %s/pizza/donut/g | update</code> command. The difference is instead of substituting all quickfix entries (<code>:cfdo</code>), you are substituting all buffer entries (<code>:bufdo</code>).</li>
+</ol>
+</section>
+<section id="learn-search-the-smart-way" class="level2" data-number="3.14">
+<h2 data-number="3.14" class="anchored" data-anchor-id="learn-search-the-smart-way"><span class="header-section-number">3.14</span> Learn Search the Smart Way</h2>
+<p>Searching is the bread-and-butter of text editing. Learning how to search well in Vim will improve your text editing workflow significantly.</p>
+<p>Fzf.vim is a game-changer. I can’t imagine using Vim without it. I think it is very important to have a good search tool when starting Vim. I’ve seen people struggling to transition to Vim because it seems to be missing critical features modern text editors have, like an easy and powerful search feature. I hope this chapter will help you to make the transition to Vim easier.</p>
+<p>You also just saw Vim’s extensibility in action - the ability to extend search functionality with a plugin and an external program. In the future, keep in mind of what other features you wish to extend Vim with. Chances are, it’s already in Vim, someone has created a plugin or there is a program for it already. Next, you’ll learn about a very important topic in Vim: Vim grammar.</p>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const disableStylesheet = (stylesheets) => {
+    for (let i=0; i < stylesheets.length; i++) {
+      const stylesheet = stylesheets[i];
+      stylesheet.rel = 'prefetch';
+    }
+  }
+  const enableStylesheet = (stylesheets) => {
+    for (let i=0; i < stylesheets.length; i++) {
+      const stylesheet = stylesheets[i];
+      stylesheet.rel = 'stylesheet';
+    }
+  }
+  const manageTransitions = (selector, allowTransitions) => {
+    const els = window.document.querySelectorAll(selector);
+    for (let i=0; i < els.length; i++) {
+      const el = els[i];
+      if (allowTransitions) {
+        el.classList.remove('notransition');
+      } else {
+        el.classList.add('notransition');
+      }
+    }
+  }
+  const toggleColorMode = (alternate) => {
+    // Switch the stylesheets
+    const alternateStylesheets = window.document.querySelectorAll('link.quarto-color-scheme.quarto-color-alternate');
+    manageTransitions('#quarto-margin-sidebar .nav-link', false);
+    if (alternate) {
+      enableStylesheet(alternateStylesheets);
+      for (const sheetNode of alternateStylesheets) {
+        if (sheetNode.id === "quarto-bootstrap") {
+          toggleBodyColorMode(sheetNode);
+        }
+      }
+    } else {
+      disableStylesheet(alternateStylesheets);
+      toggleBodyColorPrimary();
+    }
+    manageTransitions('#quarto-margin-sidebar .nav-link', true);
+    // Switch the toggles
+    const toggles = window.document.querySelectorAll('.quarto-color-scheme-toggle');
+    for (let i=0; i < toggles.length; i++) {
+      const toggle = toggles[i];
+      if (toggle) {
+        if (alternate) {
+          toggle.classList.add("alternate");     
+        } else {
+          toggle.classList.remove("alternate");
+        }
+      }
+    }
+    // Hack to workaround the fact that safari doesn't
+    // properly recolor the scrollbar when toggling (#1455)
+    if (navigator.userAgent.indexOf('Safari') > 0 && navigator.userAgent.indexOf('Chrome') == -1) {
+      manageTransitions("body", false);
+      window.scrollTo(0, 1);
+      setTimeout(() => {
+        window.scrollTo(0, 0);
+        manageTransitions("body", true);
+      }, 40);  
+    }
+  }
+  const isFileUrl = () => { 
+    return window.location.protocol === 'file:';
+  }
+  const hasAlternateSentinel = () => {  
+    let styleSentinel = getColorSchemeSentinel();
+    if (styleSentinel !== null) {
+      return styleSentinel === "alternate";
+    } else {
+      return false;
+    }
+  }
+  const setStyleSentinel = (alternate) => {
+    const value = alternate ? "alternate" : "default";
+    if (!isFileUrl()) {
+      window.localStorage.setItem("quarto-color-scheme", value);
+    } else {
+      localAlternateSentinel = value;
+    }
+  }
+  const getColorSchemeSentinel = () => {
+    if (!isFileUrl()) {
+      const storageValue = window.localStorage.getItem("quarto-color-scheme");
+      return storageValue != null ? storageValue : localAlternateSentinel;
+    } else {
+      return localAlternateSentinel;
+    }
+  }
+  let localAlternateSentinel = 'alternate';
+  // Dark / light mode switch
+  window.quartoToggleColorScheme = () => {
+    // Read the current dark / light value 
+    let toAlternate = !hasAlternateSentinel();
+    toggleColorMode(toAlternate);
+    setStyleSentinel(toAlternate);
+  };
+  // Ensure there is a toggle, if there isn't float one in the top right
+  if (window.document.querySelector('.quarto-color-scheme-toggle') === null) {
+    const a = window.document.createElement('a');
+    a.classList.add('top-right');
+    a.classList.add('quarto-color-scheme-toggle');
+    a.href = "";
+    a.onclick = function() { try { window.quartoToggleColorScheme(); } catch {} return false; };
+    const i = window.document.createElement("i");
+    i.classList.add('bi');
+    a.appendChild(i);
+    window.document.body.appendChild(a);
+  }
+  // Switch to dark mode if need be
+  if (hasAlternateSentinel()) {
+    toggleColorMode(true);
+  } else {
+    toggleColorMode(false);
+  }
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    target: function(trigger) {
+      return trigger.previousElementSibling;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="../chapters/ch02_buffers_windows_tabs.md.html" class="pagination-link">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Ch02. Buffers, Windows, and Tabs</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="../chapters/ch04_vim_grammar.md.html" class="pagination-link">
+        <span class="nav-page-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Ch04. Vim Grammar</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+
+
+
+</body></html>

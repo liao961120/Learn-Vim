@@ -1,0 +1,756 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.2.313">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Learn Vim (the Smart Way) - 4&nbsp; Ch04. Vim Grammar</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1.6em;
+  vertical-align: middle;
+}
+q { quotes: "“" "”" "‘" "’"; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { color: #008000; } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { color: #008000; font-weight: bold; } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<link href="../chapters/ch05_moving_in_file.md.html" rel="next">
+<link href="../chapters/ch03_searching_files.md.html" rel="prev">
+<script src="../site_libs/quarto-html/quarto.js"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-dark.min.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit"
+  }
+}</script>
+
+
+</head>
+
+<body class="nav-sidebar floating">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+    <div class="container-fluid d-flex justify-content-between">
+      <h1 class="quarto-secondary-nav-title"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Ch04. Vim Grammar</span></h1>
+      <button type="button" class="quarto-btn-toggle btn" aria-label="Show secondary navigation">
+        <i class="bi bi-chevron-right"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="../">Learn Vim (the Smart Way)</a> 
+        <div class="sidebar-tools-main">
+    <a href="https://github.com/iggredible/Learn-Vim" title="" class="sidebar-tool px-1"><i class="bi bi-github"></i></a>
+  <a href="" class="quarto-color-scheme-toggle sidebar-tool" onclick="window.quartoToggleColorScheme(); return false;" title="Toggle dark mode"><i class="bi"></i></a>
+</div>
+    </div>
+      </div>
+      <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+      </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../index.html" class="sidebar-item-text sidebar-link">Preface</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch01_starting_vim.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Ch01. Starting Vim</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch02_buffers_windows_tabs.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Ch02. Buffers, Windows, and Tabs</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch03_searching_files.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Ch03. Searching Files</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch04_vim_grammar.md.html" class="sidebar-item-text sidebar-link active"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Ch04. Vim Grammar</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch05_moving_in_file.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Ch05. Moving in a File</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch06_insert_mode.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Ch06. Insert Mode</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch07_the_dot_command.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Ch07. the Dot Command</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch08_registers.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Ch08. Registers</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch09_macros.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Ch09. Macros</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch10_undo.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Ch10. Undo</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch11_visual_mode.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Ch11. Visual Mode</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch12_search_and_substitute.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Ch12. Search and Substitute</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch13_the_global_command.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Ch13. the Global Command</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch14_external_commands.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Ch14. External Commands</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch15_command-line_mode.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">Ch15. Command-line Mode</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch16_tags.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Ch16. Tags</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch17_fold.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">Ch17. Fold</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch18_git.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">18</span>&nbsp; <span class="chapter-title">Ch18. Git</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch19_compile.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">19</span>&nbsp; <span class="chapter-title">Ch19. Compile</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch20_views_sessions_viminfo.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">20</span>&nbsp; <span class="chapter-title">Ch20. Views, Sessions, and Viminfo</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch21_multiple_file_operations.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">21</span>&nbsp; <span class="chapter-title">Multiple File Operations</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch22_vimrc.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">22</span>&nbsp; <span class="chapter-title">Ch22. Vimrc</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch23_vim_packages.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">23</span>&nbsp; <span class="chapter-title">Ch23. Vim Packages</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch24_vim_runtime.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">24</span>&nbsp; <span class="chapter-title">Ch24. Vim Runtime</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch25_vimscript_basic_data_types.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">25</span>&nbsp; <span class="chapter-title">Ch25. Vimscript Basic Data Types</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch26_vimscript_conditionals_and_loops.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">26</span>&nbsp; <span class="chapter-title">Ch26. Vimscript Conditionals and Loops</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch27_vimscript_variable_scopes.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">27</span>&nbsp; <span class="chapter-title">Ch27. Vimscript Variable Scopes</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch28_vimscript_functions.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">28</span>&nbsp; <span class="chapter-title">Ch28. Vimscript Functions</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/ch29_plugin_example_writing-a-titlecase-plugin.md.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">29</span>&nbsp; <span class="chapter-title">Ch29. Write a Plugin: Creating a Titlecase Operator</span></a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#how-to-learn-a-language" id="toc-how-to-learn-a-language" class="nav-link active" data-scroll-target="#how-to-learn-a-language"><span class="toc-section-number">4.1</span>  How to Learn a Language</a></li>
+  <li><a href="#grammar-rule" id="toc-grammar-rule" class="nav-link" data-scroll-target="#grammar-rule"><span class="toc-section-number">4.2</span>  Grammar Rule</a></li>
+  <li><a href="#nouns-motions" id="toc-nouns-motions" class="nav-link" data-scroll-target="#nouns-motions"><span class="toc-section-number">4.3</span>  Nouns (Motions)</a></li>
+  <li><a href="#verbs-operators" id="toc-verbs-operators" class="nav-link" data-scroll-target="#verbs-operators"><span class="toc-section-number">4.4</span>  Verbs (Operators)</a></li>
+  <li><a href="#verb-and-noun" id="toc-verb-and-noun" class="nav-link" data-scroll-target="#verb-and-noun"><span class="toc-section-number">4.5</span>  Verb and Noun</a></li>
+  <li><a href="#more-nouns-text-objects" id="toc-more-nouns-text-objects" class="nav-link" data-scroll-target="#more-nouns-text-objects"><span class="toc-section-number">4.6</span>  More Nouns (Text Objects)</a></li>
+  <li><a href="#composability-and-grammar" id="toc-composability-and-grammar" class="nav-link" data-scroll-target="#composability-and-grammar"><span class="toc-section-number">4.7</span>  Composability and Grammar</a></li>
+  <li><a href="#learn-vim-grammar-the-smart-way" id="toc-learn-vim-grammar-the-smart-way" class="nav-link" data-scroll-target="#learn-vim-grammar-the-smart-way"><span class="toc-section-number">4.8</span>  Learn Vim Grammar the Smart Way</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title d-none d-lg-block"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Ch04. Vim Grammar</span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+</header>
+
+<p>It is easy to get intimidated by the complexity of Vim commands. If you see a Vim user doing <code>gUfV</code> or <code>1GdG</code>, you may not immediately know what these commands do. In this chapter, I will break down the general structure of Vim commands into a simple grammar rule.</p>
+<p>This is the most important chapter in the entire guide. Once you understand the underlying grammatical structure, you will be able to <q>speak</q> to Vim. By the way, when I say <em>Vim language</em> in this chapter, I am not talking about Vimscript language (Vim’s built-in programming language, you will learn that in later chapters).</p>
+<section id="how-to-learn-a-language" class="level2" data-number="4.1">
+<h2 data-number="4.1" class="anchored" data-anchor-id="how-to-learn-a-language"><span class="header-section-number">4.1</span> How to Learn a Language</h2>
+<p>I am not a native English speaker. I learned English when I was 13 when I moved to the US. There are three things you need to do to learn to speak a new language:</p>
+<ol type="1">
+<li>Learn grammar rules.</li>
+<li>Increase vocabulary.</li>
+<li>Practice, practice, practice.</li>
+</ol>
+<p>Likewise, to speak Vim language, you need to learn the grammar rules, increase vocabulary, and practice until you can run the commands without thinking.</p>
+</section>
+<section id="grammar-rule" class="level2" data-number="4.2">
+<h2 data-number="4.2" class="anchored" data-anchor-id="grammar-rule"><span class="header-section-number">4.2</span> Grammar Rule</h2>
+<p>There is only one grammar rule in Vim language:</p>
+<pre><code>verb + noun</code></pre>
+<p>That’s it!</p>
+<p>This is like saying these English phrases:</p>
+<ul>
+<li><em><q>Eat (verb) a donut (noun)</q></em></li>
+<li><em><q>Kick (verb) a ball (noun)</q></em></li>
+<li><em><q>Learn (verb) the Vim editor (noun)</q></em></li>
+</ul>
+<p>Now you need to build up your vocabulary with basic Vim verbs and nouns.</p>
+</section>
+<section id="nouns-motions" class="level2" data-number="4.3">
+<h2 data-number="4.3" class="anchored" data-anchor-id="nouns-motions"><span class="header-section-number">4.3</span> Nouns (Motions)</h2>
+<p>Nouns are Vim motions. Motions are used to move around in Vim. Below is a list of some of Vim motions:</p>
+<pre><code>h    Left
+j    Down
+k    Up
+l    Right
+w    Move forward to the beginning of the next word
+}    Jump to the next paragraph
+$    Go to the end of the line</code></pre>
+<p>You will learn more about motions in the next chapter, so don’t worry too much if you don’t understand some of them.</p>
+</section>
+<section id="verbs-operators" class="level2" data-number="4.4">
+<h2 data-number="4.4" class="anchored" data-anchor-id="verbs-operators"><span class="header-section-number">4.4</span> Verbs (Operators)</h2>
+<p>According to <code>:h operator</code>, Vim has 16 operators. However, in my experience, learning these 3 operators is enough for 80% of my editing needs:</p>
+<pre><code>y    Yank text (copy)
+d    Delete text and save to register
+c    Delete text, save to register, and start insert mode</code></pre>
+<p>Btw, after you yank a text, you can paste it with <code>p</code> (after the cursor) or <code>P</code> (before the cursor).</p>
+</section>
+<section id="verb-and-noun" class="level2" data-number="4.5">
+<h2 data-number="4.5" class="anchored" data-anchor-id="verb-and-noun"><span class="header-section-number">4.5</span> Verb and Noun</h2>
+<p>Now that you know basic nouns and verbs, let’s apply the grammar rule, verb + noun! Suppose you have this expression:</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode numberSource javascript number-lines code-with-copy"><code class="sourceCode javascript"><span id="cb4-1"><a href="#cb4-1"></a><span class="kw">const</span> learn <span class="op">=</span> <span class="st">"vim"</span><span class="op">;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<ul>
+<li>To yank everything from your current location to the end of the line: <code>y$</code>.</li>
+<li>To delete from your current location to the beginning of the next word: <code>dw</code>.</li>
+<li>To change from your current location to the end of the current paragraph, say <code>c}</code>.</li>
+</ul>
+<p>Motions also accept count number as arguments (I will discuss this in the next chapter). If you need to go up 3 lines, instead of pressing <code>k</code> 3 times, you can do <code>3k</code>. Count works with Vim grammar. - To yank two characters to the left: <code>y2h</code>. - To delete the next two words: <code>d2w</code>. - To change the next two lines: <code>c2j</code>.</p>
+<p>Right now, you may have to think long and hard to execute even a simple command. You’re not alone. When I first started, I had similar struggles but I got faster in time. So will you. Repetition, repetition, repetition.</p>
+<p>As a side note, linewise operations (operations affecting the entire line) are common operations in text editing. In general, by typing an operator command twice, Vim performs a linewise operation for that action. For example, <code>dd</code>, <code>yy</code>, and <code>cc</code> perform <strong>deletion</strong>, <strong>yank</strong>, and <strong>change</strong> on the entire line. Try this with other operators!</p>
+<p>This is really cool. I am seeing a pattern here. But I am not quite done yet. Vim has one more type of noun: text objects.</p>
+</section>
+<section id="more-nouns-text-objects" class="level2" data-number="4.6">
+<h2 data-number="4.6" class="anchored" data-anchor-id="more-nouns-text-objects"><span class="header-section-number">4.6</span> More Nouns (Text Objects)</h2>
+<p>Imagine you are somewhere inside a pair of parentheses like <code>(hello Vim)</code> and you need to delete the entire phrase inside the parentheses. How can you quickly do it? Is there a way to delete the <q>group</q> you are inside of?</p>
+<p>The answer is yes. Texts often come structured. They often contain parentheses, quotes, brackets, braces, and more. Vim has a way to capture this structure with text objects.</p>
+<p>Text objects are used with operators. There are two types of text objects: inner and outer text objects.</p>
+<pre><code>i + object    Inner text object
+a + object    Outer text object</code></pre>
+<p>Inner text object selects the object inside <em>without</em> the white space or the surrounding objects. Outer text object selects the object inside <em>including</em> the white space or the surrounding objects. Generally, an outer text object always selects more text than an inner text object. If your cursor is somewhere inside the parentheses in the expression <code>(hello Vim)</code>: - To delete the text inside the parentheses without deleting the parentheses: <code>di(</code>. - To delete the parentheses and the text inside: <code>da(</code>.</p>
+<p>Let’s look at a different example. Suppose you have this Javascript function and your cursor is on the <q>H</q> in <q>Hello</q>:</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode numberSource javascript number-lines code-with-copy"><code class="sourceCode javascript"><span id="cb6-1"><a href="#cb6-1"></a><span class="kw">const</span> hello <span class="op">=</span> <span class="kw">function</span>() {</span>
+<span id="cb6-2"><a href="#cb6-2"></a>  <span class="bu">console</span><span class="op">.</span><span class="fu">log</span>(<span class="st">"Hello Vim"</span>)<span class="op">;</span></span>
+<span id="cb6-3"><a href="#cb6-3"></a>  <span class="cf">return</span> <span class="kw">true</span><span class="op">;</span></span>
+<span id="cb6-4"><a href="#cb6-4"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<ul>
+<li>To delete the entire <q>Hello Vim</q>: <code>di(</code>.</li>
+<li>To delete the content of function (surrounded by <code>{}</code>): <code>di{</code>.</li>
+<li>To delete the <q>Hello</q> string: <code>diw</code>.</li>
+</ul>
+<p>Text objects are powerful because you can target different objects from one location. You can delete the objects inside the parentheses, the function block, or the current word. Mnemonically, when you see <code>di(</code>, <code>di{</code>, and <code>diw</code>, you get a pretty good idea which text objects they represent: a pair of parentheses, a pair of braces, and a word.</p>
+<p>Let’s look at one last example. Suppose you have these HTML tags:</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode numberSource html number-lines code-with-copy"><code class="sourceCode html"><span id="cb7-1"><a href="#cb7-1"></a><span class="kw">&lt;div&gt;</span></span>
+<span id="cb7-2"><a href="#cb7-2"></a>  <span class="kw">&lt;h1&gt;</span>Header1<span class="kw">&lt;/h1&gt;</span></span>
+<span id="cb7-3"><a href="#cb7-3"></a>  <span class="kw">&lt;p&gt;</span>Paragraph1<span class="kw">&lt;/p&gt;</span></span>
+<span id="cb7-4"><a href="#cb7-4"></a>  <span class="kw">&lt;p&gt;</span>Paragraph2<span class="kw">&lt;/p&gt;</span></span>
+<span id="cb7-5"><a href="#cb7-5"></a><span class="kw">&lt;/div&gt;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>If your cursor is on <q>Header1</q> text: - To delete <q>Header1</q>: <code>dit</code>. - To delete <code>&lt;h1&gt;Header1&lt;/h1&gt;</code>: <code>dat</code>.</p>
+<p>If your cursor is on <q>div</q>: - To delete <code>h1</code> and both <code>p</code> lines: <code>dit</code>. - To delete everything: <code>dat</code>. - To delete <q>div</q>: <code>di&lt;</code>.</p>
+<p>Below is a list of common text objects:</p>
+<pre><code>w         A word
+p         A paragraph
+s         A sentence
+( or )    A pair of ( )
+{ or }    A pair of { }
+[ or ]    A pair of [ ]
+&lt; or &gt;    A pair of &lt; &gt;
+t         XML tags
+"         A pair of " "
+'         A Pair of ' '
+`         A pair of ` `</code></pre>
+<p>To learn more, check out <code>:h text-objects</code>.</p>
+</section>
+<section id="composability-and-grammar" class="level2" data-number="4.7">
+<h2 data-number="4.7" class="anchored" data-anchor-id="composability-and-grammar"><span class="header-section-number">4.7</span> Composability and Grammar</h2>
+<p>Vim grammar is subset of Vim’s composability feature. Let’s discuss composability in Vim and why this is a great feature to have in a text editor.</p>
+<p>Composability means having a set of general commands that can be combined (composed) to perform more complex commands. Just like in programming where you can create more complex abstractions from simpler abstractions, in Vim you can execute complex commands from simpler commands. Vim grammar is the manifestation of Vim’s composable nature.</p>
+<p>The true power of Vim’s composability shines when it integrates with external programs. Vim has a filter operator (<code>!</code>) to use external programs as filters for our texts. Suppose you have this messy text below and you want to tabularize it:</p>
+<pre><code>Id|Name|Cuteness
+01|Puppy|Very
+02|Kitten|Ok
+03|Bunny|Ok</code></pre>
+<p>This cannot be easily done with Vim commands, but you can get it done quickly with <code>column</code> terminal command (assuming your terminal has <code>column</code> command). With your cursor on <q>Id</q>, run <code>!}column -t -s "|"</code>. Voila! Now you have this pretty tabular data with just one quick command.</p>
+<pre><code>Id  Name    Cuteness
+01  Puppy   Very
+02  Kitten  Ok
+03  Bunny   Ok</code></pre>
+<p>Let’s break down the command. The verb was <code>!</code> (filter operator) and the noun was <code>}</code> (go to next paragraph). The filter operator <code>!</code> accepted another argument, a terminal command, so I gave it <code>column -t -s "|"</code>. I won’t go through how <code>column</code> worked, but in effect, it tabularized the text.</p>
+<p>Suppose you want to not only tabularize your text, but to display only the rows with <q>Ok</q>. You know that <code>awk</code> can do the job easily. You can do this instead:</p>
+<pre><code>!}column -t -s "|" | awk 'NR &gt; 1 &amp;&amp; /Ok/ {print $0}'</code></pre>
+<p>Result:</p>
+<pre><code>02  Kitten  Ok
+03  Bunny   Ok</code></pre>
+<p>Great! The external command operator can also use pipe (<code>|</code>).</p>
+<p>This is the power of Vim’s composability. The more you know your operators, motions, and terminal commands, your ability to compose complex actions is <em>multiplied</em>.</p>
+<p>Suppose you only know four motions, <code>w, $, }, G</code> and only one operator, <code>d</code>. You can do 8 actions: <em>move</em> 4 different ways (<code>w, $, }, G</code>) and <em>delete</em> 4 different targets (<code>dw, d$, d}, dG</code>). Then one day you learn about the uppercase (<code>gU</code>) operator. You have added not just one new ability to your Vim tool belt, but <em>four</em>: <code>gUw, gU$, gU}, gUG</code>. This makes at 12 tools in your Vim tool belt. Each new knowledge is a multiplier to your current abilities. If you know 10 motions and 5 operators, you have 60 moves (50 operations + 10 motions) in your arsenal. Vim has a line-number motion (<code>nG</code>) that gives you <code>n</code> motions, where <code>n</code> is how many lines you have in your file (to go to line 5, run <code>5G</code>). The search motion (<code>/</code>) practically gives you near unlimited number motions because you can search for anything. External command operator (<code>!</code>) gives you as many filtering tools as the number of terminal commands you know. Using a composable tool like Vim, everything you know can be linked together to do operations with increasing complexity. The more you know, the more powerful you become.</p>
+<p>This composable behavior echoes Unix philosophy: <em>do one thing well</em>. An operator has one job: do Y. A motion has one job: go to X. By combining an operator with a motion, you predictably get YX: do Y on X.</p>
+<p>Motions and operators are extendable. You can create custom motions and operators to add to your Vim toolbelt. The <a href="https://github.com/kana/vim-textobj-user"><code>vim-textobj-user</code></a> plugin allows you to create your own text objects. It also contains a <a href="https://github.com/kana/vim-textobj-user/wiki">list</a> of user-made custom text objects.</p>
+</section>
+<section id="learn-vim-grammar-the-smart-way" class="level2" data-number="4.8">
+<h2 data-number="4.8" class="anchored" data-anchor-id="learn-vim-grammar-the-smart-way"><span class="header-section-number">4.8</span> Learn Vim Grammar the Smart Way</h2>
+<p>You just learned about Vim grammar’s rule: <code>verb + noun</code>. One of my biggest Vim <q>AHA!</q> moment was when I had just learned about the uppercase (<code>gU</code>) operator and wanted to uppercase the current word, I <em>instinctively</em> ran <code>gUiw</code> and it worked! The word was uppercased. At that moment, I finally began to understand Vim. My hope is that you will have your own <q>AHA!</q> moment soon, if not already.</p>
+<p>The goal of this chapter is to show you the <code>verb + noun</code> pattern in Vim so you will approach learning Vim like learning a new language instead of memorizing every command combination.</p>
+<p>Learn the pattern and understand the implications. That’s the smart way to learn.</p>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const disableStylesheet = (stylesheets) => {
+    for (let i=0; i < stylesheets.length; i++) {
+      const stylesheet = stylesheets[i];
+      stylesheet.rel = 'prefetch';
+    }
+  }
+  const enableStylesheet = (stylesheets) => {
+    for (let i=0; i < stylesheets.length; i++) {
+      const stylesheet = stylesheets[i];
+      stylesheet.rel = 'stylesheet';
+    }
+  }
+  const manageTransitions = (selector, allowTransitions) => {
+    const els = window.document.querySelectorAll(selector);
+    for (let i=0; i < els.length; i++) {
+      const el = els[i];
+      if (allowTransitions) {
+        el.classList.remove('notransition');
+      } else {
+        el.classList.add('notransition');
+      }
+    }
+  }
+  const toggleColorMode = (alternate) => {
+    // Switch the stylesheets
+    const alternateStylesheets = window.document.querySelectorAll('link.quarto-color-scheme.quarto-color-alternate');
+    manageTransitions('#quarto-margin-sidebar .nav-link', false);
+    if (alternate) {
+      enableStylesheet(alternateStylesheets);
+      for (const sheetNode of alternateStylesheets) {
+        if (sheetNode.id === "quarto-bootstrap") {
+          toggleBodyColorMode(sheetNode);
+        }
+      }
+    } else {
+      disableStylesheet(alternateStylesheets);
+      toggleBodyColorPrimary();
+    }
+    manageTransitions('#quarto-margin-sidebar .nav-link', true);
+    // Switch the toggles
+    const toggles = window.document.querySelectorAll('.quarto-color-scheme-toggle');
+    for (let i=0; i < toggles.length; i++) {
+      const toggle = toggles[i];
+      if (toggle) {
+        if (alternate) {
+          toggle.classList.add("alternate");     
+        } else {
+          toggle.classList.remove("alternate");
+        }
+      }
+    }
+    // Hack to workaround the fact that safari doesn't
+    // properly recolor the scrollbar when toggling (#1455)
+    if (navigator.userAgent.indexOf('Safari') > 0 && navigator.userAgent.indexOf('Chrome') == -1) {
+      manageTransitions("body", false);
+      window.scrollTo(0, 1);
+      setTimeout(() => {
+        window.scrollTo(0, 0);
+        manageTransitions("body", true);
+      }, 40);  
+    }
+  }
+  const isFileUrl = () => { 
+    return window.location.protocol === 'file:';
+  }
+  const hasAlternateSentinel = () => {  
+    let styleSentinel = getColorSchemeSentinel();
+    if (styleSentinel !== null) {
+      return styleSentinel === "alternate";
+    } else {
+      return false;
+    }
+  }
+  const setStyleSentinel = (alternate) => {
+    const value = alternate ? "alternate" : "default";
+    if (!isFileUrl()) {
+      window.localStorage.setItem("quarto-color-scheme", value);
+    } else {
+      localAlternateSentinel = value;
+    }
+  }
+  const getColorSchemeSentinel = () => {
+    if (!isFileUrl()) {
+      const storageValue = window.localStorage.getItem("quarto-color-scheme");
+      return storageValue != null ? storageValue : localAlternateSentinel;
+    } else {
+      return localAlternateSentinel;
+    }
+  }
+  let localAlternateSentinel = 'alternate';
+  // Dark / light mode switch
+  window.quartoToggleColorScheme = () => {
+    // Read the current dark / light value 
+    let toAlternate = !hasAlternateSentinel();
+    toggleColorMode(toAlternate);
+    setStyleSentinel(toAlternate);
+  };
+  // Ensure there is a toggle, if there isn't float one in the top right
+  if (window.document.querySelector('.quarto-color-scheme-toggle') === null) {
+    const a = window.document.createElement('a');
+    a.classList.add('top-right');
+    a.classList.add('quarto-color-scheme-toggle');
+    a.href = "";
+    a.onclick = function() { try { window.quartoToggleColorScheme(); } catch {} return false; };
+    const i = window.document.createElement("i");
+    i.classList.add('bi');
+    a.appendChild(i);
+    window.document.body.appendChild(a);
+  }
+  // Switch to dark mode if need be
+  if (hasAlternateSentinel()) {
+    toggleColorMode(true);
+  } else {
+    toggleColorMode(false);
+  }
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    target: function(trigger) {
+      return trigger.previousElementSibling;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="../chapters/ch03_searching_files.md.html" class="pagination-link">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Ch03. Searching Files</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="../chapters/ch05_moving_in_file.md.html" class="pagination-link">
+        <span class="nav-page-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Ch05. Moving in a File</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+
+
+
+</body></html>
