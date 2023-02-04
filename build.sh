@@ -6,4 +6,5 @@ for file in Learn-Vim/ch*.md; do
 done
 
 quarto render --html
+touch docs/.nojekyll
 
